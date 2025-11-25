@@ -1,0 +1,183 @@
+.world-map-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.world-map-header {
+  padding: var(--spacing-5);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  z-index: var(--z-sticky);
+}
+
+.world-map-header h1 {
+  margin: 0 0 var(--spacing-3) 0;
+  font-size: var(--font-size-4xl);
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+  font-family: var(--font-family-base);
+}
+
+.controls-hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  opacity: 0.9;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.world-map {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(to bottom, var(--game-primary) 0%, var(--game-primary-dark) 100%);
+}
+
+.paths-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.world-node {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.node-circle {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.node-circle.clickable {
+  cursor: pointer;
+}
+
+.node-circle.clickable:hover {
+  transform: scale(1.15);
+  filter: brightness(1.2);
+  z-index: 60;
+}
+
+.node-circle.clickable:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 4px;
+}
+
+.node-circle.adjacent {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(255, 235, 59, 0.8), 0 0 30px rgba(255, 235, 59, 0.6);
+  }
+}
+
+.node-popup {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  background: var(--game-surface-elevated);
+  color: var(--game-text-primary);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  min-width: 200px;
+  max-width: 300px;
+  box-shadow: var(--shadow-xl);
+  z-index: var(--z-tooltip);
+  pointer-events: none;
+  animation: popupFadeIn var(--transition-base);
+  border: 2px solid var(--game-world-border);
+}
+
+.node-popup::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: var(--game-world-border);
+}
+
+.node-popup-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-2);
+  color: var(--game-world-border);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  font-family: var(--font-family-pixel);
+}
+
+.node-popup-description {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--game-text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -100%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%) translateY(0);
+  }
+}
+
+.mario {
+  pointer-events: none;
+  animation: bounce 0.6s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-10px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .world-node {
+    /* Larger tap targets on mobile */
+  }
+  
+  .node-circle {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    font-size: var(--font-size-lg) !important;
+  }
+  
+  .node-popup {
+    max-width: 250px;
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .node-circle.adjacent,
+  .mario {
+    animation: none;
+  }
+}

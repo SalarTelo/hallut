@@ -1,0 +1,51 @@
+/* Base Styles - Reset and Foundation */
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: var(--font-family-base, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  line-height: var(--line-height-normal, 1.5);
+  font-weight: var(--font-weight-normal, 400);
+  color-scheme: dark;
+  color: var(--game-text-primary, #ffffff);
+  background-color: var(--game-world-bg, #1a1a2e);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--game-world-bg);
+  color: var(--game-text-primary);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-primary, #2196f3);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
