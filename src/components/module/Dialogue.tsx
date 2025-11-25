@@ -45,7 +45,7 @@ export function Dialogue({
   autoAdvance = false,
   autoAdvanceDelay = 3000,
   showBackButton = false,
-  typewriterEffect = false,
+  typewriterEffect = true,
   typewriterSpeed = 30,
   question,
   inputType = 'text',
