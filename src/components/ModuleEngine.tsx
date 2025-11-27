@@ -1,20 +1,21 @@
 /**
- * New Module Engine
- * Uses new unified store, dialogue system, and task submission
+ * Module Engine
+ * Uses XState for state management, unified store, dialogue system, and task submission
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useMachine } from '@xstate/react';
 import { moduleMachine } from '../machines/moduleMachine.js';
 import { loadModule } from '../modules/loader.js';
 import { useModuleStore, useModuleActions } from '../store/moduleStore.js';
 import { LoadingSpinner } from './ui/LoadingSpinner.js';
+import { Button } from './ui/Button.js';
 import { EnvironmentView } from './module/EnvironmentView.js';
 import { TaskSubmissionView } from './task/TaskSubmissionView.js';
 import { Dialogue } from './module/Dialogue.js';
-import { DialogueSystem } from '../dialogue/DialogueSystem.js';
 import { moduleActions } from '../store/moduleActions.js';
 import { evaluateTask } from '../services/taskEvaluation.js';
+import { useI18n } from '../i18n/context.js';
 import type { TaskSubmission } from '../types/task.types.js';
 
 export interface ModuleEngineProps {
@@ -24,11 +25,13 @@ export interface ModuleEngineProps {
 }
 
 export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEngineProps) {
+  const { t } = useI18n();
   const [state, send] = useMachine(moduleMachine);
   const { setModule, setModuleId } = useModuleActions();
   const currentModule = useModuleStore((state) => state.currentModule);
   const moduleProgress = useModuleStore((state) => state.getProgress(moduleId));
   const readyToSubmit = moduleProgress?.state?.readyToSubmit || false;
+  const [error, setError] = useState<string | null>(null);
 
   // Load module on mount
   useEffect(() => {
@@ -37,10 +40,13 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
         .then((moduleData) => {
           setModule(moduleData);
           setModuleId(moduleId);
+          setError(null);
           send({ type: 'START_MODULE', module: moduleData, moduleId });
         })
-        .catch((error) => {
-          console.error('Failed to load module:', error);
+        .catch((err) => {
+          const errorMessage = err instanceof Error ? err.message : 'Failed to load module';
+          setError(errorMessage);
+          console.error('Failed to load module:', err);
         });
     }
   }, [moduleId, locale, state.value, setModule, setModuleId, send]);
@@ -63,11 +69,34 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
     }
   }, [readyToSubmit, state.value, send]);
 
+  // Show error state
+  if (error) {
+    return (
+      <div className="game-bg" style={{ padding: 'var(--spacing-12)', textAlign: 'center', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ fontSize: '40px', marginBottom: 'var(--spacing-4)', color: 'var(--game-accent-error)' }}>⚠️</div>
+        <div className="h2" style={{ marginBottom: 'var(--spacing-4)', color: 'var(--game-accent-error)' }}>
+          {t.module.error}
+        </div>
+        <div className="text-base" style={{ color: 'var(--game-text-secondary)', marginBottom: 'var(--spacing-6)' }}>
+          {error}
+        </div>
+        {onExit && (
+          <Button variant="primary" onClick={onExit}>
+            {t.common.back}
+          </Button>
+        )}
+      </div>
+    );
+  }
+
   // Render based on state
   if (state.value === 'idle' || state.value === 'loading') {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <LoadingSpinner size="lg" />
+      <div className="game-bg" style={{ padding: 'var(--spacing-12)', textAlign: 'center', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <LoadingSpinner size="lg" color="var(--game-world-border)" />
+        <div className="h3" style={{ marginTop: 'var(--spacing-4)', color: 'var(--game-world-border)' }}>
+          {t.module.loading}
+        </div>
       </div>
     );
   }
@@ -76,15 +105,23 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
     // Show welcome dialogue
     const welcomeDialogue = currentModule?.dialogues[`${moduleId}_welcome`];
     if (welcomeDialogue) {
+      // Get welcome speaker interactable for avatar
+      const welcomeSpeaker = currentModule?.config.interactables.find(
+        i => i.id === currentModule.config.welcome.speaker
+      );
+      
       return (
-        <Dialogue
-          speaker={welcomeDialogue.speaker}
-          lines={welcomeDialogue.greeting}
-          onNext={() => {
-            moduleActions.markGreetingSeen(moduleId, `${moduleId}_welcome`);
-            send({ type: 'COMPLETE_WELCOME' });
-          }}
-        />
+        <div className="game-bg" style={{ minHeight: '100vh', padding: 'var(--spacing-8)' }}>
+          <Dialogue
+            speaker={welcomeSpeaker?.name || welcomeDialogue.speaker}
+            lines={welcomeDialogue.greeting}
+            avatar={welcomeSpeaker?.avatar}
+            onNext={() => {
+              moduleActions.markGreetingSeen(moduleId, `${moduleId}_welcome`);
+              send({ type: 'COMPLETE_WELCOME' });
+            }}
+          />
+        </div>
       );
     }
     // No welcome dialogue, skip to environment
@@ -144,28 +181,18 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
 
   if (state.value === 'moduleComplete') {
     return (
-      <div style={{ padding: 'var(--spacing-6)', textAlign: 'center' }}>
-        <div className="h1" style={{ marginBottom: 'var(--spacing-4)' }}>
-          🎉 Grattis!
+      <div className="game-bg" style={{ padding: 'var(--spacing-12)', textAlign: 'center', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ fontSize: '52px', marginBottom: 'var(--spacing-4)' }}>🎉</div>
+        <div className="h1" style={{ marginBottom: 'var(--spacing-2)', color: 'var(--game-world-border)' }}>
+          {t.module.complete}
         </div>
-        <div className="text-lg" style={{ marginBottom: 'var(--spacing-6)' }}>
-          Du har klarat alla uppgifter i denna modul!
+        <div className="text-lg" style={{ marginBottom: 'var(--spacing-8)', color: 'var(--game-text-secondary)' }}>
+          {t.module.completeMessage}
         </div>
         {onExit && (
-          <button
-            onClick={onExit}
-            style={{
-              padding: 'var(--spacing-3) var(--spacing-6)',
-              fontSize: 'var(--font-size-base)',
-              backgroundColor: 'var(--game-primary)',
-              color: 'white',
-              border: 'none',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer',
-            }}
-          >
-            Tillbaka
-          </button>
+          <Button variant="primary" size="lg" onClick={onExit}>
+            {t.module.returnToSelection}
+          </Button>
         )}
       </div>
     );

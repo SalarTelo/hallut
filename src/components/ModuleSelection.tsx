@@ -33,6 +33,8 @@ export function ModuleSelection({ modules, onSelectModule }: ModuleSelectionProp
   // Define module order and connections (like Mario World paths)
   const moduleOrder = [
     'text-generation',
+      'image-recognition',
+      'sound-generation',
   ];
 
   // Get completed modules from store

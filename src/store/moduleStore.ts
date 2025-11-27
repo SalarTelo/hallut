@@ -5,7 +5,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { ModuleState, ModuleProgress } from '../types/moduleState.types.js';
+import type { ModuleProgress } from '../types/moduleState.types.js';
 import type { ModuleData } from '../types/module.types.js';
 
 /**
@@ -19,12 +19,20 @@ interface ModuleStoreState {
   // Progress (persisted)
   progress: Record<string, ModuleProgress>;
   
+  // Completed modules (persisted)
+  completedModules: string[];
+  
   // Actions
   setModule: (module: ModuleData) => void;
   setModuleId: (moduleId: string | null) => void;
   updateProgress: (moduleId: string, updates: Partial<ModuleProgress>) => void;
   getProgress: (moduleId: string) => ModuleProgress | null;
   clearModule: () => void;
+  
+  // Completed modules helpers
+  addCompletedModule: (moduleId: string) => void;
+  isModuleCompleted: (moduleId: string) => boolean;
+  getCompletedModules: () => string[];
   
   // Task helpers
   acceptTask: (moduleId: string, taskId: string) => void;
@@ -55,12 +63,29 @@ export const useModuleStore = create<ModuleStoreState>()(
       currentModule: null,
       currentModuleId: null,
       progress: {},
+      completedModules: [],
       
       // Set current module
       setModule: (module) => set({ currentModule: module }),
       
       // Set current module ID
       setModuleId: (moduleId) => set({ currentModuleId: moduleId }),
+      
+      // Add completed module
+      addCompletedModule: (moduleId) => {
+        const completed = get().completedModules;
+        if (!completed.includes(moduleId)) {
+          set({ completedModules: [...completed, moduleId] });
+        }
+      },
+      
+      // Check if module is completed
+      isModuleCompleted: (moduleId) => {
+        return get().completedModules.includes(moduleId);
+      },
+      
+      // Get completed modules
+      getCompletedModules: () => get().completedModules,
       
       // Update progress for a module
       updateProgress: (moduleId, updates) => {
@@ -141,9 +166,10 @@ export const useModuleStore = create<ModuleStoreState>()(
     {
       name: 'module-progress',
       partialize: (state) => ({
-        // Only persist progress and current module ID
+        // Persist progress, current module ID, and completed modules
         progress: state.progress,
         currentModuleId: state.currentModuleId,
+        completedModules: state.completedModules,
       }),
     }
   )
@@ -171,6 +197,9 @@ export const useModuleActions = () => {
   const getCurrentTaskId = useModuleStore((state) => state.getCurrentTaskId);
   const hasSeenGreeting = useModuleStore((state) => state.hasSeenGreeting);
   const markGreetingSeen = useModuleStore((state) => state.markGreetingSeen);
+  const addCompletedModule = useModuleStore((state) => state.addCompletedModule);
+  const isModuleCompleted = useModuleStore((state) => state.isModuleCompleted);
+  const getCompletedModules = useModuleStore((state) => state.getCompletedModules);
   
   return {
     setModule,
@@ -183,5 +212,8 @@ export const useModuleActions = () => {
     getCurrentTaskId,
     hasSeenGreeting,
     markGreetingSeen,
+    addCompletedModule,
+    isModuleCompleted,
+    getCompletedModules,
   };
 };

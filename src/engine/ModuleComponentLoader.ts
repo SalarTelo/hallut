@@ -8,7 +8,13 @@
 
 import type { ComponentType } from 'react';
 
-const moduleComponentCache = new Map<string, ComponentType<any>>();
+// Type for module component props
+export interface ModuleComponentProps {
+  onNext?: () => void;
+  [key: string]: unknown;
+}
+
+const moduleComponentCache = new Map<string, ComponentType<ModuleComponentProps>>();
 
 /**
  * Load a custom component from a module's components folder
@@ -17,7 +23,7 @@ const moduleComponentCache = new Map<string, ComponentType<any>>();
 export async function loadModuleComponent(
   moduleId: string,
   componentName: string
-): Promise<ComponentType<any> | null> {
+): Promise<ComponentType<ModuleComponentProps> | null> {
   const cacheKey = `${moduleId}:${componentName}`;
   
   // Check cache first
@@ -35,8 +41,8 @@ export async function loadModuleComponent(
     const moduleLoader = modules[modulePath];
     
     if (moduleLoader) {
-      const componentModule = await moduleLoader();
-      const Component = componentModule.default || componentModule[componentName];
+      const componentModule = await moduleLoader() as { default?: ComponentType<ModuleComponentProps>; [key: string]: unknown };
+      const Component = (componentModule.default || componentModule[componentName]) as ComponentType<ModuleComponentProps> | undefined;
       
       if (Component) {
         moduleComponentCache.set(cacheKey, Component);
@@ -49,8 +55,8 @@ export async function loadModuleComponent(
       const componentModule = await import(
         /* @vite-ignore */
         `../../modules/${moduleId}/components/${componentName}.tsx`
-      );
-      const Component = componentModule.default || componentModule[componentName];
+      ) as { default?: ComponentType<ModuleComponentProps>; [key: string]: unknown };
+      const Component = (componentModule.default || componentModule[componentName]) as ComponentType<ModuleComponentProps> | undefined;
       if (Component) {
         moduleComponentCache.set(cacheKey, Component);
         return Component;
@@ -70,8 +76,8 @@ export async function loadModuleComponent(
  * Load all components from a module's components folder
  * Looks for a components/index.ts file that exports all components
  */
-export async function loadModuleComponents(moduleId: string): Promise<Record<string, ComponentType<any>>> {
-  const components: Record<string, ComponentType<any>> = {};
+export async function loadModuleComponents(moduleId: string): Promise<Record<string, ComponentType<ModuleComponentProps>>> {
+  const components: Record<string, ComponentType<ModuleComponentProps>> = {};
   
   try {
     // Use Vite's import.meta.glob to find the index file
@@ -80,13 +86,13 @@ export async function loadModuleComponents(moduleId: string): Promise<Record<str
     const indexLoader = modules[indexPath];
     
     if (indexLoader) {
-      const componentsModule = await indexLoader();
+      const componentsModule = await indexLoader() as { default?: Record<string, ComponentType<ModuleComponentProps>>; [key: string]: unknown };
       
       // Components should be exported as named exports or default export
       if (componentsModule.default) {
-        Object.assign(components, componentsModule.default);
+        Object.assign(components, componentsModule.default as Record<string, ComponentType<ModuleComponentProps>>);
       } else {
-        Object.assign(components, componentsModule);
+        Object.assign(components, componentsModule as Record<string, ComponentType<ModuleComponentProps>>);
       }
       
       // Cache all loaded components
@@ -108,7 +114,7 @@ export async function loadModuleComponents(moduleId: string): Promise<Record<str
  */
 export async function registerModuleComponents(
   moduleId: string,
-  registerComponent: (type: string, component: ComponentType<any>) => void
+  registerComponent: (type: string, component: ComponentType<ModuleComponentProps>) => void
 ): Promise<void> {
   const components = await loadModuleComponents(moduleId);
   

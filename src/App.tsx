@@ -6,6 +6,7 @@ import { useI18n } from './i18n/context.js';
 import type { Module } from './components/ModuleSelection.js';
 import { useCurrentModuleId, useModuleActions } from './store/moduleStore.js';
 import { DebugPanel } from './components/debug/DebugPanel.js';
+import { ModuleErrorBoundary } from './components/error/ModuleErrorBoundary.js';
 import './App.css';
 
 // Register default components
@@ -24,6 +25,18 @@ function App() {
       description: 'Learn how AI can help you create stories, write creatively, and generate text. Master the art of AI-assisted writing!',
       icon: '✍️',
     },
+      {
+          id: 'image-recognition',
+          name: 'Image recognition',
+          description: 'Learn how AI can help you create stories, write creatively, and generate text. Master the art of AI-assisted writing!',
+          icon: '👀️',
+      },
+      {
+          id: 'sound-generation',
+          name: 'Sound Generation',
+          description: 'Learn how AI can help you create stories, write creatively, and generate text. Master the art of AI-assisted writing!',
+          icon: '🎵',
+      },
   ], [t]);
 
   const handleSelectModule = (moduleId: string) => {
@@ -37,11 +50,13 @@ function App() {
   return (
     <>
       <DebugPanel />
-      {currentModuleId ? (
-        <ModuleEngine moduleId={currentModuleId} onExit={handleExitModule} />
-      ) : (
-        <ModuleSelection modules={availableModules} onSelectModule={handleSelectModule} />
-      )}
+      <ModuleErrorBoundary>
+        {currentModuleId ? (
+          <ModuleEngine moduleId={currentModuleId} onExit={handleExitModule} />
+        ) : (
+          <ModuleSelection modules={availableModules} onSelectModule={handleSelectModule} />
+        )}
+      </ModuleErrorBoundary>
     </>
   );
 }

@@ -1,14 +1,15 @@
 import type { ComponentType } from 'react';
+import type { ModuleComponentProps } from './ModuleComponentLoader.js';
 
-export type ComponentRegistry = Record<string, ComponentType<any>>;
+export type ComponentRegistry = Record<string, ComponentType<ModuleComponentProps>>;
 
 const registry: ComponentRegistry = {};
 
-export function registerComponent(type: string, component: ComponentType<any>): void {
+export function registerComponent(type: string, component: ComponentType<ModuleComponentProps>): void {
   registry[type] = component;
 }
 
-export function getComponent(type: string): ComponentType<any> | null {
+export function getComponent(type: string): ComponentType<ModuleComponentProps> | null {
   // First try exact match
   if (registry[type]) {
     return registry[type];
@@ -36,7 +37,8 @@ export function isModuleComponent(type: string): boolean {
 
 export function parseModuleComponentType(type: string): { moduleId: string; componentName: string } | null {
   if (!type.includes(':')) return null;
-  const [moduleId, componentName] = type.split(':');
-  return { moduleId, componentName };
+  const parts = type.split(':');
+  if (parts.length !== 2) return null;
+  return { moduleId: parts[0]!, componentName: parts[1]! };
 }
 

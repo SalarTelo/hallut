@@ -1,16 +1,25 @@
 /**
  * InteractableHandler - Handles interactable clicks and dispatches actions
+ * Refactored to remove React anti-patterns (setTimeout hacks, render-time side effects)
  */
 
-import { useState, useEffect } from 'react';
-import type { Interactable, InteractableAction } from '../../types/interactable.types.js';
+import { useState, useEffect, useCallback } from 'react';
+import type { ComponentType } from 'react';
+import type { Interactable } from '../../types/interactable.types.js';
 import { InteractableActionType } from '../../types/interactable.types.js';
-import { Dialogue } from './Dialogue.js';
 import { ComponentOverlay } from './ComponentOverlay.js';
+import { InteractableDialogue } from './InteractableDialogue.js';
 import { getComponent, parseModuleComponentType } from '../../engine/ComponentRegistry.js';
 import { loadModuleComponent } from '../../engine/ModuleComponentLoader.js';
 import { useModuleStore } from '../../store/moduleStore.js';
 import { DialogueSystem } from '../../dialogue/DialogueSystem.js';
+import type { DialogueData } from '../../dialogue/DialogueSystem.js';
+
+// Type for module component props
+export interface ModuleComponentProps {
+  onNext?: () => void;
+  [key: string]: unknown;
+}
 
 export interface InteractableHandlerProps {
   interactable: Interactable;
@@ -27,7 +36,7 @@ function ModuleComponentLoader({
   componentName: string; 
   onNext?: () => void;
 }) {
-  const [Component, setComponent] = useState<any>(null);
+  const [Component, setComponent] = useState<ComponentType<ModuleComponentProps> | null>(null);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
@@ -58,8 +67,17 @@ function ModuleComponentLoader({
 export function InteractableHandler({ interactable, onActionComplete }: InteractableHandlerProps) {
   const currentModule = useModuleStore((state) => state.currentModule);
   const currentModuleId = useModuleStore((state) => state.currentModuleId);
-  const [dialogueData, setDialogueData] = useState<import('../../dialogue/DialogueSystem.js').DialogueData | null>(null);
+  const [dialogueData, setDialogueData] = useState<DialogueData | null>(null);
+  const [showComponent, setShowComponent] = useState<{ type: 'module' | 'global'; moduleId?: string; componentName?: string; component?: ComponentType<ModuleComponentProps> } | null>(null);
 
+  // Handle action complete callback
+  const handleActionComplete = useCallback(() => {
+    setDialogueData(null);
+    setShowComponent(null);
+    if (onActionComplete) {
+      onActionComplete();
+    }
+  }, [onActionComplete]);
 
   // Load dialogue data when dialogue action is triggered
   useEffect(() => {
@@ -70,126 +88,84 @@ export function InteractableHandler({ interactable, onActionComplete }: Interact
           dialogueConfig,
           currentModuleId,
           interactable.id,
-          () => {
-            setDialogueData(null);
-            if (onActionComplete) {
-              onActionComplete();
-            }
-          }
+          handleActionComplete
         );
         if (data) {
           setDialogueData(data);
         }
       }
     }
-  }, [interactable.action, currentModuleId, currentModule, interactable.id, onActionComplete]);
+  }, [interactable.action, currentModuleId, currentModule, interactable.id, handleActionComplete]);
 
-  const handleAction = (action: InteractableAction) => {
-    switch (action.type) {
-      case InteractableActionType.Dialogue: {
-        // Dialogue is handled by useEffect above
-        if (dialogueData) {
-          return (
-            <Dialogue
-              speaker={dialogueData.speaker}
-              lines={dialogueData.lines}
-              choices={dialogueData.choices?.map(c => c.text)}
-              inputType={dialogueData.choices ? 'choices' : undefined}
-              onResponse={(response) => {
-                // Find and call the handler for the selected choice
-                const choice = dialogueData.choices?.find(c => c.text === response);
-                if (choice) {
-                  choice.handler();
-                }
-              }}
-              onNext={dialogueData.onComplete}
-            />
-          );
-        }
-        return null;
+  // Handle non-dialogue actions on mount
+  useEffect(() => {
+    const action = interactable.action;
+    
+    if (action.type === InteractableActionType.Component) {
+      // Check if it's a module-specific component (format: moduleId:componentName)
+      const moduleComponentType = parseModuleComponentType(action.component);
+      if (moduleComponentType && currentModuleId === moduleComponentType.moduleId) {
+        setShowComponent({
+          type: 'module',
+          moduleId: moduleComponentType.moduleId,
+          componentName: moduleComponentType.componentName,
+        });
+        return;
       }
-
-      case InteractableActionType.Component: {
-        // Check if it's a module-specific component (format: moduleId:componentName)
-        const moduleComponentType = parseModuleComponentType(action.component);
-        if (moduleComponentType && currentModuleId === moduleComponentType.moduleId) {
-          return (
-            <ComponentOverlay onClose={onActionComplete}>
-              <ModuleComponentLoader 
-                moduleId={moduleComponentType.moduleId}
-                componentName={moduleComponentType.componentName}
-                onNext={onActionComplete}
-              />
-            </ComponentOverlay>
-          );
-        }
-        
-        const Component = getComponent(action.component);
-        if (!Component) {
-          console.warn(`Component "${action.component}" not found`);
-          return null;
-        }
-        
-        return (
-          <ComponentOverlay onClose={onActionComplete}>
-            <Component onNext={onActionComplete} />
-          </ComponentOverlay>
-        );
+      
+      // Try to get global component
+      const Component = getComponent(action.component);
+      if (Component) {
+        setShowComponent({
+          type: 'global',
+          component: Component,
+        });
+      } else {
+        console.warn(`Component "${action.component}" not found`);
+        handleActionComplete();
       }
-
-      case InteractableActionType.Task: {
-        // Tasks are handled by the dialogue system now
-        // Defer action complete to avoid setState during render
-        if (onActionComplete) {
-          setTimeout(() => {
-            onActionComplete();
-          }, 0);
-        }
-        return null;
+    } else if (action.type === InteractableActionType.Task) {
+      // Tasks are handled by the dialogue system now
+      // Just close immediately
+      handleActionComplete();
+    } else if (action.type === InteractableActionType.Function) {
+      // Execute function in effect, not during render
+      try {
+        action.function();
+      } catch (error) {
+        console.error('Error executing interactable function:', error);
       }
-
-      case InteractableActionType.Function: {
-        // Defer function execution to avoid setState during render
-        setTimeout(() => {
-          action.function();
-          // Defer action complete to avoid setState during render
-          if (onActionComplete) {
-            setTimeout(() => {
-              onActionComplete();
-            }, 0);
-          }
-        }, 0);
-        return null;
-      }
-
-      default:
-        return null;
+      handleActionComplete();
     }
-  };
+  }, [interactable.action, currentModuleId, handleActionComplete]);
 
-  // Handle non-dialogue actions
-  if (interactable.action.type !== InteractableActionType.Dialogue) {
-    return handleAction(interactable.action);
+  // Render dialogue if available
+  if (dialogueData) {
+    return <InteractableDialogue dialogueData={dialogueData} />;
   }
 
-  // Dialogue is handled by useEffect above
-  if (dialogueData) {
-    return (
-      <Dialogue
-        speaker={dialogueData.speaker}
-        lines={dialogueData.lines}
-        choices={dialogueData.choices?.map(c => c.text)}
-        inputType={dialogueData.choices ? 'choices' : undefined}
-        onResponse={(response) => {
-          // Find and call the handler for the selected choice
-          const choice = dialogueData.choices?.find(c => c.text === response);
-          if (choice) {
-            choice.handler();
-          }
-        }}
-        onNext={dialogueData.onComplete}
-      />
-    );
+  // Render component overlay if component action
+  if (showComponent) {
+    if (showComponent.type === 'module' && showComponent.moduleId && showComponent.componentName) {
+      return (
+        <ComponentOverlay onClose={handleActionComplete}>
+          <ModuleComponentLoader 
+            moduleId={showComponent.moduleId}
+            componentName={showComponent.componentName}
+            onNext={handleActionComplete}
+          />
+        </ComponentOverlay>
+      );
+    }
+    
+    if (showComponent.type === 'global' && showComponent.component) {
+      const Component = showComponent.component;
+      return (
+        <ComponentOverlay onClose={handleActionComplete}>
+          <Component onNext={handleActionComplete} />
+        </ComponentOverlay>
+      );
+    }
   }
 
   return null;

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useModuleStore } from '../../store/moduleStore.js';
+import { useModuleStore, useModuleActions } from '../../store/moduleStore.js';
 import { StorageService } from '../../services/storage.js';
-import type { ModuleState } from '../../types/moduleState.types.js';
 // Validation removed - moduleValidator was for old JSON system
 
 export function DebugPanel() {
@@ -9,15 +8,15 @@ export function DebugPanel() {
   const [activeTab, setActiveTab] = useState<'state' | 'storage' | 'actions'>('state');
 
   const currentModuleId = useModuleStore((state) => state.currentModuleId);
-  const moduleState = useModuleStore((state) => state.moduleState);
-  const moduleData = useModuleStore((state) => state.moduleData);
+  const moduleProgress = useModuleStore((state) => 
+    currentModuleId ? state.getProgress(currentModuleId) : null
+  );
+  const moduleState = moduleProgress?.state || {};
   
-  // Get completed modules from StorageService since it's not in the store
-  const completedModules = StorageService.getCompletedModules();
+  // Get completed modules from store
+  const completedModules = useModuleStore((state) => state.getCompletedModules());
 
-  const setModuleId = useModuleStore((state) => state.setModuleId);
-  const resetModule = useModuleStore((state) => state.resetModule);
-  const updateModuleState = useModuleStore((state) => state.updateModuleState);
+  const { addCompletedModule, updateProgress } = useModuleActions();
 
   // Toggle with backtick key
   useEffect(() => {
@@ -69,8 +68,12 @@ export function DebugPanel() {
   }
 
   const handleResetModule = () => {
-    if (confirm('Reset current module state? This will clear all progress.')) {
-      resetModule();
+    if (currentModuleId && confirm('Reset current module state? This will clear all progress.')) {
+      updateProgress(currentModuleId, {
+        completedTasks: [],
+        state: {},
+      });
+      window.location.reload();
     }
   };
 
@@ -83,21 +86,37 @@ export function DebugPanel() {
 
   const handleCompleteModule = () => {
     if (currentModuleId) {
-      StorageService.addCompletedModule(currentModuleId);
+      addCompletedModule(currentModuleId);
       window.location.reload();
     }
   };
 
 
   const handleSetModuleState = () => {
+    if (!currentModuleId) {
+      alert('No module selected');
+      return;
+    }
     const key = prompt('Enter state key:');
     const value = prompt('Enter state value (JSON):');
     if (key && value) {
       try {
         const parsedValue = JSON.parse(value);
-        updateModuleState({ [key]: parsedValue });
+        const currentState = moduleProgress?.state || {};
+        updateProgress(currentModuleId, {
+          state: {
+            ...currentState,
+            [key]: parsedValue,
+          },
+        });
       } catch {
-        updateModuleState({ [key]: value });
+        const currentState = moduleProgress?.state || {};
+        updateProgress(currentModuleId, {
+          state: {
+            ...currentState,
+            [key]: value,
+          },
+        });
       }
     }
   };
@@ -105,7 +124,7 @@ export function DebugPanel() {
   // Get Zustand persisted state directly from localStorage
   const getZustandState = () => {
     try {
-      const zustandData = localStorage.getItem('module-store');
+      const zustandData = localStorage.getItem('module-progress');
       if (zustandData) {
         return JSON.parse(zustandData);
       }
@@ -118,12 +137,12 @@ export function DebugPanel() {
   const zustandState = getZustandState();
   
   const storageData = {
-    currentModuleId: StorageService.getCurrentModuleId(),
-    completedModules: StorageService.getCompletedModules(),
+    currentModuleId: currentModuleId,
+    completedModules: completedModules,
     zustandState: zustandState?.state || null,
-    locale: StorageService.getLocale(),
+    locale: StorageService.getLocale(), // Locale is separate, can stay in StorageService
     // Get module progress for current module if available
-    moduleProgress: currentModuleId ? StorageService.getModuleProgress(currentModuleId) : null,
+    moduleProgress: moduleProgress,
   };
 
   return (

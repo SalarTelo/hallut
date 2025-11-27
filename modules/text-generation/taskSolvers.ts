@@ -14,6 +14,7 @@ export function task1_solve(input: TaskSubmission): TaskSolveResult {
       details: 'Denna uppgift kräver textinlämning.',
     };
   }
+
   
   const answer = input.text;
   const trimmedAnswer = answer.trim();
