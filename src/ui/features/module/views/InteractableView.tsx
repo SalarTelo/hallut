@@ -5,8 +5,8 @@
 
 import { memo, useMemo } from 'react';
 import { ModuleBackground } from '@ui/shared/components/ModuleBackground.js';
-import { Card } from '@ui/shared/components/Card.js';
 import { Button } from '@ui/shared/components/Button.js';
+import { PixelIcon } from '@ui/shared/components/PixelIcon.js';
 import { InteractableIcon } from '@ui/shared/components/InteractableIcon.js';
 import { TaskTracker } from '@ui/shared/components/TaskTracker.js';
 import { ChatWindow } from '@ui/shared/components/ChatWindow.js';
@@ -67,28 +67,38 @@ export const InteractableView = memo(function InteractableView({
   return (
     <ModuleBackground imageUrl={backgroundImage} color={backgroundColor}>
       <div className="relative min-h-screen">
-        {/* Rubrik - Kompakt */}
-        <Card
-          padding="sm"
-          dark
-          pixelated
-          className="m-2 mb-4"
-          style={{ borderColor: borderColor }}
+        {/* Kompakt header */}
+        <div
+          className="fixed top-0 left-0 right-0 z-30 px-3 py-2 bg-black/90 backdrop-blur-sm border-b-2 pixelated"
+          style={{
+            borderColor,
+            boxShadow: `0 2px 8px rgba(0, 0, 0, 0.5)`,
+          }}
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-lg font-bold text-white pixelated">
+          <div className="flex items-center justify-between max-w-7xl mx-auto">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-sm font-bold text-yellow-300 pixelated">
                 {moduleData.config.manifest.name}
               </h1>
+              <span className="text-gray-500 text-[10px] font-mono">
+                {moduleId}
+              </span>
             </div>
-            <Button variant="ghost" pixelated onClick={onExit} size="sm">
-              ← Avsluta
+            <Button
+              variant="ghost"
+              pixelated
+              onClick={onExit}
+              size="sm"
+              className="text-xs flex items-center gap-1.5"
+            >
+              <PixelIcon type="arrow-left" size={16} color="currentColor" />
+              <span>Avsluta</span>
             </Button>
           </div>
-        </Card>
+        </div>
 
         {/* Interaktiva objekt - Positionsbaserade */}
-        <div className="relative w-full h-[calc(100vh-120px)]">
+        <div className="relative w-full h-screen pt-12">
           {moduleData.config.interactables.map((interactable) => {
             // Kontrollera om interaktivt objekt är låst baserat på unlockRequirement
             let isLocked = interactable.locked;
