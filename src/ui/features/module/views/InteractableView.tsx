@@ -10,6 +10,7 @@ import { InteractableIcon } from '@ui/shared/components/InteractableIcon.js';
 import { TaskTracker } from '@ui/shared/components/TaskTracker.js';
 import { ChatWindow } from '@ui/shared/components/ChatWindow.js';
 import { ImageViewer } from '@ui/shared/components/ImageViewer.js';
+import { ModuleProgressIndicator } from '@ui/shared/components/ModuleProgressIndicator.js';
 import { getThemeValue } from '@utils/theme.js';
 import { DEFAULT_THEME } from '@constants/module.constants.js';
 import { getTaskIdFromRequirement, getModuleIdFromRequirement } from '@constants/module.constants.js';
@@ -177,6 +178,13 @@ export const InteractableView = memo(function InteractableView({
             );
           })}
         </div>
+
+        {/* Modulförloppsindikator */}
+        <ModuleProgressIndicator
+          moduleData={moduleData}
+          moduleId={moduleId}
+          borderColor={borderColor}
+        />
 
         {/* Uppgiftsspårare - Flytande uppdragslogg */}
         <TaskTracker activeTask={activeTask} borderColor={borderColor} />

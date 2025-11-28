@@ -16,7 +16,7 @@
  *
  * Game UI:
  * - DialogueBox, ModuleBackground, InteractableIcon, ModulePath
- * - ModuleInfoModal, ChatWindow, TaskTracker, ImageViewer
+ * - ModuleInfoModal, ChatWindow, TaskTracker, ModuleProgressIndicator, ImageViewer
  *
  * Usage:
  * ```typescript
@@ -40,6 +40,7 @@ export { ModulePath, type ModulePathProps } from './ModulePath.js';
 export { ModuleInfoModal, type ModuleInfoModalProps } from './ModuleInfoModal.js';
 export { ChatWindow, type ChatWindowProps, type ChatMessage } from './ChatWindow.js';
 export { TaskTracker, type TaskTrackerProps } from './TaskTracker.js';
+export { ModuleProgressIndicator, type ModuleProgressIndicatorProps } from './ModuleProgressIndicator.js';
 export { LoadingSpinner, type LoadingSpinnerProps } from './LoadingSpinner.js';
 export { LoadingState, type LoadingStateProps } from './LoadingState.js';
 export { ErrorDisplay, type ErrorDisplayProps } from './ErrorDisplay.js';
