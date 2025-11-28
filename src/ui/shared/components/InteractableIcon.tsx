@@ -11,9 +11,9 @@ export type IconShape = 'circle' | 'square' | string;
 
 export interface InteractableIconProps {
   /**
-   * Icon content (emoji, image, component)
+   * Icon content (emoji, image, component, or pixel icon type)
    */
-  icon: ReactNode;
+  icon: ReactNode | 'shield' | 'avatar' | 'box' | 'star' | 'check' | 'lock' | 'chat';
 
   /**
    * Icon shape (circular default)
@@ -119,6 +119,12 @@ export function InteractableIcon({
       >
         {locked ? (
           <PixelIcon type="lock" size={Math.floor(size * 0.5)} color="#999" />
+        ) : typeof icon === 'string' && ['shield', 'avatar', 'box', 'star', 'check', 'lock', 'chat'].includes(icon) ? (
+          <PixelIcon 
+            type={icon as 'shield' | 'avatar' | 'box' | 'star' | 'check' | 'lock' | 'chat'} 
+            size={Math.floor(size * 0.6)} 
+            color="white" 
+          />
         ) : (
           <div className="text-2xl drop-shadow-lg">{icon}</div>
         )}

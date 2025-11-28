@@ -15,7 +15,7 @@ export const guardInteractable: Interactable = {
   type: 'npc',
   name: 'Slottsvakt',
   position: { x: 50, y: 50 },
-  avatar: '🛡️',
+  avatar: 'shield',
   locked: false,
   unlockRequirement: null,
   action: {
@@ -32,7 +32,7 @@ export const aiCompanionInteractable: Interactable = {
   type: 'object',
   name: 'AI-kompanjon',
   position: { x: 25, y: 40 },
-  avatar: '🤖',
+  avatar: 'chat',
   locked: false,
   unlockRequirement: null,
   action: {
@@ -48,7 +48,7 @@ export const fridgeInteractable: Interactable = {
   type: 'object',
   name: 'Kylskåp',
   position: { x: 75, y: 40 },
-  avatar: '🧊',
+  avatar: 'box',
   locked: true,
   unlockRequirement: taskComplete(TASK_IDS.STORY),
   action: {

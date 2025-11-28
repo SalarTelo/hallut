@@ -12,6 +12,10 @@ import CloseIcon from 'pixelarticons/svg/close.svg?react';
 import ArrowRightIcon from 'pixelarticons/svg/arrow-right.svg?react';
 import ArrowLeftIcon from 'pixelarticons/svg/arrow-left.svg?react';
 import MoonStarIcon from 'pixelarticons/svg/moon-star.svg?react';
+import ShieldIcon from 'pixelarticons/svg/shield.svg?react';
+import AvatarIcon from 'pixelarticons/svg/avatar.svg?react';
+import BoxIcon from 'pixelarticons/svg/add-box.svg?react';
+import ChatIcon from 'pixelarticons/svg/chat.svg?react';
 
 export type PixelIconType =
   | 'lock'
@@ -21,7 +25,11 @@ export type PixelIconType =
   | 'pin'
   | 'close'
   | 'arrow-right'
-  | 'arrow-left';
+  | 'arrow-left'
+  | 'shield'
+  | 'avatar'
+  | 'box'
+  | 'chat';
 
 export interface PixelIconProps {
   /**
@@ -75,6 +83,10 @@ const iconComponents: Record<PixelIconType, React.ComponentType<React.SVGProps<S
   close: CloseIcon,
   'arrow-right': ArrowRightIcon,
   'arrow-left': ArrowLeftIcon,
+  shield: ShieldIcon,
+  avatar: AvatarIcon,
+  box: BoxIcon,
+  chat: ChatIcon,
 };
 
 /**
