@@ -1,64 +1,38 @@
-import { useMemo } from 'react';
-import { ModuleEngine } from './components/ModuleEngine.js';
-import { ModuleSelection } from './components/ModuleSelection.js';
-import { registerDefaultComponents } from './engine/registerComponents.js';
-import { useI18n } from './i18n/context.js';
-import type { Module } from './components/ModuleSelection.js';
-import { useCurrentModuleId, useModuleActions } from './store/moduleStore.js';
-import { DebugPanel } from './components/debug/DebugPanel.js';
-import { ModuleErrorBoundary } from './components/error/ModuleErrorBoundary.js';
-import './App.css';
+/**
+ * App Component
+ * Root component that orchestrates the entire application
+ */
 
-// Register default components
-registerDefaultComponents();
+import { useState } from 'react';
+import { ErrorBoundary } from './ui/shared/components/ErrorBoundary.js';
+import { ModuleSelection } from './ui/features/module/ModuleSelection.js';
+import { ModuleEngine } from './ui/features/module/ModuleEngine.js';
+import { FullScreenLayout } from './ui/shared/components/layouts/index.js';
 
-function App() {
-  const { t } = useI18n();
-  const currentModuleId = useCurrentModuleId();
-  const { setModuleId } = useModuleActions();
-
-  // Available modules in order (like Mario World)
-  const availableModules: Module[] = useMemo(() => [
-    {
-      id: 'text-generation',
-      name: 'Text Generation',
-      description: 'Learn how AI can help you create stories, write creatively, and generate text. Master the art of AI-assisted writing!',
-      icon: '✍️',
-    },
-      {
-          id: 'image-recognition',
-          name: 'Image recognition',
-          description: 'Learn how AI can help you create stories, write creatively, and generate text. Master the art of AI-assisted writing!',
-          icon: '👀️',
-      },
-      {
-          id: 'sound-generation',
-          name: 'Sound Generation',
-          description: 'Learn how AI can help you create stories, write creatively, and generate text. Master the art of AI-assisted writing!',
-          icon: '🎵',
-      },
-  ], [t]);
+/**
+ * App component
+ */
+export function App() {
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
 
   const handleSelectModule = (moduleId: string) => {
-    setModuleId(moduleId);
+    setSelectedModuleId(moduleId);
   };
 
   const handleExitModule = () => {
-    setModuleId(null);
+    setSelectedModuleId(null);
   };
 
   return (
-    <>
-      <DebugPanel />
-      <ModuleErrorBoundary>
-        {currentModuleId ? (
-          <ModuleEngine moduleId={currentModuleId} onExit={handleExitModule} />
+    <ErrorBoundary>
+      <FullScreenLayout>
+        {selectedModuleId ? (
+          <ModuleEngine moduleId={selectedModuleId} onExit={handleExitModule} />
         ) : (
-          <ModuleSelection modules={availableModules} onSelectModule={handleSelectModule} />
+          <ModuleSelection onSelectModule={handleSelectModule} />
         )}
-      </ModuleErrorBoundary>
-    </>
+      </FullScreenLayout>
+    </ErrorBoundary>
   );
 }
 
-export default App;

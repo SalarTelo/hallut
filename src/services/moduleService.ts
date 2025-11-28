@@ -1,0 +1,202 @@
+/**
+ * Module Service
+ * Business logic for module progression, unlocking, and completion
+ * Does NOT modify state - returns results for action creators to use
+ * Depends on: engine (moduleRegistry), stores (read-only via getState)
+ */
+
+import { getModuleConfig, getRegisteredModuleIds } from '../engine/moduleRegistry.js';
+import { useModuleStore } from '../stores/moduleStore/index.js';
+import type { ModuleProgressionState } from '../types/core/moduleProgression.types.js';
+import { handleError } from './errorService.js';
+import { ModuleError, ErrorCode } from '../types/core/error.types.js';
+
+/**
+ * Get store state (read-only helper)
+ */
+function getStoreState() {
+  return useModuleStore.getState();
+}
+
+/**
+ * Check if a module's dependencies are met
+ * 
+ * @param moduleId - Module ID
+ * @returns True if all dependencies are completed
+ */
+export async function checkModuleDependencies(moduleId: string): Promise<boolean> {
+  const config = await getModuleConfig(moduleId);
+  if (!config) {
+    return false;
+  }
+
+  // If no dependencies, module is always available
+  if (!config.requires || config.requires.length === 0) {
+    return true;
+  }
+
+  // Check if all required modules are completed
+  const { isModuleCompleted } = getStoreState();
+  return config.requires.every((requiredModuleId) => isModuleCompleted(requiredModuleId));
+}
+
+/**
+ * Check if module should be unlocked based on dependencies
+ * Returns whether the module should be unlocked (does not modify state)
+ * 
+ * @param moduleId - Module ID
+ * @returns Object with shouldUnlock and currentState
+ */
+export async function checkModuleUnlockStatus(moduleId: string): Promise<{
+  shouldUnlock: boolean;
+  currentState: ModuleProgressionState;
+}> {
+  const { getModuleProgression } = getStoreState();
+  const currentState = getModuleProgression(moduleId);
+  
+  // Already unlocked or completed
+  if (currentState === 'unlocked' || currentState === 'completed') {
+    return { shouldUnlock: false, currentState };
+  }
+
+  // Check dependencies
+  const dependenciesMet = await checkModuleDependencies(moduleId);
+  return { shouldUnlock: dependenciesMet, currentState };
+}
+
+/**
+ * Check if a module is completed (all tasks completed)
+ * 
+ * @param moduleId - Module ID
+ * @returns True if all tasks are completed
+ */
+export async function isModuleFullyCompleted(moduleId: string): Promise<boolean> {
+  const { getProgress } = getStoreState();
+  const progress = getProgress(moduleId);
+  if (!progress) {
+    return false;
+  }
+
+  const config = await getModuleConfig(moduleId);
+  if (!config) {
+    return false;
+  }
+
+  const completedTasks = progress.state.completedTasks || [];
+  const totalTasks = config.tasks.length;
+
+  return completedTasks.length === totalTasks && totalTasks > 0;
+}
+
+/**
+ * Check if module should be marked as completed
+ * Returns whether the module is fully completed (does not modify state)
+ * 
+ * @param moduleId - Module ID
+ * @returns Object with isCompleted flag and modules that should be unlocked
+ */
+export async function checkModuleCompletionStatus(moduleId: string): Promise<{
+  isCompleted: boolean;
+  modulesToUnlock: string[];
+}> {
+  try {
+    const isCompleted = await isModuleFullyCompleted(moduleId);
+    
+    if (!isCompleted) {
+      return { isCompleted: false, modulesToUnlock: [] };
+    }
+
+    // Find dependent modules that should be unlocked
+    const allModules = getRegisteredModuleIds();
+    const modulesToUnlock: string[] = [];
+    
+    for (const otherModuleId of allModules) {
+      const { shouldUnlock } = await checkModuleUnlockStatus(otherModuleId);
+      if (shouldUnlock) {
+        modulesToUnlock.push(otherModuleId);
+      }
+    }
+
+    return { isCompleted: true, modulesToUnlock };
+  } catch (error) {
+    const moduleError = new ModuleError(
+      ErrorCode.MODULE_INVALID,
+      moduleId,
+      `Error checking module completion: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      { originalError: error }
+    );
+    handleError(moduleError);
+    return { isCompleted: false, modulesToUnlock: [] };
+  }
+}
+
+/**
+ * Get module progression state
+ * 
+ * @param moduleId - Module ID
+ * @returns Current progression state
+ */
+export function getModuleProgressionState(moduleId: string): ModuleProgressionState {
+  const { getModuleProgression } = getStoreState();
+  return getModuleProgression(moduleId);
+}
+
+/**
+ * Get initialization actions for module progression
+ * Returns which modules should be unlocked/locked
+ * 
+ * @param moduleIds - Array of module IDs to initialize
+ * @returns Object with arrays of modules to unlock and lock
+ */
+export async function getModuleProgressionInitActions(moduleIds: string[]): Promise<{
+  toUnlock: string[];
+  toLock: string[];
+}> {
+  const ids = moduleIds.length > 0 ? moduleIds : getRegisteredModuleIds();
+  const toUnlock: string[] = [];
+  const toLock: string[] = [];
+
+  for (let i = 0; i < ids.length; i++) {
+    const moduleId = ids[i];
+    const { getModuleProgression } = getStoreState();
+    const currentState = getModuleProgression(moduleId);
+    
+    // Preserve completed modules
+    if (currentState === 'completed') {
+      continue;
+    }
+    
+    // Unlock first two modules, lock the rest
+    if (i < 2) {
+      const { shouldUnlock, currentState: state } = await checkModuleUnlockStatus(moduleId);
+      if (shouldUnlock || state !== 'unlocked') {
+        toUnlock.push(moduleId);
+      }
+    } else {
+      toLock.push(moduleId);
+    }
+  }
+
+  return { toUnlock, toLock };
+}
+
+/**
+ * Initialize module progression
+ * Unlocks only the first two modules, locks all others
+ * 
+ * @param moduleIds - Optional array of module IDs to initialize. If not provided, uses registered modules.
+ */
+export async function initializeModuleProgression(moduleIds?: string[]): Promise<void> {
+  const ids = moduleIds || getRegisteredModuleIds();
+  const { toUnlock, toLock } = await getModuleProgressionInitActions(ids);
+  
+  const { unlockModule, setModuleProgression } = getStoreState();
+  
+  for (const moduleId of toUnlock) {
+    unlockModule(moduleId);
+  }
+  
+  for (const moduleId of toLock) {
+    setModuleProgression(moduleId, 'locked');
+  }
+}

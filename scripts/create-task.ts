@@ -235,7 +235,7 @@ async function main(): Promise<void> {
   const { moduleId, taskId, options } = parseArgs();
 
   if (!moduleId || !taskId) {
-    console.error('❌ Usage: npm run task:create <module-id> <task-id> [options]');
+    console.error('Usage: npm run task:create <module-id> <task-id> [options]');
     console.error('\nOptions:');
     console.error('  --order <number>        Task order (default: next available)');
     console.error('  --name <text>          Task name');
@@ -271,23 +271,23 @@ async function main(): Promise<void> {
 
     // Update module.ts
     await addTaskToModule(modulePath, taskId, options);
-    console.log('✅ Updated module.ts');
+    console.log('Updated module.ts');
 
     // Add solve function
     await addTaskSolver(modulePath, taskId, taskName);
-    console.log('✅ Added solve function to taskSolvers.ts');
+    console.log('Added solve function to taskSolvers.ts');
 
     // Add translations
     await addTaskTranslations(modulePath, taskId, taskName, taskDescription, introLines);
-    console.log('✅ Added translations to translations.ts');
+    console.log('Added translations to translations.ts');
 
-    console.log(`\n✅ Task "${taskId}" added successfully!`);
-    console.log(`\n📝 Next steps:`);
+    console.log(`\nTask "${taskId}" added successfully!`);
+    console.log(`\nNext steps:`);
     console.log(`   1. Edit ${path.join(modulePath, 'taskSolvers.ts')} to implement ${taskId}_solve logic`);
     console.log(`   2. Edit ${path.join(modulePath, 'translations.ts')} to customize translations`);
     console.log(`   3. Test your task in the app`);
   } catch (error: any) {
-    console.error('❌ Error:', error.message);
+    console.error('Error:', error.message);
     process.exit(1);
   }
 }

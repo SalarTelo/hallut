@@ -7,10 +7,16 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      // Allow importing module components directly
+      // Core application aliases
+      '@engine': path.resolve(__dirname, 'src/engine'),
+      '@ui': path.resolve(__dirname, 'src/ui'),
+      '@services': path.resolve(__dirname, 'src/services'),
+      '@stores': path.resolve(__dirname, 'src/stores'),
+      '@types': path.resolve(__dirname, 'src/types'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
+      '@constants': path.resolve(__dirname, 'src/constants'),
+      // Game content modules (outside src/)
       '@modules': path.resolve(__dirname, 'modules'),
-      // Allow modules to import from src
-      '@src': path.resolve(__dirname, 'src'),
     },
   },
   server: {

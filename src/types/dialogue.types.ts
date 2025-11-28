@@ -1,43 +1,99 @@
 /**
- * Dialogue system types
+ * Dialogue Types
+ * Types for the dialogue system
+ * Depends on: ModuleState (core)
  */
 
+import type { ModuleState } from './core/moduleState.types.js';
+
 /**
- * Dialogue configuration - simple config for NPCs
- * Just contains greeting text, dialogue comes from tasks
+ * Dialogue completion action types
  */
-export interface DialogueConfig {
-  id: string;
-  speaker: string;
-  greeting: string[];  // Shown once when entering module
+export type DialogueCompletionAction =
+  | { type: 'accept-task'; taskId: string }
+  | { type: 'set-state'; key: string; value: unknown }
+  | { type: 'function'; functionName: string };
+
+/**
+ * Dialogue choice option
+ */
+export interface DialogueChoice {
+  /**
+   * Choice text to display
+   */
+  text: string;
+
+  /**
+   * Action to perform when this choice is selected
+   * If null, the dialogue will simply continue/end without performing any action
+   */
+  action: DialogueCompletionAction | DialogueCompletionAction[] | null;
 }
 
 /**
- * Dialogue context - provided to dialogue handlers
+ * Dialogue configuration
+ */
+export interface DialogueConfig {
+  /**
+   * Dialogue ID
+   */
+  id: string;
+
+  /**
+   * Speaker ID (references an interactable)
+   */
+  speaker: string;
+
+  /**
+   * Greeting lines (shown when dialogue starts)
+   */
+  greeting: string[];
+
+  /**
+   * Choices to show at the end of dialogue
+   * If not provided, a default "Continue" choice will be auto-generated
+   * If a choice has action: null, it will just continue/end the dialogue
+   */
+  choices?: DialogueChoice[];
+
+  /**
+   * Optional action to perform when dialogue completes
+   * Only used if choices are not provided (for backward compatibility)
+   */
+  onComplete?: DialogueCompletionAction | DialogueCompletionAction[];
+}
+
+/**
+ * Dialogue context
+ * Provided to dialogue handlers
  */
 export interface DialogueContext {
-  // State management
-  setModuleStateField: <K extends keyof import('./moduleState.types.js').ModuleState>(
+  /**
+   * Current module ID
+   */
+  moduleId: string;
+
+  /**
+   * Current locale
+   */
+  locale: string;
+
+  /**
+   * Current module state
+   */
+  moduleState: ModuleState;
+
+  /**
+   * Set a field in module state
+   */
+  setModuleStateField: <K extends keyof ModuleState>(
     key: K,
-    value: import('./moduleState.types.js').ModuleState[K]
+    value: ModuleState[K]
   ) => void;
-  updateModuleState: (updates: Partial<import('./moduleState.types.js').ModuleState>) => void;
-  getModuleStateField: <K extends keyof import('./moduleState.types.js').ModuleState>(
-    key: K
-  ) => import('./moduleState.types.js').ModuleState[K] | undefined;
 
-  // Current state
-  moduleState: import('./moduleState.types.js').ModuleState;
-  moduleData: import('./module.types.js').ModuleData;
-
-  // Current interaction
-  interactable: import('./interactable.types.js').Interactable;
-
-  // Task helpers
-  acceptTask: (taskId: string) => void;
-  getCurrentTask: () => import('./module.types.js').Task | null;
-  isTaskCompleted: (taskId: string) => boolean;
-  hasSeenGreeting: (dialogueId: string) => boolean;
-  markGreetingSeen: (dialogueId: string) => void;
+  /**
+   * Get a field from module state
+   */
+  getModuleStateField: <K extends keyof ModuleState>(key: K) => ModuleState[K] | undefined;
 }
 

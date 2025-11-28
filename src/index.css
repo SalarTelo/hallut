@@ -1,51 +1,169 @@
-/* Base Styles - Reset and Foundation */
-* {
-  box-sizing: border-box;
-}
+/**
+ * Global Styles
+ * Tailwind CSS directives and custom styles
+ */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme CSS Variables */
 :root {
-  font-family: var(--font-family-base, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
-  line-height: var(--line-height-normal, 1.5);
-  font-weight: var(--font-weight-normal, 400);
-  color-scheme: dark;
-  color: var(--game-text-primary, #ffffff);
-  background-color: var(--game-world-bg, #1a1a2e);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --theme-border-color: #FFD700; /* Yellow default */
+  --theme-background-color: #17172b; /* Dark blue default */
+  --theme-accent-primary: #FF8C00; /* Orange */
+  --theme-accent-secondary: #FFA500; /* Light orange */
+  --theme-accent-highlight: #87CEEB; /* Light blue */
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  overflow-x: hidden;
-  background: var(--game-world-bg);
-  color: var(--game-text-primary);
+/* Custom base styles */
+@layer base {
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--theme-background-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Subtle background pattern */
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 140, 0, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(135, 206, 235, 0.02) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  /* In-game pixelated font */
+  .pixelated,
+  [data-in-game="true"] {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    image-rendering: pixelated;
+    text-rendering: optimizeSpeed;
+  }
+
+
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+  }
 }
 
-#root {
-  width: 100%;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
+/* Glowing border utilities */
+@layer utilities {
+  .glow-border {
+    border: 2px solid var(--theme-border-color);
+    transition: all 0.3s ease;
+  }
+
+  .glow-border-hover:hover {
+    box-shadow: 0 0 10px var(--theme-border-color);
+    transform: scale(1.05);
+  }
+
+  /* Subtle shimmer animation */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 215, 0, 0.1),
+      transparent
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 3s infinite;
+  }
 }
 
-/* Focus styles for accessibility */
-*:focus-visible {
-  outline: 2px solid var(--color-primary, #2196f3);
-  outline-offset: 2px;
+/* Background utilities */
+@layer utilities {
+  .bg-module {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .bg-module-fallback {
+    background-color: var(--theme-background-color);
+  }
 }
 
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+/* Animation utilities */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-fade-in-delay {
+    animation: fadeIn 1s ease-out 0.2s both;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out;
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes blink {
+    0%, 50% {
+      opacity: 1;
+    }
+    51%, 100% {
+      opacity: 0;
+    }
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  .module-card {
+    @apply bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200;
+  }
+
+  .module-card:hover {
+    @apply transform -translate-y-1;
+  }
+
+  .interactable-card {
+    @apply bg-gradient-to-br from-white to-gray-50 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200;
+  }
+
+  .task-card {
+    @apply bg-white rounded-lg shadow-sm border-l-4 border-blue-500;
+  }
+
+  .dialogue-card {
+    @apply bg-gradient-to-br from-white to-blue-50 rounded-xl shadow-lg border border-blue-100;
   }
 }
