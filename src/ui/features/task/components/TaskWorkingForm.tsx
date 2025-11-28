@@ -69,7 +69,7 @@ export function TaskWorkingForm({
 
   const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     e.currentTarget.style.borderColor = borderColorValue;
-    e.currentTarget.style.boxShadow = `0 0 10px ${borderColorValue}`;
+    e.currentTarget.style.boxShadow = `0 0 8px ${borderColorValue}`;
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -78,25 +78,25 @@ export function TaskWorkingForm({
   };
 
   return (
-    <ContainerLayout className="max-w-3xl">
+    <ContainerLayout className="max-w-2xl">
       <Card
-        padding="lg"
+        padding="md"
         dark
         pixelated
         className="animate-scale-in"
         borderColor={borderColorValue}
       >
-          <div className="space-y-5">
+          <div className="space-y-3">
             {/* Rubrik */}
             <div
-              className="pb-3 border-b"
+              className="pb-2 border-b"
               style={{ borderColor: addOpacityToColor(borderColorValue, 0.3) }}
             >
-              <h3 className="!text-yellow-200 text-xl font-bold pixelated mb-2">
+              <h3 className="!text-yellow-200 text-base font-bold pixelated mb-1.5">
                 {taskName}
               </h3>
               {taskDescription && (
-                <p className="!text-white text-sm pixelated leading-relaxed">
+                <p className="!text-white text-xs pixelated leading-relaxed">
                   {taskDescription}
                 </p>
               )}
@@ -105,15 +105,15 @@ export function TaskWorkingForm({
             {/* Textinlämningsinmatning */}
             {submissionType === 'text' && (
               <div>
-                <label className="!text-yellow-200 block text-sm font-bold pixelated mb-2 uppercase tracking-wide">
+                <label className="!text-yellow-200 block text-xs font-bold pixelated mb-1.5 uppercase tracking-wide">
                   Ditt svar
                 </label>
                 <textarea
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
                   disabled={isEvaluating}
-                  rows={10}
-                  className="w-full bg-black border-2 pixelated text-white p-3 rounded focus:outline-none focus:ring-2 transition-all placeholder:text-gray-500"
+                  rows={8}
+                  className="w-full bg-black border-2 pixelated text-white text-xs p-2.5 rounded focus:outline-none focus:ring-2 transition-all placeholder:text-gray-500"
                   style={{ borderColor: borderColorValue }}
                   onFocus={handleFocus}
                   onBlur={handleBlur}
@@ -125,15 +125,15 @@ export function TaskWorkingForm({
             {/* Kodinlämningsinmatning */}
             {submissionType === 'code' && (
               <div>
-                <label className="!text-yellow-200 block text-sm font-bold pixelated mb-2 uppercase tracking-wide">
+                <label className="!text-yellow-200 block text-xs font-bold pixelated mb-1.5 uppercase tracking-wide">
                   Din kod
                 </label>
                 <textarea
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
                   disabled={isEvaluating}
-                  rows={16}
-                  className="w-full bg-black border-2 pixelated text-white p-3 rounded font-mono resize-y focus:outline-none focus:ring-2 transition-all placeholder:text-gray-500"
+                  rows={12}
+                  className="w-full bg-black border-2 pixelated text-white text-xs p-2.5 rounded font-mono resize-y focus:outline-none focus:ring-2 transition-all placeholder:text-gray-500"
                   style={{ borderColor: borderColorValue }}
                   onFocus={handleFocus}
                   onBlur={handleBlur}
@@ -145,19 +145,19 @@ export function TaskWorkingForm({
             {/* Felmeddelande */}
             {error && (
               <div
-                className="p-4 border-2 rounded-md pixelated"
+                className="p-2.5 border-2 rounded-md pixelated"
                 style={{
                   borderColor: '#ff4444',
                   backgroundColor: 'rgba(255, 68, 68, 0.1)',
                 }}
               >
-                <p className="text-sm text-red-400">{error}</p>
+                <p className="text-xs text-red-400">{error}</p>
               </div>
             )}
 
             {/* Skicka in-knapp */}
             <div
-              className="flex justify-end pt-3 border-t"
+              className="flex justify-end pt-2 border-t"
               style={{ borderColor: addOpacityToColor(borderColorValue, 0.2) }}
             >
               <Button
@@ -165,7 +165,7 @@ export function TaskWorkingForm({
                 onClick={onSubmit}
                 disabled={!value || isEvaluating}
                 loading={isEvaluating}
-                size="md"
+                size="sm"
                 pixelated
               >
                 Skicka in

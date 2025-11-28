@@ -41,7 +41,7 @@ export const branchingWorldmapExample: WorldmapConfig = {
         shape: 'circle',
         size: 56,
       },
-      summary: 'Startmodul - Slottsporten',
+      summary: 'Börja din resa vid slottsporten. Hjälp vakten med uppgifter för att få tillgång till slottet.',
     },
     
     // Vänster gren - första nivå
@@ -52,7 +52,7 @@ export const branchingWorldmapExample: WorldmapConfig = {
         shape: 'circle',
         size: 48,
       },
-      summary: 'By - Utforska byn och dess invånare',
+      summary: 'Besök den mysiga byn och träffa dess invånare. Hjälp byborna med deras dagliga sysslor och uppgifter.',
     },
     
     // Höger gren - första nivå
@@ -63,7 +63,7 @@ export const branchingWorldmapExample: WorldmapConfig = {
         shape: 'circle',
         size: 48,
       },
-      summary: 'Skog - Vandra genom den mystiska skogen',
+      summary: 'Vandra genom den mystiska skogen där dolda hemligheter och utmaningar väntar. Var försiktig med vad du möter.',
     },
     
     // Mitt gren - första nivå
@@ -74,7 +74,7 @@ export const branchingWorldmapExample: WorldmapConfig = {
         shape: 'square',
         size: 48,
       },
-      summary: 'Marknad - Handla och interagera med köpmän',
+      summary: 'Handla och interagera med köpmän på den livliga marknaden. Hitta sällsynta föremål och handla klokt.',
     },
     
     // Vänster gren - andra nivå (från village)
@@ -85,7 +85,7 @@ export const branchingWorldmapExample: WorldmapConfig = {
         shape: 'square',
         size: 48,
       },
-      summary: 'Torn - Klättra upp i det höga tornet',
+      summary: 'Klättra upp i det höga tornet och utforska dess många våningar. Varje nivå håller nya utmaningar och belöningar.',
     },
     
     // Höger gren - andra nivå (från forest)
@@ -96,7 +96,7 @@ export const branchingWorldmapExample: WorldmapConfig = {
         shape: 'circle',
         size: 48,
       },
-      summary: 'Dungeon - Utforska de mörka kryptorna',
+      summary: 'Utforska de mörka kryptorna under marken. Farliga fiender och värdefulla skatter väntar de modiga.',
     },
   ],
   
@@ -152,50 +152,50 @@ export const complexBranchingExample: WorldmapConfig = {
     {
       moduleId: 'example',
       position: { x: 10, y: 50 },
-      summary: 'Start',
+      summary: 'Börja din resa vid slottsporten. Hjälp vakten med uppgifter för att få tillgång till slottet.',
     },
     
     // Nivå 2: Två huvudvägar
     {
       moduleId: 'village',
       position: { x: 30, y: 30 },
-      summary: 'Vänster väg',
+      summary: 'Besök den mysiga byn och träffa dess invånare. Hjälp byborna med deras dagliga sysslor och uppgifter.',
     },
     {
       moduleId: 'forest',
       position: { x: 30, y: 70 },
-      summary: 'Höger väg',
+      summary: 'Vandra genom den mystiska skogen där dolda hemligheter och utmaningar väntar. Var försiktig med vad du möter.',
     },
     
     // Nivå 3: Förgreningar från village
     {
       moduleId: 'marketplace',
       position: { x: 50, y: 20 },
-      summary: 'Marknad',
+      summary: 'Handla och interagera med köpmän på den livliga marknaden. Hitta sällsynta föremål och handla klokt.',
     },
     {
       moduleId: 'tower',
       position: { x: 50, y: 40 },
-      summary: 'Torn',
+      summary: 'Klättra upp i det höga tornet och utforska dess många våningar. Varje nivå håller nya utmaningar och belöningar.',
     },
     
     // Nivå 3: Förgreningar från forest
     {
       moduleId: 'dungeon',
       position: { x: 50, y: 60 },
-      summary: 'Dungeon',
+      summary: 'Utforska de mörka kryptorna under marken. Farliga fiender och värdefulla skatter väntar de modiga.',
     },
     {
       moduleId: 'cave',
       position: { x: 50, y: 80 },
-      summary: 'Grotta',
+      summary: 'Utforska den djupa grottan där gamla mysterier och dolda skatter kan hittas. Var beredd på faror.',
     },
     
     // Nivå 4: Slutmoduler
     {
       moduleId: 'final-boss',
       position: { x: 75, y: 50 },
-      summary: 'Slutboss',
+      summary: 'Möt den slutgiltiga utmaningen. Alla dina färdigheter kommer att sättas på prov i denna avgörande strid.',
     },
   ],
   

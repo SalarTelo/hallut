@@ -71,12 +71,12 @@ export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
         />
       </div>
 
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="text-center mb-10">
-          <h1 className="text-6xl font-bold mb-3 pixelated text-yellow-300 animate-fade-in">
+      <div className="container mx-auto px-4 py-6 relative z-10">
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-bold mb-2 pixelated text-yellow-300 animate-fade-in">
             Världskarta
           </h1>
-          <p className="text-lg pixelated text-white mt-2 animate-fade-in-delay">
+          <p className="text-base pixelated text-white mt-1 animate-fade-in-delay">
             Välj ditt nästa äventyr
           </p>
         </div>
@@ -84,10 +84,10 @@ export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
         {/* Världskarta */}
         <div className="max-w-6xl mx-auto">
           <Card 
-            padding="lg" 
+            padding="md" 
             dark 
             pixelated
-            className="min-h-[600px] relative overflow-hidden"
+            className="min-h-[500px] relative overflow-hidden"
             style={{
               background: 'linear-gradient(135deg, rgba(23, 23, 43, 0.98) 0%, rgba(15, 15, 35, 0.98) 100%)',
             }}

@@ -1,6 +1,6 @@
 /**
- * DialogueAvatar Component
- * Renders the avatar portion of the dialogue box
+ * Dialogavatar-komponent
+ * Renderar avatar-delen av dialogrutan
  */
 
 import type { ReactNode } from 'react';
@@ -9,28 +9,28 @@ export type AvatarType = 'silhouette' | 'image' | 'icon';
 
 export interface DialogueAvatarProps {
   /**
-   * Avatar type
+   * Avatartyp
    */
   type: AvatarType;
 
   /**
-   * Avatar data (image URL or icon component)
+   * Avatardata (bild-URL eller ikonkomponent)
    */
   data?: string | ReactNode;
 
   /**
-   * Speaker name for alt text
+   * Talarens namn för alt-text
    */
   speaker: string;
 
   /**
-   * Border color for styling
+   * Kantfärg för styling
    */
   borderColor: string;
 }
 
 /**
- * DialogueAvatar component
+ * Dialogavatar-komponent
  */
 export function DialogueAvatar({
   type,
@@ -43,7 +43,7 @@ export function DialogueAvatar({
       case 'image':
         if (typeof data === 'string') {
           return (
-            <div className="w-full h-full flex items-center justify-center p-2 min-h-[12rem]">
+            <div className="w-full h-full flex items-center justify-center p-1.5 min-h-[8rem]">
               <img
                 src={data}
                 alt={speaker}
@@ -56,7 +56,7 @@ export function DialogueAvatar({
 
       case 'icon':
         return (
-          <div className="flex items-center justify-center w-full min-h-[12rem] p-4">
+          <div className="flex items-center justify-center w-full min-h-[8rem] p-2">
             {data}
           </div>
         );
@@ -64,8 +64,8 @@ export function DialogueAvatar({
       case 'silhouette':
       default:
         return (
-          <div className="w-full bg-blue-400 flex items-center justify-center p-4 min-h-[12rem]">
-            <div className="w-16 h-16 bg-blue-600 rounded-full flex-shrink-0" />
+          <div className="w-full bg-blue-400 flex items-center justify-center p-2 min-h-[8rem]">
+            <div className="w-12 h-12 bg-blue-600 rounded-full flex-shrink-0" />
           </div>
         );
     }
@@ -73,11 +73,10 @@ export function DialogueAvatar({
 
   return (
     <div
-      className="w-32 border-r-2 flex-shrink-0 overflow-hidden rounded-l-lg flex items-center justify-center"
+      className="w-24 border-r-2 flex-shrink-0 overflow-hidden rounded-l-lg flex items-center justify-center"
       style={{ borderColor }}
     >
       {renderContent()}
     </div>
   );
 }
-

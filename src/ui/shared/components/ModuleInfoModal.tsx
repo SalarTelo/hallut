@@ -74,37 +74,37 @@ export function ModuleInfoModal({
       closeOnOverlayClick
     >
       <div
-        className="bg-black border-2 rounded-lg p-6 animate-scale-in"
+        className="bg-black border-2 rounded-lg p-4 animate-scale-in"
         style={{
           borderColor: borderColorValue,
           background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(15, 15, 35, 0.95) 100%)',
         }}
       >
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Rubrik */}
-          <div className="pb-3 border-b" style={{ borderColor: borderColorValue, opacity: 0.3 }}>
-            <h2 className="pixelated text-yellow-400 text-xl font-bold mb-1">{moduleName}</h2>
-            <p className="text-gray-400 text-xs">Modul: {moduleId}</p>
+          <div className="pb-2 border-b" style={{ borderColor: borderColorValue, opacity: 0.3 }}>
+            <h2 className="pixelated text-yellow-400 text-base font-bold mb-0.5">{moduleName}</h2>
+            <p className="text-gray-400 text-[10px]">Modul: {moduleId}</p>
           </div>
 
           {/* Beskrivning */}
           {description && (
-            <div className="border-t border-gray-700 pt-4">
-              <h3 className="text-sm font-bold text-yellow-400 mb-2 pixelated uppercase tracking-wide">Beskrivning</h3>
-              <p className="pixelated text-white text-sm leading-relaxed">{description}</p>
+            <div className="border-t border-gray-700 pt-3">
+              <h3 className="text-xs font-bold text-yellow-400 mb-1.5 pixelated uppercase tracking-wide">Beskrivning</h3>
+              <p className="pixelated text-white text-xs leading-relaxed">{description}</p>
             </div>
           )}
 
           {/* Status */}
-          <div className="border-t border-gray-700 pt-4">
-            <h3 className="text-sm font-bold text-yellow-400 mb-2 pixelated uppercase tracking-wide">Status</h3>
-            <p className="pixelated text-gray-300 text-sm">
+          <div className="border-t border-gray-700 pt-3">
+            <h3 className="text-xs font-bold text-yellow-400 mb-1.5 pixelated uppercase tracking-wide">Status</h3>
+            <p className="pixelated text-gray-300 text-xs">
               {isUnlocked ? 'Tillgänglig' : 'Låst'}
             </p>
           </div>
 
           {/* Åtgärder */}
-          <div className="flex justify-end space-x-2 pt-4 border-t border-gray-700">
+          <div className="flex justify-end space-x-2 pt-3 border-t border-gray-700">
             <Button variant="ghost" pixelated onClick={onClose} size="sm">
               Stäng
             </Button>

@@ -102,7 +102,7 @@ export function DialogueBox({
   return (
     <div
       ref={dialogueRef}
-      className="fixed bottom-0 left-0 right-0 z-50 p-4 outline-none"
+      className="fixed bottom-0 left-0 right-0 z-50 p-2 outline-none"
       onClick={handleClick}
       tabIndex={-1}
       role="dialog"
@@ -110,13 +110,13 @@ export function DialogueBox({
       style={{ outline: 'none' }}
     >
       <div
-        className="max-w-6xl mx-auto bg-black border-2 rounded-lg animate-scale-in cursor-pointer overflow-hidden"
+        className="max-w-5xl mx-auto bg-black border-2 rounded-lg animate-scale-in cursor-pointer overflow-hidden"
         style={{
           borderColor: borderColorValue,
           background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(15, 15, 35, 0.95) 100%)',
         }}
       >
-        <div className="flex min-h-[12rem]">
+        <div className="flex min-h-[8rem]">
           {/* Avatar */}
           <DialogueAvatar
             type={avatarType}

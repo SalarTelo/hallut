@@ -1,6 +1,6 @@
 /**
- * DialogueChoices Component
- * Renders the choice buttons at the end of dialogue
+ * Dialogval-komponent
+ * Renderar valknapparna i slutet av dialogen
  */
 
 export interface DialogueChoice {
@@ -10,33 +10,33 @@ export interface DialogueChoice {
 
 export interface DialogueChoicesProps {
   /**
-   * Array of choices to display
+   * Array med val att visa
    */
   choices: DialogueChoice[];
 
   /**
-   * Border color for styling
+   * Kantfärg för styling
    */
   borderColor: string;
 }
 
 /**
- * DialogueChoices component
+ * Dialogval-komponent
  */
 export function DialogueChoices({
   choices,
   borderColor,
 }: DialogueChoicesProps) {
   return (
-    <div className="mt-3 space-y-2.5">
+    <div className="mt-2 space-y-1.5">
       {choices.map((choice, index) => (
         <button
           key={index}
           onClick={() => choice.action()}
-          className="w-full text-left pixelated text-white text-sm px-4 py-2 bg-gray-800 border-2 rounded hover:bg-gray-700 transition-colors"
+          className="w-full text-left pixelated text-white text-xs px-3 py-1.5 bg-gray-800 border-2 rounded hover:bg-gray-700 transition-colors"
           style={{ borderColor }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow = `0 0 10px ${borderColor}`;
+            e.currentTarget.style.boxShadow = `0 0 8px ${borderColor}`;
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.boxShadow = 'none';
@@ -48,4 +48,3 @@ export function DialogueChoices({
     </div>
   );
 }
-
