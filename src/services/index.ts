@@ -11,6 +11,7 @@
  * - moduleService: Module progression, unlocking, completion checks
  * - taskService: Task evaluation and submission handling
  * - worldmapService: World map and module discovery
+ * - ollamaService: AI chat integration with Ollama API
  *
  * Actions (services/actions/):
  * - moduleActions: Store action helpers for module state
@@ -28,6 +29,25 @@
 
 export { generateDialoguesFromModule, getDialogueConfig } from './dialogueService.js';
 export { handleError, registerErrorHandler, getUserFriendlyMessage } from './errorService.js';
+export {
+  // Chat
+  sendChatMessage,
+  streamChatMessage,
+  // Vision
+  analyzeImage,
+  sendChatWithImages,
+  // Image Generation
+  generateImage,
+  streamImageGeneration,
+  // Utilities
+  checkOllamaAvailable,
+  getAvailableModels,
+  fileToBase64,
+  imageUrlToBase64,
+  DEFAULT_MODELS,
+  // Types
+  type OllamaMessage,
+} from './ollamaService.js';
 export type { ErrorHandler } from './errorService.js';
 export {
   checkModuleDependencies,

@@ -8,6 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Modal } from './Modal.js';
 import { PixelIcon } from './PixelIcon.js';
 import { getThemeValue } from '@utils/theme.js';
+import { streamChatMessage, type OllamaMessage } from '@services/ollamaService.js';
 
 export interface ChatMessage {
   id: string;
@@ -51,6 +52,16 @@ export interface ChatWindowProps {
    * Kantfärg (standard från tema)
    */
   borderColor?: string;
+
+  /**
+   * Aktivera Ollama-integration (standard: true)
+   */
+  enableOllama?: boolean;
+
+  /**
+   * Ollama-modell att använda (standard: 'llama3.2')
+   */
+  ollamaModel?: string;
 }
 
 /**
@@ -64,9 +75,12 @@ export function ChatWindow({
   onSend,
   isTyping = false,
   borderColor,
+  enableOllama = true,
+  ollamaModel = 'llama3.2',
 }: ChatWindowProps) {
   const [inputValue, setInputValue] = useState('');
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(messages);
+  const [ollamaError, setOllamaError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
 
@@ -77,18 +91,42 @@ export function ChatWindow({
     }
   }, [messages]);
 
-  // Auto-scroll till botten när nya meddelanden kommer
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [localMessages, isTyping]);
 
-  const handleSend = () => {
+  /**
+   * Convert chat messages to Ollama message format
+   */
+  const convertToOllamaMessages = (messages: ChatMessage[]): OllamaMessage[] => {
+    return messages
+      .filter((msg) => msg.sender === 'user' || msg.sender === 'ai')
+      .map((msg) => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.text,
+      }));
+  };
+
+  /**
+   * Update AI message with streaming text
+   */
+  const updateAiMessage = (messageId: string, text: string) => {
+    setLocalMessages((prev) =>
+      prev.map((msg) => (msg.id === messageId ? { ...msg, text } : msg))
+    );
+  };
+
+  /**
+   * Handle sending a message
+   */
+  const handleSend = async () => {
     const trimmedValue = inputValue.trim();
     if (!trimmedValue) return;
 
-    // Add user message to local state immediately
+    // Add user message immediately
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       text: trimmedValue,
@@ -97,10 +135,49 @@ export function ChatWindow({
     };
     setLocalMessages((prev) => [...prev, userMessage]);
     setInputValue('');
+    setOllamaError(null);
 
-    // Call onSend if provided, otherwise just show the message
-    if (onSend) {
-      onSend(trimmedValue);
+    // Call onSend callback if provided
+    onSend?.(trimmedValue);
+
+    // Get AI response with streaming if Ollama is enabled
+    if (!enableOllama) return;
+
+    const conversationHistory = convertToOllamaMessages(localMessages);
+    const aiMessageId = `ai-${Date.now()}`;
+    const aiMessage: ChatMessage = {
+      id: aiMessageId,
+      text: '',
+      sender: 'ai',
+      timestamp: new Date(),
+    };
+
+    // Add empty AI message for streaming
+    setLocalMessages((prev) => [...prev, aiMessage]);
+
+    try {
+      let fullResponse = '';
+      for await (const chunk of streamChatMessage(trimmedValue, conversationHistory, ollamaModel)) {
+        fullResponse += chunk;
+        updateAiMessage(aiMessageId, fullResponse);
+      }
+    } catch (error) {
+      console.error('Ollama error:', error);
+      setOllamaError('Kunde inte ansluta till AI. Kontrollera att Ollama är igång.');
+
+      // Replace empty message with error message
+      setLocalMessages((prev) => {
+        const filtered = prev.filter((msg) => msg.id !== aiMessageId);
+        return [
+          ...filtered,
+          {
+            id: `error-${Date.now()}`,
+            text: 'Tyvärr kunde jag inte svara just nu. Kontrollera att Ollama är igång och att modellen är installerad.',
+            sender: 'ai' as const,
+            timestamp: new Date(),
+          },
+        ];
+      });
     }
   };
 
@@ -174,6 +251,11 @@ export function ChatWindow({
           scrollbarWidth: 'thin',
           scrollbarColor: `${borderColorValue}40 transparent`,
         }}>
+          {ollamaError && (
+            <div className="bg-red-900/30 border border-red-500/50 rounded-lg px-3 py-2 text-xs text-red-300 mb-2">
+              {ollamaError}
+            </div>
+          )}
           {localMessages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <div
