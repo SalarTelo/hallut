@@ -9,6 +9,7 @@ import { useState } from 'react';
 import type { Task } from '@types/module/moduleConfig.types.js';
 import { Card } from './Card.js';
 import { Badge } from './Badge.js';
+import { PixelIcon } from './PixelIcon.js';
 import { getThemeValue } from '@utils/theme.js';
 
 export interface TaskTrackerProps {
@@ -34,82 +35,110 @@ export function TaskTracker({ activeTask, borderColor }: TaskTrackerProps) {
     return null;
   }
 
+  // Hämta header-höjd från CSS-variabel, fallback till 48px om inte satt
+  const headerHeight = typeof window !== 'undefined' 
+    ? getComputedStyle(document.documentElement).getPropertyValue('--module-header-height').trim() || '48px'
+    : '48px';
+  
+  // Lägg till 8px spacing under headern
+  const topPosition = `calc(${headerHeight} + 8px)`;
+
   return (
     <div 
-      className="fixed top-12 right-3 z-40 transition-all duration-300 ease-in-out"
+      className="fixed right-3 z-40 transition-all duration-300 ease-out"
       style={{
-        width: isExpanded ? '280px' : '240px',
-        maxHeight: 'calc(100vh - 60px)',
-        overflowY: 'auto',
+        top: topPosition,
+        width: isExpanded ? '320px' : '280px',
+        maxHeight: `calc(100vh - ${headerHeight} - 16px)`,
       }}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
       <Card
-        padding={isExpanded ? "sm" : "sm"}
+        padding="none"
         dark
-        pixelated
-        className="bg-black bg-opacity-90 backdrop-blur-sm transition-all duration-300"
+        pixelated={false}
+        className="bg-black bg-opacity-95 backdrop-blur-sm transition-all duration-300 ease-out overflow-hidden"
         borderColor={borderColorValue}
       >
-        {/* Rubrik - Alltid synlig */}
-        <div className={`${isExpanded ? 'mb-2 border-b border-gray-700 pb-1.5' : 'mb-1.5'}`}>
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-yellow-400 pixelated">
-              Aktiv uppgift
-            </h3>
+        {/* Kompakt header */}
+        <div
+          className="px-3 py-2.5 border-b-2"
+          style={{
+            borderColor: borderColorValue,
+            background: `linear-gradient(135deg, ${borderColorValue}15 0%, transparent 100%)`,
+          }}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <PixelIcon type="check" size={18} color={borderColorValue} />
+              <h3 className="text-sm font-bold text-yellow-300">
+                Aktiv uppgift
+              </h3>
+            </div>
             <Badge variant="primary" size="sm">
               Aktiv
             </Badge>
           </div>
         </div>
 
-        {/* Uppgiftsnamn - Alltid synligt */}
-        <h4 className="text-sm font-bold text-white mb-1.5 pixelated">
-          {activeTask.name}
-        </h4>
+        {/* Innehåll med smooth height transition */}
+        <div className="px-3 py-3">
+          {/* Uppgiftsnamn - Alltid synligt */}
+          <h4 className="text-base font-bold text-white mb-2.5 leading-tight">
+            {activeTask.name}
+          </h4>
 
-        {/* Hopfällt tillstånd - Visa kort beskrivning */}
-        {!isExpanded && activeTask.description && (
-          <p className="text-[10px] text-gray-200 pixelated line-clamp-2 leading-snug">
-            {activeTask.description}
-          </p>
-        )}
+          {/* Beskrivning - Alltid synlig */}
+          {activeTask.description && (
+            <p className={`text-sm text-gray-200 leading-relaxed mb-2 transition-all duration-300 ${
+              isExpanded ? '' : 'line-clamp-2'
+            }`}>
+              {activeTask.description}
+            </p>
+          )}
 
-        {/* Expanderat innehåll */}
-        {isExpanded && (
-          <div className="animate-fade-in">
-            {/* Uppgiftsbeskrivning */}
-            {activeTask.description && (
-              <p className="text-xs text-gray-100 mb-2 pixelated leading-relaxed">
-                {activeTask.description}
-              </p>
-            )}
+          {/* Expanderat innehåll - Använder CSS Grid för smooth height transition */}
+          <div
+            className="grid transition-all duration-300 ease-out overflow-hidden"
+            style={{
+              gridTemplateRows: isExpanded ? '1fr' : '0fr',
+            }}
+          >
+            <div className="min-h-0">
+              <div className="space-y-3 pt-2">
+                {/* Krav */}
+                {activeTask.overview?.requirements && (
+                  <div className="pt-2 border-t border-gray-700/60">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="w-1 h-4 bg-yellow-400 rounded"></span>
+                      <h5 className="text-xs font-bold text-yellow-400 uppercase tracking-wider">Krav</h5>
+                    </div>
+                    <p className="text-sm text-gray-100 leading-relaxed">{activeTask.overview.requirements}</p>
+                  </div>
+                )}
 
-            {/* Krav */}
-            {activeTask.overview?.requirements && (
-              <div className="mb-2 pt-1.5 border-t border-gray-700">
-                <div className="text-xs font-bold text-yellow-400 mb-1.5 pixelated uppercase tracking-wide">Krav</div>
-                <p className="text-xs text-gray-100 pixelated leading-relaxed">{activeTask.overview.requirements}</p>
+                {/* Mål/Delmål */}
+                {activeTask.overview?.goals && activeTask.overview.goals.length > 0 && (
+                  <div className="pt-2 border-t border-gray-700/60">
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <span className="w-1 h-4 bg-yellow-400 rounded"></span>
+                      <h5 className="text-xs font-bold text-yellow-400 uppercase tracking-wider">Delmål</h5>
+                    </div>
+                    <ul className="space-y-1.5">
+                      {activeTask.overview.goals.map((goal, index) => (
+                        <li key={index} className="text-sm text-gray-200 flex items-start leading-relaxed">
+                          <span className="text-yellow-400 mr-2 flex-shrink-0 font-bold">•</span>
+                          <span>{goal}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
-
-            {/* Mål/Delmål */}
-            {activeTask.overview?.goals && activeTask.overview.goals.length > 0 && (
-              <div className="pt-1.5 border-t border-gray-700">
-                <div className="text-xs font-bold text-yellow-400 mb-1.5 pixelated uppercase tracking-wide">Delmål</div>
-                <ul className="space-y-1">
-                  {activeTask.overview.goals.map((goal, index) => (
-                    <li key={index} className="text-xs text-gray-100 pixelated flex items-start leading-relaxed">
-                      <span className="text-yellow-400 mr-1.5 flex-shrink-0">•</span>
-                      <span>{goal}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            </div>
           </div>
-        )}
+        </div>
       </Card>
     </div>
   );

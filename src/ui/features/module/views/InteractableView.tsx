@@ -3,7 +3,7 @@
  * Huvudvy som visar interaktiva objekt och modulbakgrund
  */
 
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useRef, useEffect } from 'react';
 import { ModuleBackground } from '@ui/shared/components/ModuleBackground.js';
 import { Button } from '@ui/shared/components/Button.js';
 import { PixelIcon } from '@ui/shared/components/PixelIcon.js';
@@ -48,6 +48,7 @@ export const InteractableView = memo(function InteractableView({
   onImageViewerClose,
 }: InteractableViewProps) {
   const { isTaskCompleted, isModuleCompleted, getCurrentTaskId } = useModuleActions();
+  const headerRef = useRef<HTMLDivElement>(null);
 
   const moduleTheme = moduleData.config.theme;
   const borderColor = useMemo(
@@ -64,11 +65,36 @@ export const InteractableView = memo(function InteractableView({
       : null;
   }, [moduleId, moduleData.tasks, getCurrentTaskId]);
 
+  // Uppdatera CSS-variabel med header-höjd
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.offsetHeight;
+        document.documentElement.style.setProperty('--module-header-height', `${height}px`);
+      }
+    };
+
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+    
+    // Observera för ändringar i header-storlek
+    const resizeObserver = new ResizeObserver(updateHeaderHeight);
+    if (headerRef.current) {
+      resizeObserver.observe(headerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateHeaderHeight);
+      resizeObserver.disconnect();
+    };
+  }, []);
+
   return (
     <ModuleBackground imageUrl={backgroundImage} color={backgroundColor}>
       <div className="relative min-h-screen">
         {/* Kompakt header */}
         <div
+          ref={headerRef}
           className="fixed top-0 left-0 right-0 z-30 px-3 py-2 bg-black/90 backdrop-blur-sm border-b-2 pixelated"
           style={{
             borderColor,

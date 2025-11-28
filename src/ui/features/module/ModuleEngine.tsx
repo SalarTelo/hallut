@@ -170,6 +170,7 @@ export function ModuleEngine({
               task={task}
               moduleId={moduleId}
               onComplete={handleTaskComplete}
+              onClose={navigateToInteractable}
             />
           </Overlay>
         );
