@@ -4,7 +4,7 @@
  * Position-based (absolute positioning)
  */
 
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { PixelIcon } from './PixelIcon.js';
 
 export type IconShape = 'circle' | 'square' | string;
@@ -61,6 +61,7 @@ export function InteractableIcon({
   onClick,
   size = 64,
 }: InteractableIconProps) {
+  const [isHovered, setIsHovered] = useState(false);
   const shapeClass = shape === 'circle' ? 'rounded-full' : shape === 'square' ? 'rounded' : '';
 
   const handleClick = () => {
@@ -69,40 +70,82 @@ export function InteractableIcon({
     }
   };
 
+  const borderColor = locked ? '#666' : '#FFD700';
+  const bgColor = locked ? 'rgba(100, 100, 100, 0.3)' : 'rgba(255, 215, 0, 0.2)';
+
+  // Base shadow (subtle, always on)
+  const baseShadow = locked 
+    ? `0 2px 8px rgba(0, 0, 0, 0.3)`
+    : `0 2px 8px rgba(0, 0, 0, 0.4)`;
+  
+  // Glow shadow (only on hover)
+  const glowShadow = isHovered && !locked
+    ? `${baseShadow}, 0 4px 20px ${borderColor}60, 0 0 16px ${borderColor}40, inset 0 0 20px ${borderColor}15`
+    : baseShadow;
+
   return (
     <div
-      className="absolute cursor-pointer transition-transform hover:scale-110"
+      className="absolute cursor-pointer transition-all duration-200 flex flex-col items-center"
       style={{
         left: `${position.x}%`,
         top: `${position.y}%`,
-        transform: 'translate(-50%, -50%)',
-        opacity: locked ? 0.6 : 1,
+        transform: isHovered && !locked ? 'translate(-50%, -50%) scale(1.1)' : 'translate(-50%, -50%) scale(1)',
+        opacity: locked ? 0.5 : 1,
       }}
       onClick={handleClick}
       role="button"
       tabIndex={locked ? -1 : 0}
       aria-label={label || 'Interactable'}
       aria-disabled={locked}
+      onMouseEnter={() => {
+        if (!locked) {
+          setIsHovered(true);
+        }
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+      }}
     >
       {/* Icon container */}
       <div
-        className={`${shapeClass} bg-orange-400 border-2 border-yellow-400 flex items-center justify-center glow-border-hover`}
+        className={`${shapeClass} flex items-center justify-center relative flex-shrink-0 transition-all duration-200`}
         style={{
           width: `${size}px`,
           height: `${size}px`,
+          backgroundColor: bgColor,
+          border: `3px solid ${borderColor}`,
+          boxShadow: glowShadow,
         }}
       >
         {locked ? (
-          <PixelIcon type="lock" size={Math.floor(size * 0.5)} color="white" />
+          <PixelIcon type="lock" size={Math.floor(size * 0.5)} color="#999" />
         ) : (
-          <div className="text-2xl">{icon}</div>
+          <div className="text-2xl drop-shadow-lg">{icon}</div>
+        )}
+        {/* Pulse effect for unlocked items - only on hover */}
+        {!locked && isHovered && (
+          <div
+            className={`absolute inset-0 ${shapeClass} animate-pulse`}
+            style={{
+              border: `2px solid ${borderColor}`,
+              opacity: 0.4,
+            }}
+          />
         )}
       </div>
 
-      {/* Label button */}
+      {/* Label */}
       {label && (
         <div
-          className="mt-2 px-2 py-1 bg-blue-900 border border-yellow-400 rounded pixelated text-white text-xs text-center whitespace-nowrap"
+          className="mt-3 px-3 py-1.5 rounded-lg text-white text-xs text-center whitespace-nowrap font-medium transition-all duration-200"
+          style={{
+            backgroundColor: locked ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.85)',
+            border: `2px solid ${borderColor}`,
+            boxShadow: isHovered && !locked
+              ? `0 2px 8px rgba(0, 0, 0, 0.5), 0 0 8px ${borderColor}50`
+              : `0 2px 8px rgba(0, 0, 0, 0.5), 0 0 4px ${borderColor}30`,
+            backdropFilter: 'blur(4px)',
+          }}
         >
           {label}
         </div>

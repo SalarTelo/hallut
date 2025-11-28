@@ -5,7 +5,6 @@
 
 import { memo, useMemo, useRef, useEffect } from 'react';
 import { ModuleBackground } from '@ui/shared/components/ModuleBackground.js';
-import { Button } from '@ui/shared/components/Button.js';
 import { PixelIcon } from '@ui/shared/components/PixelIcon.js';
 import { InteractableIcon } from '@ui/shared/components/InteractableIcon.js';
 import { TaskTracker } from '@ui/shared/components/TaskTracker.js';
@@ -37,7 +36,6 @@ export interface InteractableViewProps {
 export const InteractableView = memo(function InteractableView({
   moduleData,
   moduleId,
-  locale,
   onExit,
   onInteractableClick,
   chatOpen,
@@ -95,36 +93,57 @@ export const InteractableView = memo(function InteractableView({
         {/* Kompakt header */}
         <div
           ref={headerRef}
-          className="fixed top-0 left-0 right-0 z-30 px-3 py-2 bg-black/90 backdrop-blur-sm border-b-2 pixelated"
+          className="fixed top-0 left-0 right-0 z-30 px-5 py-3 border-b-2"
           style={{
             borderColor,
-            boxShadow: `0 2px 8px rgba(0, 0, 0, 0.5)`,
+            background: `linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(15, 15, 35, 0.95) 100%)`,
+            backdropFilter: 'blur(8px)',
+            boxShadow: `0 4px 16px rgba(0, 0, 0, 0.6), 0 0 8px ${borderColor}30`,
           }}
         >
           <div className="flex items-center justify-between max-w-7xl mx-auto">
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-sm font-bold text-yellow-300 pixelated">
-                {moduleData.config.manifest.name}
-              </h1>
-              <span className="text-gray-500 text-[10px] font-mono">
-                {moduleId}
-              </span>
+            <div className="flex items-center gap-3">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{
+                  backgroundColor: `${borderColor}20`,
+                  border: `2px solid ${borderColor}50`,
+                }}
+              >
+                <PixelIcon type="star" size={18} color={borderColor} />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-base font-bold text-yellow-300 leading-tight">
+                  {moduleData.config.manifest.name}
+                </h1>
+                <span className="text-gray-400 text-[10px] font-mono leading-tight">
+                  {moduleId}
+                </span>
+              </div>
             </div>
-            <Button
-              variant="ghost"
-              pixelated
+            <button
               onClick={onExit}
-              size="sm"
-              className="text-xs flex items-center gap-1.5"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-all border-2"
+              style={{
+                borderColor: 'transparent',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = borderColor;
+                e.currentTarget.style.backgroundColor = `${borderColor}15`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'transparent';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
             >
               <PixelIcon type="arrow-left" size={16} color="currentColor" />
               <span>Avsluta</span>
-            </Button>
+            </button>
           </div>
         </div>
 
         {/* Interaktiva objekt - Positionsbaserade */}
-        <div className="relative w-full h-screen pt-12">
+        <div className="relative w-full h-screen pt-16">
           {moduleData.config.interactables.map((interactable) => {
             // Kontrollera om interaktivt objekt är låst baserat på unlockRequirement
             let isLocked = interactable.locked;
