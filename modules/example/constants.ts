@@ -7,6 +7,7 @@ export const INTERACTABLE_IDS = {
   GUARD: 'guard',
   AI_COMPANION: 'ai-companion',
   FRIDGE: 'fridge',
+  MAGIC_MIRROR: 'magic-mirror',
 } as const;
 
 export const TASK_IDS = {

@@ -10,6 +10,7 @@ import { InteractableIcon } from '@ui/shared/components/InteractableIcon.js';
 import { TaskTracker } from '@ui/shared/components/TaskTracker.js';
 import { ChatWindow } from '@ui/shared/components/ChatWindow.js';
 import { ImageViewer } from '@ui/shared/components/ImageViewer.js';
+import { ImageAnalysisView } from '@ui/shared/components/ImageAnalysisView.js';
 import { ModuleProgressIndicator } from '@ui/shared/components/ModuleProgressIndicator.js';
 import { getThemeValue } from '@utils/theme.js';
 import { DEFAULT_THEME } from '@constants/module.constants.js';
@@ -29,6 +30,8 @@ export interface InteractableViewProps {
   imageViewerUrl: string;
   imageViewerTitle: string;
   onImageViewerClose: () => void;
+  imageAnalysisOpen: boolean;
+  onImageAnalysisClose: () => void;
 }
 
 /**
@@ -45,6 +48,8 @@ export const InteractableView = memo(function InteractableView({
   imageViewerUrl,
   imageViewerTitle,
   onImageViewerClose,
+  imageAnalysisOpen,
+  onImageAnalysisClose,
 }: InteractableViewProps) {
   const { isTaskCompleted, isModuleCompleted, getCurrentTaskId } = useModuleActions();
   const headerRef = useRef<HTMLDivElement>(null);
@@ -203,6 +208,13 @@ export const InteractableView = memo(function InteractableView({
           onClose={onImageViewerClose}
           imageUrl={imageViewerUrl}
           title={imageViewerTitle}
+          borderColor={borderColor}
+        />
+
+        {/* Bildanalysvy */}
+        <ImageAnalysisView
+          isOpen={imageAnalysisOpen}
+          onClose={onImageAnalysisClose}
           borderColor={borderColor}
         />
       </div>

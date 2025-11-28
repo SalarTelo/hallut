@@ -90,6 +90,16 @@ export interface UseModuleViewStateReturn {
   closeImageViewer: () => void;
 
   /**
+   * Whether image analysis view is open
+   */
+  imageAnalysisOpen: boolean;
+
+  /**
+   * Set image analysis open state
+   */
+  setImageAnalysisOpen: (open: boolean) => void;
+
+  /**
    * Open task submission from dialogue
    */
   openTaskSubmissionFromDialogue: (taskId: string) => void;
@@ -108,6 +118,7 @@ export function useModuleViewState(): UseModuleViewStateReturn {
     url: '',
     title: '',
   });
+  const [imageAnalysisOpen, setImageAnalysisOpen] = useState(false);
 
   // Navigation helpers
   const navigateToTask = useCallback((taskId: string) => {
@@ -158,6 +169,8 @@ export function useModuleViewState(): UseModuleViewStateReturn {
     navigateToInteractable,
     openImageViewer,
     closeImageViewer,
+    imageAnalysisOpen,
+    setImageAnalysisOpen,
     openTaskSubmissionFromDialogue,
   };
 }

@@ -84,14 +84,14 @@ export function ChatWindow({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
 
-  // Sync with external messages
+  // Synka med externa meddelanden
   useEffect(() => {
     if (messages.length > 0) {
       setLocalMessages(messages);
     }
   }, [messages]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scrolla till botten när nya meddelanden kommer
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -99,7 +99,7 @@ export function ChatWindow({
   }, [localMessages, isTyping]);
 
   /**
-   * Convert chat messages to Ollama message format
+   * Konvertera chattmeddelanden till Ollama-meddelandeformat
    */
   const convertToOllamaMessages = (messages: ChatMessage[]): OllamaMessage[] => {
     return messages
@@ -111,7 +111,7 @@ export function ChatWindow({
   };
 
   /**
-   * Update AI message with streaming text
+   * Uppdatera AI-meddelande med streaming-text
    */
   const updateAiMessage = (messageId: string, text: string) => {
     setLocalMessages((prev) =>
@@ -120,13 +120,13 @@ export function ChatWindow({
   };
 
   /**
-   * Handle sending a message
+   * Hantera skickande av meddelande
    */
   const handleSend = async () => {
     const trimmedValue = inputValue.trim();
     if (!trimmedValue) return;
 
-    // Add user message immediately
+    // Lägg till användarmeddelande omedelbart
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       text: trimmedValue,
@@ -137,10 +137,10 @@ export function ChatWindow({
     setInputValue('');
     setOllamaError(null);
 
-    // Call onSend callback if provided
+    // Anropa onSend-callback om den finns
     onSend?.(trimmedValue);
 
-    // Get AI response with streaming if Ollama is enabled
+    // Hämta AI-svar med streaming om Ollama är aktiverat
     if (!enableOllama) return;
 
     const conversationHistory = convertToOllamaMessages(localMessages);
@@ -152,7 +152,7 @@ export function ChatWindow({
       timestamp: new Date(),
     };
 
-    // Add empty AI message for streaming
+    // Lägg till tomt AI-meddelande för streaming
     setLocalMessages((prev) => [...prev, aiMessage]);
 
     try {
@@ -162,10 +162,10 @@ export function ChatWindow({
         updateAiMessage(aiMessageId, fullResponse);
       }
     } catch (error) {
-      console.error('Ollama error:', error);
+      console.error('Ollama-fel:', error);
       setOllamaError('Kunde inte ansluta till AI. Kontrollera att Ollama är igång.');
 
-      // Replace empty message with error message
+      // Ersätt tomt meddelande med felmeddelande
       setLocalMessages((prev) => {
         const filtered = prev.filter((msg) => msg.id !== aiMessageId);
         return [

@@ -24,6 +24,7 @@ export const InteractableActionType = {
   Function: 'function',
   Chat: 'chat',
   Image: 'image',
+  ImageAnalysis: 'image-analysis',
 } as const;
 
 export type InteractableActionType = typeof InteractableActionType[keyof typeof InteractableActionType];
@@ -75,9 +76,18 @@ export interface ImageAction {
 }
 
 /**
+ * Image analysis action
+ * Allows users to upload an image and analyze it with Ollama vision
+ */
+export interface ImageAnalysisAction {
+  type: typeof InteractableActionType.ImageAnalysis;
+  analysisPrompt?: string; // Optional custom prompt for analysis
+}
+
+/**
  * Union type for all interactable actions
  */
-export type InteractableAction = DialogueAction | TaskAction | FunctionAction | ChatAction | ImageAction;
+export type InteractableAction = DialogueAction | TaskAction | FunctionAction | ChatAction | ImageAction | ImageAnalysisAction;
 
 /**
  * Unlock requirement types

@@ -1,35 +1,35 @@
 /**
  * Ollama Service
- * Handles communication with Ollama API for various AI capabilities
- * Extensible architecture for chat, image generation, image recognition, etc.
+ * Hanterar kommunikation med Ollama API för olika AI-funktioner
+ * Utbyggbar arkitektur för chatt, bildgenerering, bildigenkänning, etc.
  */
 
 // ============================================================================
-// Shared Types and Configuration
+// Delade typer och konfiguration
 // ============================================================================
 
 export interface OllamaMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
-  images?: string[]; // Base64 encoded images for vision models
+  images?: string[]; // Base64-kodade bilder för vision-modeller
 }
 
 /**
- * Default models for different capabilities
+ * Standardmodeller för olika funktioner
  */
 export const DEFAULT_MODELS = {
-  chat: 'llama3.2',
-  vision: 'llama3.2-vision', // Example vision model
-  image: 'flux', // Example image generation model
+    chat: 'llama3.2',
+    vision: 'llava:7b',
+    image: 'flux', // Exempel på bildgenereringsmodell
 } as const;
 
 /**
- * Ollama API base URL (via Vite proxy)
+ * Ollama API bas-URL (via Vite proxy)
  */
 const OLLAMA_API_BASE = '/api/ollama';
 
 /**
- * Base function to make Ollama API requests
+ * Basfunktion för att göra Ollama API-förfrågningar
  */
 async function ollamaRequest<T>(
   endpoint: string,
@@ -44,14 +44,14 @@ async function ollamaRequest<T>(
   });
 
   if (!response.ok) {
-    throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+    throw new Error(`Ollama API-fel: ${response.status} ${response.statusText}`);
   }
 
   return response.json();
 }
 
 /**
- * Check if Ollama is available
+ * Kontrollera om Ollama är tillgänglig
  */
 export async function checkOllamaAvailable(): Promise<boolean> {
   try {
@@ -65,20 +65,20 @@ export async function checkOllamaAvailable(): Promise<boolean> {
 }
 
 /**
- * Get list of available models
+ * Hämta lista över tillgängliga modeller
  */
 export async function getAvailableModels(): Promise<string[]> {
   try {
     const data = await ollamaRequest<{ models: Array<{ name: string }> }>('/api/tags');
     return data.models.map((model) => model.name);
   } catch (error) {
-    console.error('Error fetching models:', error);
+    console.error('Fel vid hämtning av modeller:', error);
     return [];
   }
 }
 
 // ============================================================================
-// Chat Capabilities
+// Chattfunktioner
 // ============================================================================
 
 export interface OllamaChatRequest {
@@ -101,7 +101,7 @@ export interface OllamaChatResponse {
 }
 
 /**
- * Send a chat message to Ollama and get a response
+ * Skicka ett chattmeddelande till Ollama och få ett svar
  */
 export async function sendChatMessage(
   message: string,
@@ -131,13 +131,13 @@ export async function sendChatMessage(
     });
     return data.message.content;
   } catch (error) {
-    console.error('Ollama chat error:', error);
+    console.error('Ollama chattfel:', error);
     throw error;
   }
 }
 
 /**
- * Helper function to stream JSON responses from Ollama
+ * Hjälpfunktion för att streama JSON-svar från Ollama
  */
 async function* streamJsonResponse(
   endpoint: string,
@@ -152,14 +152,14 @@ async function* streamJsonResponse(
   });
 
   if (!response.ok) {
-    throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+    throw new Error(`Ollama API-fel: ${response.status} ${response.statusText}`);
   }
 
   const reader = response.body?.getReader();
   const decoder = new TextDecoder();
 
   if (!reader) {
-    throw new Error('No response body reader available');
+    throw new Error('Ingen response body reader tillgänglig');
   }
 
   let buffer = '';
@@ -177,7 +177,7 @@ async function* streamJsonResponse(
         try {
           yield JSON.parse(line);
         } catch {
-          // Skip invalid JSON lines
+          // Hoppa över ogiltiga JSON-rader
         }
       }
     }
@@ -185,7 +185,7 @@ async function* streamJsonResponse(
 }
 
 /**
- * Stream chat messages from Ollama
+ * Streama chattmeddelanden från Ollama
  */
 export async function* streamChatMessage(
   message: string,
@@ -218,19 +218,19 @@ export async function* streamChatMessage(
       }
     }
   } catch (error) {
-    console.error('Ollama stream error:', error);
+    console.error('Ollama streamfel:', error);
     throw error;
   }
 }
 
 // ============================================================================
-// Vision / Image Recognition Capabilities
+// Vision / Bildigenkänning
 // ============================================================================
 
 export interface OllamaVisionRequest {
   model: string;
   prompt: string;
-  images: string[]; // Base64 encoded images
+  images: string[]; // Base64-kodade bilder
   stream?: boolean;
   options?: {
     temperature?: number;
@@ -243,10 +243,10 @@ export interface OllamaVisionResponse {
 }
 
 /**
- * Analyze an image using a vision model
- * @param prompt - Text prompt describing what to analyze
- * @param imageBase64 - Base64 encoded image
- * @param model - Vision model name (default: llama3.2-vision)
+ * Analysera en bild med en vision-modell
+ * @param prompt - Textprompt som beskriver vad som ska analyseras
+ * @param imageBase64 - Base64-kodad bild
+ * @param model - Vision-modellnamn (standard: llama3.2-vision)
  */
 export async function analyzeImage(
   prompt: string,
@@ -267,17 +267,17 @@ export async function analyzeImage(
     });
     return data.response;
   } catch (error) {
-    console.error('Ollama vision error:', error);
+    console.error('Ollama visionfel:', error);
     throw error;
   }
 }
 
 /**
- * Chat with images (multimodal conversation)
- * @param message - Text message
- * @param images - Array of base64 encoded images
- * @param conversationHistory - Previous messages in conversation
- * @param model - Vision-capable model name
+ * Chatta med bilder (multimodal konversation)
+ * @param message - Textmeddelande
+ * @param images - Array av base64-kodade bilder
+ * @param conversationHistory - Tidigare meddelanden i konversationen
+ * @param model - Vision-kapabel modellnamn
  */
 export async function sendChatWithImages(
   message: string,
@@ -307,13 +307,13 @@ export async function sendChatWithImages(
     });
     return data.message.content;
   } catch (error) {
-    console.error('Ollama vision chat error:', error);
+    console.error('Ollama vision chattfel:', error);
     throw error;
   }
 }
 
 // ============================================================================
-// Image Generation Capabilities
+// Bildgenerering
 // ============================================================================
 
 export interface OllamaImageGenerationRequest {
@@ -327,14 +327,14 @@ export interface OllamaImageGenerationRequest {
 }
 
 export interface OllamaImageGenerationResponse {
-  response: string; // Base64 encoded image or image URL
+  response: string; // Base64-kodad bild eller bild-URL
   done: boolean;
 }
 
 /**
- * Generate an image from a text prompt
- * @param prompt - Text description of the image to generate
- * @param model - Image generation model name (default: flux)
+ * Generera en bild från en textprompt
+ * @param prompt - Textbeskrivning av bilden som ska genereras
+ * @param model - Bildgenereringsmodellnamn (standard: flux)
  */
 export async function generateImage(
   prompt: string,
@@ -353,13 +353,13 @@ export async function generateImage(
     });
     return data.response;
   } catch (error) {
-    console.error('Ollama image generation error:', error);
+    console.error('Ollama bildgenereringsfel:', error);
     throw error;
   }
 }
 
 /**
- * Stream image generation progress
+ * Streama bildgenereringsförlopp
  */
 export async function* streamImageGeneration(
   prompt: string,
@@ -381,24 +381,24 @@ export async function* streamImageGeneration(
       }
     }
   } catch (error) {
-    console.error('Ollama image generation stream error:', error);
+    console.error('Ollama bildgenererings streamfel:', error);
     throw error;
   }
 }
 
 // ============================================================================
-// Helper Functions
+// Hjälpfunktioner
 // ============================================================================
 
 /**
- * Convert a File or Blob to base64 string
+ * Konvertera en File eller Blob till base64-sträng
  */
 export async function fileToBase64(file: File | Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
-      // Remove data URL prefix if present
+      // Ta bort data URL-prefix om det finns
       const base64 = result.includes(',') ? result.split(',')[1] : result;
       resolve(base64);
     };
@@ -408,7 +408,7 @@ export async function fileToBase64(file: File | Blob): Promise<string> {
 }
 
 /**
- * Convert an image URL to base64 string
+ * Konvertera en bild-URL till base64-sträng
  */
 export async function imageUrlToBase64(url: string): Promise<string> {
   try {
@@ -416,7 +416,7 @@ export async function imageUrlToBase64(url: string): Promise<string> {
     const blob = await response.blob();
     return fileToBase64(blob);
   } catch (error) {
-    console.error('Error converting image URL to base64:', error);
+    console.error('Fel vid konvertering av bild-URL till base64:', error);
     throw error;
   }
 }

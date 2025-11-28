@@ -59,10 +59,28 @@ export const fridgeInteractable: Interactable = {
 };
 
 /**
+ * Magisk spegel - analyserar bilder med AI
+ */
+export const magicMirrorInteractable: Interactable = {
+  id: INTERACTABLE_IDS.MAGIC_MIRROR,
+  type: 'object',
+  name: 'Magisk spegel',
+  position: { x: 50, y: 70 },
+  avatar: 'star',
+  locked: false,
+  unlockRequirement: null,
+  action: {
+    type: InteractableActionType.ImageAnalysis,
+    analysisPrompt: 'Beskriv vad du ser i denna bild på svenska. Var detaljerad och beskriv atmosfären, färger och känsla.',
+  },
+};
+
+/**
  * Alla interaktiva objekt för exempelmodulen
  */
 export const interactables: Interactable[] = [
   guardInteractable,
   aiCompanionInteractable,
   fridgeInteractable,
+  magicMirrorInteractable,
 ];

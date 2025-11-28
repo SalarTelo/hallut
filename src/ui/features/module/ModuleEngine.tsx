@@ -61,6 +61,8 @@ export function ModuleEngine({
     chatOpen,
     setChatOpen,
     imageViewer,
+    imageAnalysisOpen,
+    setImageAnalysisOpen,
     navigateToTask,
     navigateToDialogue,
     navigateToInteractable,
@@ -91,6 +93,7 @@ export function ModuleEngine({
     onNavigateToInteractable: navigateToInteractable,
     onChatOpen: () => setChatOpen(true),
     onImageOpen: openImageViewer,
+    onImageAnalysisOpen: () => setImageAnalysisOpen(true),
   });
 
   // Visa välkomstdialog om inte sedd
@@ -234,6 +237,8 @@ export function ModuleEngine({
           imageViewerUrl={imageViewer.url}
           imageViewerTitle={imageViewer.title}
           onImageViewerClose={closeImageViewer}
+          imageAnalysisOpen={imageAnalysisOpen}
+          onImageAnalysisClose={() => setImageAnalysisOpen(false)}
         />
         {taskOverlay}
         {dialogueOverlay}

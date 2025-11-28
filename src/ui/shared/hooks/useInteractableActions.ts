@@ -14,7 +14,7 @@ import { ModuleError, ErrorCode } from '@types/core/error.types.js';
 import { handleError } from '@services/errorService.js';
 
 export interface InteractableActionResult {
-  type: 'task' | 'dialogue' | 'chat' | 'image' | 'none';
+  type: 'task' | 'dialogue' | 'chat' | 'image' | 'image-analysis' | 'none';
   taskId?: string;
   dialogueId?: string;
   imageUrl?: string;
@@ -28,6 +28,7 @@ export interface UseInteractableActionsOptions {
   onDialogueSelected?: (dialogueId: string) => void;
   onChatOpen?: () => void;
   onImageOpen?: (url: string, title: string) => void;
+  onImageAnalysisOpen?: () => void;
   onError?: (error: Error) => void;
 }
 
@@ -41,6 +42,7 @@ export function useInteractableActions({
   onDialogueSelected,
   onChatOpen,
   onImageOpen,
+  onImageAnalysisOpen,
   onError,
 }: UseInteractableActionsOptions) {
   const { acceptTask } = useModuleActions();
@@ -72,6 +74,11 @@ export function useInteractableActions({
           case InteractableActionType.Image: {
             onImageOpen?.(action.imageUrl, action.title || 'Image');
             return { type: 'image', imageUrl: action.imageUrl, imageTitle: action.title };
+          }
+
+          case InteractableActionType.ImageAnalysis: {
+            onImageAnalysisOpen?.();
+            return { type: 'image-analysis' };
           }
 
           case InteractableActionType.Function: {
@@ -135,7 +142,7 @@ export function useInteractableActions({
         return { type: 'none' };
       }
     },
-    [moduleId, locale, acceptTask, onTaskSelected, onDialogueSelected, onChatOpen, onImageOpen, onError]
+    [moduleId, locale, acceptTask, onTaskSelected, onDialogueSelected, onChatOpen, onImageOpen, onImageAnalysisOpen, onError]
   );
 
   return {

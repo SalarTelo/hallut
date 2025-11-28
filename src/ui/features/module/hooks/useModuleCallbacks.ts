@@ -55,6 +55,11 @@ export interface UseModuleCallbacksOptions {
    * Open image viewer
    */
   onImageOpen: (url: string, title: string) => void;
+
+  /**
+   * Open image analysis view
+   */
+  onImageAnalysisOpen: () => void;
 }
 
 export interface UseModuleCallbacksReturn {
@@ -82,6 +87,7 @@ export function useModuleCallbacks({
   onNavigateToInteractable,
   onChatOpen,
   onImageOpen,
+  onImageAnalysisOpen,
 }: UseModuleCallbacksOptions): UseModuleCallbacksReturn {
   // Handle interactable actions
   const { handleInteractableAction } = useInteractableActions({
@@ -91,6 +97,7 @@ export function useModuleCallbacks({
     onDialogueSelected: onNavigateToDialogue,
     onChatOpen,
     onImageOpen,
+    onImageAnalysisOpen,
     onError: (err: unknown) => {
       handleError(err);
     },
