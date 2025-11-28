@@ -1,31 +1,32 @@
 /**
- * Marketplace Module - Skeleton
- * A placeholder module for the worldmap
+ * Marknadsmodul - Skelett
+ * En platshållarmodul för världskartan
  */
 
 import type { IModule } from '../../src/types/core/moduleClass.types.js';
 import type { ModuleConfig } from '../../src/types/module/moduleConfig.types.js';
 
 /**
- * Marketplace module implementation
+ * Marknadsmodulens implementation
  */
 const marketplaceModule: IModule = {
   init(_locale: string): ModuleConfig {
     return {
       manifest: {
         id: 'marketplace',
-        name: 'Bustling Marketplace',
+        name: 'Livlig marknad',
         version: '1.0.0',
+        summary: 'Handla och interagera med köpmän på den livliga marknaden. Hitta sällsynta föremål och handla klokt.',
       },
       background: {
         color: '#2e2a1a',
       },
       welcome: {
-        speaker: 'Merchant',
+        speaker: 'Köpmann',
         lines: [
-          'Welcome to the bustling marketplace!',
-          'Stalls line the streets, filled with exotic wares.',
-          'Traders from far and wide gather here.',
+          'Välkommen till den livliga marknaden!',
+          'Stånden kantas längs gatorna, fyllda med exotiska varor.',
+          'Handlare från långt och brett samlas här.',
         ],
       },
       interactables: [],
@@ -37,8 +38,8 @@ const marketplaceModule: IModule = {
     };
   },
 
-  // handleInteractableFunction and handleDialogueCompletion are optional
-  // and not needed for skeleton modules without interactables
+  // handleInteractableFunction och handleDialogueCompletion är valfria
+  // och behövs inte för skelettmoduler utan interaktiva objekt
 };
 
 export default marketplaceModule;

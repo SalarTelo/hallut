@@ -12,6 +12,7 @@ export const manifest: ModuleConfig['manifest'] = {
   id: 'temp',
   name: 'Temp',
   version: '1.0.0',
+  summary: 'En temporär modul för testning och utveckling. Utforska och experimentera med nya funktioner.',
 };
 
 /**

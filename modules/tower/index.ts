@@ -1,31 +1,32 @@
 /**
- * Tower Module - Skeleton
- * A placeholder module for the worldmap
+ * Tornmodul - Skelett
+ * En platshållarmodul för världskartan
  */
 
 import type { IModule } from '../../src/types/core/moduleClass.types.js';
 import type { ModuleConfig } from '../../src/types/module/moduleConfig.types.js';
 
 /**
- * Tower module implementation
+ * Tornmodulens implementation
  */
 const towerModule: IModule = {
   init(_locale: string): ModuleConfig {
     return {
       manifest: {
         id: 'tower',
-        name: 'Mystical Tower',
+        name: 'Mystiskt torn',
         version: '1.0.0',
+        summary: 'Klättra upp i det höga tornet och utforska dess många våningar. Varje nivå håller nya utmaningar och belöningar.',
       },
       background: {
         color: '#1a1a2e',
       },
       welcome: {
-        speaker: 'Scholar',
+        speaker: 'Lärd',
         lines: [
-          'You approach the mystical tower.',
-          'Ancient magic courses through its stones.',
-          'The path to knowledge lies within.',
+          'Du närmar dig det mystiska tornet.',
+          'Uråldrig magi flödar genom dess stenar.',
+          'Vägen till kunskap ligger inom.',
         ],
       },
       interactables: [],
@@ -37,8 +38,8 @@ const towerModule: IModule = {
     };
   },
 
-  // handleInteractableFunction and handleDialogueCompletion are optional
-  // and not needed for skeleton modules without interactables
+  // handleInteractableFunction och handleDialogueCompletion är valfria
+  // och behövs inte för skelettmoduler utan interaktiva objekt
 };
 
 export default towerModule;

@@ -18,21 +18,23 @@ export * from './interactableBuilders.js';
 // ============================================================================
 
 /**
- * Create a module manifest
+ * Skapa ett modulmanifest
  * 
- * @param id - Module ID (should match folder name)
- * @param name - Display name
- * @param version - Semantic version (default: '1.0.0')
+ * @param id - Modul-ID (bör matcha mappnamn)
+ * @param name - Visningsnamn
+ * @param version - Semantisk version (standard: '1.0.0')
+ * @param summary - Valfri sammanfattning för världskarteverktygstips
  * 
  * @example
- * manifest: createManifest('my-module', 'My Module')
+ * manifest: createManifest('min-modul', 'Min modul', '1.0.0', 'En kort beskrivning')
  */
 export function createManifest(
   id: string,
   name: string,
-  version: string = '1.0.0'
+  version: string = '1.0.0',
+  summary?: string
 ): ModuleConfig['manifest'] {
-  return { id, name, version };
+  return { id, name, version, summary };
 }
 
 /**
@@ -304,28 +306,30 @@ export function createModule(options: ModuleOptions): IModule {
 // ============================================================================
 
 /**
- * Simple module options (for modules without handlers)
+ * Enkla modulalternativ (för moduler utan hanterare)
  */
 export interface SimpleModuleOptions {
-  /** Module ID */
+  /** Modul-ID */
   id: string;
-  /** Module display name */
+  /** Modulvisningsnamn */
   name: string;
-  /** Background color */
+  /** Bakgrundsfärg */
   backgroundColor: string;
-  /** Welcome speaker */
+  /** Välkomsttalare */
   welcomeSpeaker: string;
-  /** Welcome lines */
+  /** Välkomstrader */
   welcomeLines: string[];
-  /** Optional interactables */
+  /** Valfri sammanfattning för världskarteverktygstips */
+  summary?: string;
+  /** Valfria interaktiva objekt */
   interactables?: Interactable[];
-  /** Optional tasks */
+  /** Valfria uppgifter */
   tasks?: Task[];
-  /** Optional dialogues */
+  /** Valfria dialoger */
   dialogues?: ModuleConfig['dialogues'];
-  /** Optional theme border color */
+  /** Valfri temakantfärg */
   borderColor?: string;
-  /** Optional required modules */
+  /** Valfria obligatoriska moduler */
   requires?: string[];
 }
 
@@ -352,6 +356,7 @@ export function createSimpleModule(options: SimpleModuleOptions): IModule {
     backgroundColor,
     welcomeSpeaker,
     welcomeLines,
+    summary,
     interactables = [],
     tasks = [],
     dialogues = {},
@@ -361,7 +366,7 @@ export function createSimpleModule(options: SimpleModuleOptions): IModule {
 
   return createModule({
     config: createModuleConfig({
-      manifest: createManifest(id, name),
+      manifest: createManifest(id, name, '1.0.0', summary),
       background: colorBackground(backgroundColor),
       welcome: createWelcome(welcomeSpeaker, welcomeLines),
       interactables,

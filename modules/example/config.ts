@@ -12,6 +12,7 @@ export const manifest: ModuleConfig['manifest'] = {
   id: 'example',
   name: 'Slottsporten',
   version: '1.0.0',
+  summary: 'Börja din resa vid slottsporten. Hjälp vakten med uppgifter för att få tillgång till slottet.',
 };
 
 /**

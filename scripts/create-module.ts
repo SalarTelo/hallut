@@ -139,6 +139,7 @@ export const manifest: ModuleConfig['manifest'] = {
   id: '${moduleId}',
   name: '${displayName}',
   version: '1.0.0',
+  summary: 'En kort beskrivning av vad denna modul handlar om och vad spelaren kan förvänta sig.',
 };
 
 /**

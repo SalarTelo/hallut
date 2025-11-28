@@ -1,31 +1,32 @@
 /**
- * Dungeon Module - Skeleton
- * A placeholder module for the worldmap
+ * Dungeon-modul - Skelett
+ * En platshållarmodul för världskartan
  */
 
 import type { IModule } from '../../src/types/core/moduleClass.types.js';
 import type { ModuleConfig } from '../../src/types/module/moduleConfig.types.js';
 
 /**
- * Dungeon module implementation
+ * Dungeon-modulens implementation
  */
 const dungeonModule: IModule = {
   init(_locale: string): ModuleConfig {
     return {
       manifest: {
         id: 'dungeon',
-        name: 'Ancient Dungeon',
+        name: 'Uråldrig dungeon',
         version: '1.0.0',
+        summary: 'Utforska de mörka kryptorna under marken. Farliga fiender och värdefulla skatter väntar de modiga.',
       },
       background: {
         color: '#1a1a1a',
       },
       welcome: {
-        speaker: 'Explorer',
+        speaker: 'Upptäcktsresande',
         lines: [
-          'You descend into the ancient dungeon.',
-          'Torches flicker along the stone walls.',
-          'Echoes of past adventures fill the air.',
+          'Du går ner i den uråldriga dungeonen.',
+          'Facklor fladdrar längs stenväggarna.',
+          'Ekon av tidigare äventyr fyller luften.',
         ],
       },
       interactables: [],
@@ -37,8 +38,8 @@ const dungeonModule: IModule = {
     };
   },
 
-  // handleInteractableFunction and handleDialogueCompletion are optional
-  // and not needed for skeleton modules without interactables
+  // handleInteractableFunction och handleDialogueCompletion är valfria
+  // och behövs inte för skelettmoduler utan interaktiva objekt
 };
 
 export default dungeonModule;

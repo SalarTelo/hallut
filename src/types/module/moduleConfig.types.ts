@@ -79,6 +79,10 @@ export interface ModuleConfig {
     id: string;
     name: string;
     version: string;
+    /**
+     * Module summary/description for worldmap tooltips
+     */
+    summary?: string;
   };
 
   /**
