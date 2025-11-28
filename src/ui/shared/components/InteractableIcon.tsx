@@ -5,6 +5,7 @@
  */
 
 import type { ReactNode } from 'react';
+import { PixelIcon } from './PixelIcon.js';
 
 export type IconShape = 'circle' | 'square' | string;
 
@@ -92,7 +93,7 @@ export function InteractableIcon({
         }}
       >
         {locked ? (
-          <span className="text-2xl">🔒</span>
+          <PixelIcon type="lock" size={Math.floor(size * 0.5)} color="white" />
         ) : (
           <div className="text-2xl">{icon}</div>
         )}

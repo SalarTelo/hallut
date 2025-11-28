@@ -1,52 +1,53 @@
 /**
- * ModuleNode Component
- * Individual module node in the worldmap
+ * Modulnod-komponent
+ * Individuell modulnod i världskartan
  */
 
 import type { WorldmapNode } from '@types/worldmap.types.js';
 import type { ModuleProgressionState } from '@types/core/moduleProgression.types.js';
 import { ModuleTooltip } from './ModuleTooltip.js';
+import { PixelIcon } from '../PixelIcon.js';
 import { formatModuleName } from './utils.js';
 
 export interface ModuleNodeProps {
   /**
-   * Node data
+   * Noddata
    */
   node: WorldmapNode;
 
   /**
-   * Module progression state
+   * Modulframstegsstatus
    */
   progression: ModuleProgressionState;
 
   /**
-   * Whether this node is hovered
+   * Om denna nod är hovrad
    */
   isHovered: boolean;
 
   /**
-   * Border color
+   * Kantfärg
    */
   borderColor: string;
 
   /**
-   * Click handler
+   * Klickhanterare
    */
   onClick: () => void;
 
   /**
-   * Mouse enter handler
+   * Musenter-hanterare
    */
   onMouseEnter: () => void;
 
   /**
-   * Mouse leave handler
+   * Muslämna-hanterare
    */
   onMouseLeave: () => void;
 }
 
 /**
- * ModuleNode component
+ * Modulnod-komponent
  */
 export function ModuleNode({
   node,
@@ -78,10 +79,10 @@ export function ModuleNode({
     return 'none';
   };
 
-  const getIconEmoji = () => {
-    if (isLocked) return '🔒';
-    if (isCompleted) return '⭐';
-    return '📍';
+  const getIconType = (): 'lock' | 'star' | 'pin' => {
+    if (isLocked) return 'lock';
+    if (isCompleted) return 'star';
+    return 'pin';
   };
 
   return (
@@ -97,7 +98,7 @@ export function ModuleNode({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      {/* Module icon */}
+      {/* Modulikon */}
       <div
         className={`${
           iconShape === 'circle'
@@ -117,20 +118,24 @@ export function ModuleNode({
           transform: isHovered ? 'scale(1.15)' : 'scale(1)',
         }}
       >
-        {/* Completion checkmark */}
+        {/* Slutförandemarkering */}
         {isCompleted && !isLocked && (
           <span
-            className="absolute -top-1 -right-1 text-xs"
+            className="absolute -top-1 -right-1"
             style={{ color: borderColor }}
           >
-            ✓
+            <PixelIcon type="check" size={12} color={borderColor} />
           </span>
         )}
 
-        <span className="text-2xl">{getIconEmoji()}</span>
+        <PixelIcon
+          type={getIconType()}
+          size={Math.floor(iconSize * 0.6)}
+          color="white"
+        />
       </div>
 
-      {/* Tooltip */}
+      {/* Verktygstips */}
       {isHovered && (
         <ModuleTooltip
           moduleName={formatModuleName(node.moduleId)}
@@ -142,4 +147,3 @@ export function ModuleNode({
     </div>
   );
 }
-

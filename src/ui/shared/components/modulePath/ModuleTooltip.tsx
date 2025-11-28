@@ -4,6 +4,7 @@
  */
 
 import type { ModuleProgressionState } from '@types/core/moduleProgression.types.js';
+import { PixelIcon } from '../PixelIcon.js';
 
 export interface ModuleTooltipProps {
   /**
@@ -51,10 +52,10 @@ export function ModuleTooltip({
     return 'text-yellow-400';
   };
 
-  const getStatusIcon = () => {
-    if (isLocked) return '🔒';
-    if (isCompleted) return '✓';
-    return '▶';
+  const getStatusIconType = (): 'lock' | 'check' | 'play' => {
+    if (isLocked) return 'lock';
+    if (isCompleted) return 'check';
+    return 'play';
   };
 
   return (
@@ -84,8 +85,14 @@ export function ModuleTooltip({
 
         {/* Status */}
         <div className="flex items-center gap-1 pt-1.5 border-t border-gray-700/60">
+          <PixelIcon
+            type={getStatusIconType()}
+            size={10}
+            color="currentColor"
+            className={getStatusColor()}
+          />
           <span className={`text-[10px] ${getStatusColor()} font-semibold`}>
-            {getStatusIcon()} {getStatusText()}
+            {getStatusText()}
           </span>
         </div>
       </div>

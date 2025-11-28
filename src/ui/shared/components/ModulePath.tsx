@@ -102,18 +102,22 @@ export function ModulePath({
       })}
 
       {/* Modulinformationsmodal */}
-      {selectedNode && (
-        <ModuleInfoModal
-          isOpen={selectedModuleId !== null}
-          onClose={() => setSelectedModuleId(null)}
-          moduleId={selectedNode.moduleId}
-          moduleName={selectedNode.moduleId.replace(/-/g, ' ')}
-          description={selectedNode.summary}
-          isUnlocked={getModuleProgression(selectedNode.moduleId) !== 'locked'}
-          onEnterModule={handleEnterModule}
-          borderColor={borderColorValue}
-        />
-      )}
+      {selectedNode && (() => {
+        const progression = getModuleProgression(selectedNode.moduleId);
+        return (
+          <ModuleInfoModal
+            isOpen={selectedModuleId !== null}
+            onClose={() => setSelectedModuleId(null)}
+            moduleId={selectedNode.moduleId}
+            moduleName={selectedNode.moduleId.replace(/-/g, ' ')}
+            description={selectedNode.summary}
+            isUnlocked={progression !== 'locked'}
+            isCompleted={progression === 'completed'}
+            onEnterModule={handleEnterModule}
+            borderColor={borderColorValue}
+          />
+        );
+      })()}
     </div>
   );
 }
