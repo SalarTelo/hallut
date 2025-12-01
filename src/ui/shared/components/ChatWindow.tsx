@@ -120,6 +120,15 @@ export function ChatWindow({
   };
 
   /**
+   * Återställ konversationen
+   */
+  const handleReset = () => {
+    setLocalMessages([]);
+    setOllamaError(null);
+    setInputValue('');
+  };
+
+  /**
    * Hantera skickande av meddelande
    */
   const handleSend = async () => {
@@ -237,13 +246,40 @@ export function ChatWindow({
             </div>
             <h3 className="text-base font-bold text-yellow-300">{title}</h3>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors p-1.5 rounded hover:bg-gray-800"
-            aria-label="Stäng chatt"
-          >
-            <PixelIcon type="close" size={18} color="currentColor" />
-          </button>
+          <div className="flex items-center gap-2">
+            {localMessages.length > 0 && (
+              <button
+                onClick={handleReset}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 border-2"
+                style={{
+                  borderColor: borderColorValue,
+                  backgroundColor: `${borderColorValue}15`,
+                  color: borderColorValue,
+                  boxShadow: `0 2px 8px ${borderColorValue}30`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = `${borderColorValue}25`;
+                  e.currentTarget.style.boxShadow = `0 4px 12px ${borderColorValue}50`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = `${borderColorValue}15`;
+                  e.currentTarget.style.boxShadow = `0 2px 8px ${borderColorValue}30`;
+                }}
+                aria-label="Återställ konversation"
+                title="Återställ konversation"
+              >
+                <PixelIcon type="reload" size={16} color={borderColorValue} />
+                <span>Återställ</span>
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-white transition-colors p-1.5 rounded hover:bg-gray-800"
+              aria-label="Stäng chatt"
+            >
+              <PixelIcon type="close" size={18} color="currentColor" />
+            </button>
+          </div>
         </div>
 
         {/* Meddelandeområde */}
@@ -319,16 +355,29 @@ export function ChatWindow({
                         }),
                       }}
                     >
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-                        {message.text}
-                      </p>
-                      <p
-                        className={`text-[11px] mt-2 opacity-70 ${
-                          message.sender === 'user' ? 'text-blue-100' : 'text-gray-400'
-                        }`}
-                      >
-                        {formatTime(message.timestamp)}
-                      </p>
+                      {message.sender === 'ai' && !message.text ? (
+                        // Typing indicator for AI when message is empty (loading)
+                        <div className="flex gap-1.5">
+                          <span className="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                          <span className="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                          <span className="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+                            {message.text}
+                          </p>
+                          {message.text && (
+                            <p
+                              className={`text-[11px] mt-2 opacity-70 ${
+                                message.sender === 'user' ? 'text-blue-100' : 'text-gray-400'
+                              }`}
+                            >
+                              {formatTime(message.timestamp)}
+                            </p>
+                          )}
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

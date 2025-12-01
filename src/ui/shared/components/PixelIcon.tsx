@@ -16,6 +16,7 @@ import ShieldIcon from 'pixelarticons/svg/shield.svg?react';
 import AvatarIcon from 'pixelarticons/svg/avatar.svg?react';
 import BoxIcon from 'pixelarticons/svg/add-box.svg?react';
 import ChatIcon from 'pixelarticons/svg/chat.svg?react';
+import ReloadIcon from 'pixelarticons/svg/reload.svg?react';
 
 export type PixelIconType =
   | 'lock'
@@ -29,7 +30,8 @@ export type PixelIconType =
   | 'shield'
   | 'avatar'
   | 'box'
-  | 'chat';
+  | 'chat'
+  | 'reload';
 
 export interface PixelIconProps {
   /**
@@ -87,6 +89,7 @@ const iconComponents: Record<PixelIconType, React.ComponentType<React.SVGProps<S
   avatar: AvatarIcon,
   box: BoxIcon,
   chat: ChatIcon,
+  reload: ReloadIcon,
 };
 
 /**
