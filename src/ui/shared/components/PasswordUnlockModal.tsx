@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Modal } from './Modal.js';
 import { Button } from './Button.js';
 import { Input } from './Input.js';
+import { getThemeValue } from '@utils/theme.js';
 
 export interface PasswordUnlockModalProps {
   /**
@@ -87,16 +88,20 @@ export function PasswordUnlockModal({
     }
   };
 
+  const borderColorValue = getThemeValue('border-color', '#FFD700');
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={moduleName ? `Lås upp ${moduleName}` : 'Lås upp modul'}
       size="md"
       closeOnOverlayClick={true}
       closeOnEscape={true}
     >
-      <div className="space-y-4">
+      <div className="bg-black border-2 rounded-lg p-4 space-y-4" style={{ borderColor: borderColorValue }}>
+        <h3 className="pixelated text-yellow-400 text-lg font-bold mb-4">
+          {moduleName ? `Lås upp ${moduleName}` : 'Lås upp modul'}
+        </h3>
         {hint && (
           <p className="text-sm text-gray-400 italic pixelated">
             Ledtråd: {hint}

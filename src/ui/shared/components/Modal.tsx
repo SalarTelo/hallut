@@ -22,16 +22,6 @@ export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 
   /**
-   * Modal title
-   */
-  title?: string;
-
-  /**
-   * Modal subtitle
-   */
-  subtitle?: string;
-
-  /**
    * Show close button
    */
   showCloseButton?: boolean;
@@ -50,11 +40,6 @@ export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
    * Modal size
    */
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-
-  /**
-   * Footer content
-   */
-  footer?: ReactNode;
 }
 
 const sizeStyles: Record<NonNullable<ModalProps['size']>, string> = {
@@ -72,13 +57,10 @@ export function Modal({
   isOpen,
   onClose,
   children,
-  title,
-  subtitle,
   showCloseButton = true,
   closeOnOverlayClick = true,
   closeOnEscape = true,
   size = 'md',
-  footer,
   className = '',
   ...props
 }: ModalProps) {
@@ -107,7 +89,6 @@ export function Modal({
       tabIndex={-1}
       role="dialog"
       aria-modal="true"
-      aria-labelledby={title ? 'modal-title' : undefined}
     >
       {/* Overlay */}
       <div
@@ -123,56 +104,23 @@ export function Modal({
           onClick={(e) => e.stopPropagation()}
           {...props}
         >
-          {/* Header */}
-          {(title || subtitle || showCloseButton) && (
-            <div className="flex items-start justify-between p-4 border-b border-gray-700">
-              <div className="flex-1">
-                {title && (
-                  <h3 id="modal-title" className="text-xl font-bold text-yellow-400 pixelated">
-                    {title}
-                  </h3>
-                )}
-                {subtitle && (
-                  <p className="mt-1 text-sm text-gray-300 pixelated">{subtitle}</p>
-                )}
-              </div>
-              {showCloseButton && (
-                <button
-                  type="button"
-                  className="ml-4 text-gray-400 hover:text-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 rounded-md p-1 transition-colors"
-                  onClick={onClose}
-                  aria-label="Close modal"
-                >
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              )}
-            </div>
+          {/* Close button - positioned absolutely in top-right */}
+          {showCloseButton && (
+            <button
+              type="button"
+              className="absolute top-4 right-4 text-gray-400 hover:text-orange-400 pixelated text-xl font-bold transition-colors p-1 rounded hover:bg-gray-800/50 flex items-center justify-center w-7 h-7 z-10"
+              onClick={onClose}
+              aria-label="Close modal"
+              style={{ lineHeight: 1 }}
+            >
+              ✕
+            </button>
           )}
 
           {/* Content */}
-          <div className="p-4">{children}</div>
-
-          {/* Footer */}
-          {footer && (
-            <div className="px-4 py-3 border-t border-gray-700 bg-black bg-opacity-50 rounded-b-lg">
-              {footer}
-            </div>
-          )}
+          {children}
         </div>
       </div>
     </div>
   );
 }
-
