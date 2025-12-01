@@ -73,7 +73,7 @@ export interface ModuleConfig {
   welcome: ModuleWelcome;
   theme?: ModuleTheme;
   taskOrder: Task[]; // Objects, not strings!
-  requires?: string[]; // Module IDs (strings for cross-module) - used for worldmap layout
+  unlockRequirement?: import('./unlock.js').UnlockRequirement | null;
 }
 
 /**

@@ -4,7 +4,7 @@
  */
 
 import { defineModule } from '../../src/core/module/define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '../../src/utils/builders/modules.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome, moduleComplete } from '../../src/utils/builders/modules.js';
 import { createTask, textSubmission, textLengthValidator, success } from '../../src/utils/builders/tasks.js';
 
 const task = createTask({
@@ -29,7 +29,7 @@ const config = createModuleConfig({
     'Be prepared for danger!',
   ]),
   taskOrder: [task],
-  requires: ['village'], // Requires village to be completed - creates connection in worldmap
+  unlockRequirement: moduleComplete('village'), // Requires village to be completed
 });
 
 export default defineModule({

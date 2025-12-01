@@ -5,6 +5,10 @@
 
 import type { DialogueConfig } from './dialogue.js';
 import type { Task } from './task.js';
+import type { UnlockRequirement } from './unlock.js';
+
+// Re-export for convenience
+export type { UnlockRequirement } from './unlock.js';
 
 /**
  * Position on screen (percentage coordinates)
@@ -23,14 +27,6 @@ export type ObjectInteraction =
   | { type: 'image'; imageUrl: string; title?: string }
   | { type: 'note'; content: string; title?: string }
   | { type: 'none' };
-
-/**
- * Unlock requirement types
- */
-export type UnlockRequirement =
-  | { type: 'task-complete'; task: Task }
-  | { type: 'module-complete'; moduleId: string }
-  | { type: 'state-check'; key: string; value: unknown };
 
 /**
  * Get dialogue function (for dynamic dialogue selection)

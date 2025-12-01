@@ -43,6 +43,9 @@ export function TaskView({ task, moduleId, onComplete, onClose }: TaskViewProps)
 
       if (validationResult.solved) {
         actions.completeTask(moduleId, task);
+        // Check if module is complete and unlock dependents
+        const { evaluateModuleCompletion } = await import('../../../../core/services/unlockService.js');
+        await evaluateModuleCompletion(moduleId);
         setTimeout(() => {
           onComplete();
         }, 2000);

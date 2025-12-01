@@ -1,11 +1,13 @@
 /**
  * Worldmap Service
  * Generates worldmap configuration from discovered modules
- * Layout is automatically generated based on module dependencies (requires field)
+ * Layout is automatically generated based on module dependencies from unlockRequirement field
  */
 
-import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '../types/worldmap.js';
+import type { WorldmapConfig, WorldmapNode, WorldmapConnection, WorldmapIcon } from '../types/worldmap.js';
 import { getModule } from '../module/registry.js';
+import { extractModuleDependencies, extractRequirementTypes, extractRequirementDetails } from './unlockRequirement.js';
+import type { UnlockRequirement } from '../types/unlock.js';
 
 /**
  * Generate worldmap configuration from module IDs
@@ -24,6 +26,19 @@ export async function generateWorldmap(moduleIds: string[]): Promise<WorldmapCon
 }
 
 /**
+ * Determine icon type based on unlock requirement
+ * For locked modules, always use 'lock' since tooltip shows specific requirements
+ */
+function getIconTypeForRequirement(requirement: UnlockRequirement | null | undefined): WorldmapIcon['iconType'] {
+  if (!requirement) {
+    return 'pin'; // Default for no requirements (unlocked modules)
+  }
+
+  // All locked modules use 'lock' icon - tooltip shows specific requirements
+  return 'lock';
+}
+
+/**
  * Auto-generate worldmap layout based on dependency graph
  * Creates a tree structure where modules without dependencies are at the start,
  * and modules with dependencies are positioned based on their requirements
@@ -33,12 +48,20 @@ function generateFromDependencies(moduleIds: string[]): WorldmapConfig {
   const connections: WorldmapConnection[] = [];
   const positioned = new Set<string>();
 
-  // Build dependency graph
-  const modules = moduleIds.map(id => ({
-    id,
-    module: getModule(id),
-    dependencies: getModule(id)?.config.requires || [],
-  })).filter(m => m.module !== null);
+  // Build dependency graph from unlockRequirement
+  const modules = moduleIds.map(id => {
+    const module = getModule(id);
+    const unlockReq = module?.config.unlockRequirement;
+    const dependencies = unlockReq 
+      ? extractModuleDependencies(unlockReq)
+      : [];
+    
+    return {
+      id,
+      module,
+      dependencies,
+    };
+  }).filter(m => m.module !== null);
 
   // Find root modules (no dependencies or dependencies not in the set)
   const rootModules = modules.filter(m => 
@@ -50,11 +73,17 @@ function generateFromDependencies(moduleIds: string[]): WorldmapConfig {
   if (rootModules.length === 1) {
     // Single root: place at left center
     const root = rootModules[0];
+    const unlockReq = root.module?.config.unlockRequirement;
+    const iconType = getIconTypeForRequirement(unlockReq);
+    const reqTypes = unlockReq ? extractRequirementTypes(unlockReq) : undefined;
+    const reqDetails = unlockReq ? extractRequirementDetails(unlockReq) : undefined;
     nodes.push({
       moduleId: root.id,
       position: { x: 15, y: 50 },
-      icon: { shape: 'circle', size: 56 },
+      icon: { shape: 'circle', size: 56, iconType },
       summary: root.module?.config.manifest.summary,
+      unlockRequirementTypes: reqTypes,
+      unlockRequirementDetails: reqDetails,
     });
     positioned.add(root.id);
   } else if (rootModules.length > 1) {
@@ -62,11 +91,17 @@ function generateFromDependencies(moduleIds: string[]): WorldmapConfig {
     rootModules.forEach((root, index) => {
       const ySpacing = 100 / (rootModules.length + 1);
       const y = 20 + (index + 1) * ySpacing;
+      const unlockReq = root.module?.config.unlockRequirement;
+      const iconType = getIconTypeForRequirement(unlockReq);
+      const reqTypes = unlockReq ? extractRequirementTypes(unlockReq) : undefined;
+      const reqDetails = unlockReq ? extractRequirementDetails(unlockReq) : undefined;
       nodes.push({
         moduleId: root.id,
         position: { x: 15, y },
-        icon: { shape: 'circle', size: 48 },
+        icon: { shape: 'circle', size: 48, iconType },
         summary: root.module?.config.manifest.summary,
+        unlockRequirementTypes: reqTypes,
+        unlockRequirementDetails: reqDetails,
       });
       positioned.add(root.id);
     });
@@ -119,14 +154,21 @@ function generateFromDependencies(moduleIds: string[]): WorldmapConfig {
         y = 20 + (index + 1) * ySpacing;
       }
 
+      const unlockReq = moduleData.module?.config.unlockRequirement;
+      const iconType = getIconTypeForRequirement(unlockReq);
+      const reqTypes = unlockReq ? extractRequirementTypes(unlockReq) : undefined;
+      const reqDetails = unlockReq ? extractRequirementDetails(unlockReq) : undefined;
       nodes.push({
         moduleId: moduleData.id,
         position: { x: currentX, y },
         icon: { 
           shape: dependencyCount > 1 ? 'diamond' : dependencyCount === 1 ? 'square' : 'circle',
           size: dependencyCount > 1 ? 52 : 48,
+          iconType,
         },
         summary: moduleData.module?.config.manifest.summary,
+        unlockRequirementTypes: reqTypes,
+        unlockRequirementDetails: reqDetails,
       });
       positioned.add(moduleData.id);
 
@@ -150,11 +192,17 @@ function generateFromDependencies(moduleIds: string[]): WorldmapConfig {
   // Handle any remaining unpositioned modules (orphans)
   modules.forEach(moduleData => {
     if (!positioned.has(moduleData.id)) {
+      const unlockReq = moduleData.module?.config.unlockRequirement;
+      const iconType = getIconTypeForRequirement(unlockReq);
+      const reqTypes = unlockReq ? extractRequirementTypes(unlockReq) : undefined;
+      const reqDetails = unlockReq ? extractRequirementDetails(unlockReq) : undefined;
       nodes.push({
         moduleId: moduleData.id,
         position: { x: 50, y: 50 },
-        icon: { shape: 'circle', size: 44 },
+        icon: { shape: 'circle', size: 44, iconType },
         summary: moduleData.module?.config.manifest.summary,
+        unlockRequirementTypes: reqTypes,
+        unlockRequirementDetails: reqDetails,
       });
     }
   });

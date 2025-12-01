@@ -4,7 +4,7 @@
  */
 
 import { defineModule } from '../../src/core/module/define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '../../src/utils/builders/modules.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome, moduleComplete } from '../../src/utils/builders/modules.js';
 import { createTask, textSubmission, textLengthValidator, success } from '../../src/utils/builders/tasks.js';
 
 const task = createTask({
@@ -29,7 +29,7 @@ const config = createModuleConfig({
     'Many have tried to reach the top...',
   ]),
   taskOrder: [task],
-  requires: ['forest'], // Requires forest to be completed - creates connection in worldmap
+  unlockRequirement: moduleComplete('forest'), // Requires forest to be completed
 });
 
 export default defineModule({

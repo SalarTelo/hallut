@@ -7,6 +7,8 @@
 import { useState, useCallback } from 'react';
 import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '../../../core/types/worldmap.js';
 import { actions } from '../../../core/state/actions.js';
+import { canUnlockModule } from '../../../core/services/unlockService.js';
+import { getModule } from '../../../core/module/registry.js';
 import { ModuleInfoModal } from './ModuleInfoModal.js';
 import { getThemeValue } from '@utils/theme.js';
 import { ConnectionLines, ModuleNode } from './modulePath/index.js';
@@ -23,6 +25,11 @@ export interface ModulePathProps {
   onSelectModule: (moduleId: string) => void;
 
   /**
+   * Callback när modul kräver lösenord
+   */
+  onPasswordRequired?: (moduleId: string, hint?: string, moduleName?: string) => void;
+
+  /**
    * Kantfärg (standard från tema)
    */
   borderColor?: string;
@@ -34,6 +41,7 @@ export interface ModulePathProps {
 export function ModulePath({
   worldmap,
   onSelectModule,
+  onPasswordRequired,
   borderColor,
 }: ModulePathProps) {
   const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
@@ -45,13 +53,38 @@ export function ModulePath({
   }, []);
 
   const handleModuleClick = useCallback(
-    (moduleId: string) => {
+    async (moduleId: string) => {
       const progression = getModuleProgression(moduleId);
+      
+      // If already unlocked or completed, allow entry
       if (progression === 'unlocked' || progression === 'completed') {
+        setSelectedModuleId(moduleId);
+        return;
+      }
+
+      // Check if module can be unlocked
+      const { canUnlock, requiresInteraction } = await canUnlockModule(moduleId);
+
+      // If requires user interaction (password), trigger password modal
+      if (requiresInteraction && onPasswordRequired) {
+        const module = getModule(moduleId);
+        const unlockReq = module?.config.unlockRequirement;
+        if (unlockReq?.type === 'password') {
+          onPasswordRequired(
+            moduleId,
+            unlockReq.hint,
+            module?.config.manifest.name
+          );
+          return;
+        }
+      }
+
+      // If can unlock without interaction, allow entry
+      if (canUnlock) {
         setSelectedModuleId(moduleId);
       }
     },
-    [getModuleProgression]
+    [getModuleProgression, onPasswordRequired]
   );
 
   const handleEnterModule = useCallback(() => {

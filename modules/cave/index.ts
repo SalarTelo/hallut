@@ -4,7 +4,7 @@
  */
 
 import { defineModule } from '../../src/core/module/define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '../../src/utils/builders/modules.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome, andRequirements, moduleComplete } from '../../src/utils/builders/modules.js';
 import { createTask, textSubmission, textLengthValidator, success } from '../../src/utils/builders/tasks.js';
 
 const task = createTask({
@@ -29,7 +29,10 @@ const config = createModuleConfig({
     'Who knows what lies within?',
   ]),
   taskOrder: [task],
-  requires: ['dungeon', 'tower'], // Requires both dungeon and tower - creates connections in worldmap
+  unlockRequirement: andRequirements(
+    moduleComplete('dungeon'),
+    moduleComplete('tower')
+  ), // Requires both dungeon and tower
 });
 
 export default defineModule({

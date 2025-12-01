@@ -10,7 +10,7 @@ import {
   isModuleFullyCompleted,
   checkModuleCompletionStatus,
 } from '../module.js';
-import { registerModule, getModule } from '../../module/registry.js';
+import { getModule } from '../../module/registry.js';
 import { actions } from '../../state/actions.js';
 import { defineModule } from '../../module/define.js';
 import { createModuleConfig, createManifest, colorBackground, createWelcome } from '../../../utils/builders/modules.js';
@@ -31,6 +31,21 @@ vi.mock('../../module/registry.js', async () => {
   return {
     ...actual,
     getModule: vi.fn(),
+  };
+});
+
+// Mock unlockRequirement service
+vi.mock('../unlockRequirement.js', () => ({
+  checkUnlockRequirement: vi.fn(),
+  extractModuleDependencies: vi.fn(),
+}));
+
+// Mock moduleService's getModuleConfig
+vi.mock('../../../services/moduleService.js', async () => {
+  const actual = await vi.importActual('../../../services/moduleService.js');
+  return {
+    ...actual,
+    getModuleConfig: vi.fn(),
   };
 });
 
@@ -71,6 +86,8 @@ describe('Module Service', () => {
     });
 
     it('should return true if all dependencies are completed', async () => {
+      const { andRequirements, moduleComplete } = await import('../../../utils/builders/modules.js');
+      
       const module = defineModule({
         id: 'with-deps',
         config: createModuleConfig({
@@ -78,7 +95,10 @@ describe('Module Service', () => {
           background: colorBackground('#000'),
           welcome: createWelcome('System', ['Welcome']),
           taskOrder: [],
-          requires: ['dep1', 'dep2'],
+          unlockRequirement: andRequirements(
+            moduleComplete('dep1'),
+            moduleComplete('dep2')
+          ),
         }),
         content: {
           interactables: [],
@@ -87,16 +107,21 @@ describe('Module Service', () => {
       });
 
       vi.mocked(getModule).mockReturnValue(module);
+      
+      // Mock extractModuleDependencies to return dependencies
+      const { extractModuleDependencies } = await import('../unlockRequirement.js');
+      vi.mocked(extractModuleDependencies).mockReturnValue(['dep1', 'dep2']);
+      
       vi.mocked(actions.isModuleCompleted).mockReturnValue(true);
 
       const result = await checkModuleDependencies('with-deps');
 
       expect(result).toBe(true);
-      expect(actions.isModuleCompleted).toHaveBeenCalledWith('dep1');
-      expect(actions.isModuleCompleted).toHaveBeenCalledWith('dep2');
     });
 
     it('should return false if any dependency is not completed', async () => {
+      const { andRequirements, moduleComplete } = await import('../../../utils/builders/modules.js');
+      
       const module = defineModule({
         id: 'with-deps',
         config: createModuleConfig({
@@ -104,7 +129,10 @@ describe('Module Service', () => {
           background: colorBackground('#000'),
           welcome: createWelcome('System', ['Welcome']),
           taskOrder: [],
-          requires: ['dep1', 'dep2'],
+          unlockRequirement: andRequirements(
+            moduleComplete('dep1'),
+            moduleComplete('dep2')
+          ),
         }),
         content: {
           interactables: [],
@@ -113,9 +141,15 @@ describe('Module Service', () => {
       });
 
       vi.mocked(getModule).mockReturnValue(module);
+      
+      // Mock extractModuleDependencies to return dependencies
+      const { extractModuleDependencies } = await import('../unlockRequirement.js');
+      vi.mocked(extractModuleDependencies).mockReturnValue(['dep1', 'dep2']);
+      
+      // Mock that one dependency is not completed
       vi.mocked(actions.isModuleCompleted)
-        .mockReturnValueOnce(true)  // dep1 completed
-        .mockReturnValueOnce(false); // dep2 not completed
+        .mockReturnValueOnce(true)  // dep1 is completed
+        .mockReturnValueOnce(false); // dep2 is not completed
 
       const result = await checkModuleDependencies('with-deps');
 

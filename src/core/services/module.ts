@@ -6,6 +6,7 @@
 import { getModule } from '../module/registry.js';
 import { actions } from '../state/actions.js';
 import type { ModuleProgressionState } from '../state/types.js';
+import { extractModuleDependencies } from './unlockRequirement.js';
 
 /**
  * Check if a module's dependencies are met
@@ -16,12 +17,17 @@ export async function checkModuleDependencies(moduleId: string): Promise<boolean
     return false;
   }
 
-  const requires = module.config.requires || [];
-  if (requires.length === 0) {
+  const unlockRequirement = module.config.unlockRequirement;
+  if (!unlockRequirement) {
     return true;
   }
 
-  return requires.every((requiredModuleId) => actions.isModuleCompleted(requiredModuleId));
+  const dependencies = extractModuleDependencies(unlockRequirement);
+  if (dependencies.length === 0) {
+    return true;
+  }
+
+  return dependencies.every((requiredModuleId) => actions.isModuleCompleted(requiredModuleId));
 }
 
 /**

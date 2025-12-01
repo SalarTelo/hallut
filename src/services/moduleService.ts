@@ -24,6 +24,7 @@ function getModuleConfig(moduleId: string): ModuleConfig | null {
 
 /**
  * Check if a module's dependencies are met
+ * @deprecated Use unlockService.canUnlockModule instead
  * 
  * @param moduleId - Module ID
  * @returns True if all dependencies are completed
@@ -34,13 +35,14 @@ export async function checkModuleDependencies(moduleId: string): Promise<boolean
     return false;
   }
 
-  // If no dependencies, module is always available
-  if (!config.requires || config.requires.length === 0) {
+  // If no unlock requirement, module is always available
+  if (!config.unlockRequirement) {
     return true;
   }
 
-  // Check if all required modules are completed
-  return config.requires.every((requiredModuleId: string) => actions.isModuleCompleted(requiredModuleId));
+  // Use unlockRequirement checker
+  const { checkUnlockRequirement } = await import('../core/services/unlockRequirement.js');
+  return await checkUnlockRequirement(config.unlockRequirement, { moduleId });
 }
 
 /**

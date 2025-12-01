@@ -79,10 +79,15 @@ export function ModuleNode({
     return 'none';
   };
 
-  const getIconType = (): 'lock' | 'star' | 'pin' => {
-    if (isLocked) return 'lock';
+  const getIconType = (): 'lock' | 'star' | 'pin' | 'shield' | 'box' | 'check' => {
+    // If completed, always show star
     if (isCompleted) return 'star';
-    return 'pin';
+    
+    // If locked, always show lock icon (tooltip shows specific requirements)
+    if (isLocked) return 'lock';
+    
+    // Unlocked: show icon based on requirement type, or default to pin
+    return node.icon?.iconType || 'pin';
   };
 
   return (
@@ -129,7 +134,7 @@ export function ModuleNode({
         )}
 
         <PixelIcon
-          type={getIconType()}
+          type={getIconType() as 'lock' | 'star' | 'pin' | 'shield' | 'box' | 'check'}
           size={Math.floor(iconSize * 0.6)}
           color="white"
         />
@@ -141,6 +146,9 @@ export function ModuleNode({
           moduleName={formatModuleName(node.moduleId)}
           summary={node.summary}
           progression={progression}
+          iconType={node.icon?.iconType}
+          unlockRequirementTypes={node.unlockRequirementTypes}
+          unlockRequirementDetails={node.unlockRequirementDetails}
           borderColor={borderColor}
         />
       )}

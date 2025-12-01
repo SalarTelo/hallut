@@ -5,14 +5,15 @@
  */
 
 import { useEffect, useState } from 'react';
-import { discoverModules } from '../../../core/module/registry.js';
+import { discoverModules, getModule } from '../../../core/module/registry.js';
 import { loadModuleInstance } from '../../../core/module/loader.js';
 import { generateWorldmap } from '../../../core/services/worldmap.js';
 import type { WorldmapConfig } from '../../../core/types/worldmap.js';
-import { actions } from '../../../core/state/actions.js';
+import { initializeModuleProgression, unlockModule } from '../../../core/services/unlockService.js';
 import { ModulePath } from '../../shared/components/ModulePath.js';
 import { LoadingState } from '../../shared/components/LoadingState.js';
 import { FullScreenLayout } from '../../shared/components/layouts/index.js';
+import { PasswordUnlockModal } from '../../shared/components/PasswordUnlockModal.js';
 
 export interface ModuleSelectionProps {
   onSelectModule: (moduleId: string) => void;
@@ -24,6 +25,11 @@ export interface ModuleSelectionProps {
 export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
   const [worldmap, setWorldmap] = useState<WorldmapConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [passwordModal, setPasswordModal] = useState<{
+    moduleId: string;
+    hint?: string;
+    moduleName: string;
+  } | null>(null);
 
   useEffect(() => {
     const loadWorldmap = async () => {
@@ -36,14 +42,8 @@ export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
           await loadModuleInstance(moduleId);
         }
         
-        // Initialize module progression: unlock first module if not already set
-        if (moduleIds.length > 0) {
-          const firstModuleId = moduleIds[0];
-          const progression = actions.getModuleProgression(firstModuleId);
-          if (progression === 'locked') {
-            actions.unlockModule(firstModuleId);
-          }
-        }
+        // Initialize module progression using unlock service
+        await initializeModuleProgression(moduleIds);
         
         // Generate worldmap configuration
         const config = await generateWorldmap(moduleIds);
@@ -57,6 +57,33 @@ export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
 
     loadWorldmap();
   }, []);
+
+  const handlePasswordRequired = (moduleId: string) => {
+    const module = getModule(moduleId);
+    const unlockReq = module?.config.unlockRequirement;
+    
+    if (unlockReq?.type === 'password') {
+      setPasswordModal({
+        moduleId,
+        hint: unlockReq.hint,
+        moduleName: module?.config.manifest.name || moduleId,
+      });
+    }
+  };
+
+  const handlePasswordUnlock = async (password: string): Promise<boolean> => {
+    if (!passwordModal) return false;
+    
+    const { success } = await unlockModule(passwordModal.moduleId, password);
+    
+    if (success) {
+      setPasswordModal(null);
+      onSelectModule(passwordModal.moduleId);
+      return true;
+    }
+    
+    return false;
+  };
 
   if (loading) {
     return <LoadingState message="Loading worldmap..." />;
@@ -95,9 +122,22 @@ export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
         {/* Worldmap - takes up remaining space */}
         <div className="flex-1 w-full p-4 overflow-hidden">
           <div className="w-full h-full" style={{ position: 'relative' }}>
-            <ModulePath worldmap={worldmap} onSelectModule={onSelectModule} />
+            <ModulePath 
+              worldmap={worldmap} 
+              onSelectModule={onSelectModule}
+              onPasswordRequired={handlePasswordRequired}
+            />
           </div>
         </div>
+
+        {/* Password Unlock Modal */}
+        <PasswordUnlockModal
+          isOpen={passwordModal !== null}
+          onClose={() => setPasswordModal(null)}
+          onUnlock={handlePasswordUnlock}
+          hint={passwordModal?.hint}
+          moduleName={passwordModal?.moduleName}
+        />
       </div>
     </FullScreenLayout>
   );

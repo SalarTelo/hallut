@@ -11,6 +11,7 @@ import type {
   ModuleTheme,
 } from '../../core/types/module.js';
 import type { Task } from '../../core/types/task.js';
+import type { UnlockRequirement } from '../../core/types/unlock.js';
 
 /**
  * Create a module manifest
@@ -82,14 +83,14 @@ export interface ModuleConfigOptions {
   welcome: ModuleWelcome;
   taskOrder: Task[]; // Objects, not strings!
   theme?: ModuleTheme;
-  requires?: string[]; // Module IDs (strings for cross-module) - defines worldmap connections
+  unlockRequirement?: UnlockRequirement | null;
 }
 
 /**
  * Create a module configuration
  */
 export function createModuleConfig(options: ModuleConfigOptions): ModuleConfig {
-  const { manifest, background, welcome, taskOrder, theme, requires } = options;
+  const { manifest, background, welcome, taskOrder, theme, unlockRequirement } = options;
 
   const config: ModuleConfig = {
     manifest,
@@ -102,10 +103,45 @@ export function createModuleConfig(options: ModuleConfigOptions): ModuleConfig {
     config.theme = theme;
   }
 
-  if (requires && requires.length > 0) {
-    config.requires = requires;
+  if (unlockRequirement !== undefined) {
+    config.unlockRequirement = unlockRequirement;
   }
 
   return config;
+}
+
+/**
+ * Create a password unlock requirement
+ */
+export function passwordUnlock(
+  password: string,
+  hint?: string
+): UnlockRequirement {
+  return { type: 'password', password, hint };
+}
+
+/**
+ * Create a module completion requirement (for dependencies)
+ */
+export function moduleComplete(moduleId: string): UnlockRequirement {
+  return { type: 'module-complete', moduleId };
+}
+
+/**
+ * Create an AND requirement (all must be met)
+ */
+export function andRequirements(
+  ...requirements: UnlockRequirement[]
+): UnlockRequirement {
+  return { type: 'and', requirements };
+}
+
+/**
+ * Create an OR requirement (any can be met)
+ */
+export function orRequirements(
+  ...requirements: UnlockRequirement[]
+): UnlockRequirement {
+  return { type: 'or', requirements };
 }
 

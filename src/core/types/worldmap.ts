@@ -22,6 +22,7 @@ export interface WorldmapPosition {
 export interface WorldmapIcon {
   shape: 'circle' | 'square' | 'diamond';
   size: number;
+  iconType?: 'lock' | 'shield' | 'box' | 'pin' | 'star'; // Icon type based on unlock requirement
 }
 
 /**
@@ -32,6 +33,13 @@ export interface WorldmapNode {
   position: WorldmapPosition;
   icon?: WorldmapIcon;
   summary?: string;
+  unlockRequirementTypes?: Array<'password' | 'module-complete' | 'task-complete' | 'state-check' | 'custom'>;
+  unlockRequirementDetails?: Array<{
+    type: 'password' | 'module-complete' | 'task-complete' | 'state-check' | 'custom';
+    moduleId?: string;
+    taskName?: string;
+    hint?: string;
+  }>;
 }
 
 /**
