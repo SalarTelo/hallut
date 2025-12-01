@@ -28,8 +28,14 @@ const config = createModuleConfig({
     'Welcome to our village!',
     'We could use your help.',
   ]),
-  taskOrder: [task],
-  // No requires = accessible from start (will be auto-positioned)
+    taskOrder: [task],
+    worldmap: {
+      position: { x: 35, y: 30 }, // Top left branch
+      icon: {
+        shape: 'circle',
+        size: 48,
+      },
+    },
 });
 
 export default defineModule({

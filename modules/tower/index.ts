@@ -28,8 +28,15 @@ const config = createModuleConfig({
     'Welcome to the Ancient Tower!',
     'Many have tried to reach the top...',
   ]),
-  taskOrder: [task],
-  unlockRequirement: moduleComplete('forest'), // Requires forest to be completed
+    taskOrder: [task],
+    unlockRequirement: moduleComplete('forest'), // Requires forest to be completed
+    worldmap: {
+      position: { x: 55, y: 80 }, // From forest, bottom area
+      icon: {
+        shape: 'square',
+        size: 48,
+      },
+    },
 });
 
 export default defineModule({

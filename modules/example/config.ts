@@ -16,7 +16,13 @@ export function createConfig(tasks: Task[]) {
       'Click on NPCs and objects to interact with them.',
     ]),
     taskOrder: tasks, // Direct object references
-    // No requires = starting point (will be positioned on the left)
+    worldmap: {
+      position: { x: 15, y: 50 }, // Starting point - left center
+      icon: {
+        shape: 'circle',
+        size: 56,
+      },
+    },
   });
 }
 

@@ -84,13 +84,23 @@ export interface ModuleConfigOptions {
   taskOrder: Task[]; // Objects, not strings!
   theme?: ModuleTheme;
   unlockRequirement?: UnlockRequirement | null;
+  worldmap?: {
+    position: {
+      x: number; // Percentage (0-100)
+      y: number; // Percentage (0-100)
+    };
+    icon?: {
+      shape?: 'circle' | 'square' | 'diamond';
+      size?: number;
+    };
+  };
 }
 
 /**
  * Create a module configuration
  */
 export function createModuleConfig(options: ModuleConfigOptions): ModuleConfig {
-  const { manifest, background, welcome, taskOrder, theme, unlockRequirement } = options;
+  const { manifest, background, welcome, taskOrder, theme, unlockRequirement, worldmap } = options;
 
   const config: ModuleConfig = {
     manifest,
@@ -105,6 +115,10 @@ export function createModuleConfig(options: ModuleConfigOptions): ModuleConfig {
 
   if (unlockRequirement !== undefined) {
     config.unlockRequirement = unlockRequirement;
+  }
+
+  if (worldmap) {
+    config.worldmap = worldmap;
   }
 
   return config;

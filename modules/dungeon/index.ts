@@ -28,8 +28,15 @@ const config = createModuleConfig({
     'You enter the dark dungeon...',
     'Be prepared for danger!',
   ]),
-  taskOrder: [task],
-  unlockRequirement: moduleComplete('village'), // Requires village to be completed
+    taskOrder: [task],
+    unlockRequirement: moduleComplete('village'), // Requires village to be completed
+    worldmap: {
+      position: { x: 55, y: 20 }, // From village, top area
+      icon: {
+        shape: 'square',
+        size: 48,
+      },
+    },
 });
 
 export default defineModule({

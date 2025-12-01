@@ -28,8 +28,14 @@ const config = createModuleConfig({
     'Welcome to the Mysterious Forest!',
     'Be careful as you explore...',
   ]),
-  taskOrder: [task],
-  // No requires = accessible from start (will be auto-positioned)
+    taskOrder: [task],
+    worldmap: {
+      position: { x: 35, y: 70 }, // Bottom left branch
+      icon: {
+        shape: 'circle',
+        size: 48,
+      },
+    },
 });
 
 export default defineModule({

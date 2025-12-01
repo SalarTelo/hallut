@@ -65,6 +65,20 @@ export interface ModuleTheme {
 }
 
 /**
+ * Worldmap position configuration for a module
+ */
+export interface ModuleWorldmapConfig {
+  position: {
+    x: number; // Percentage (0-100)
+    y: number; // Percentage (0-100)
+  };
+  icon?: {
+    shape?: 'circle' | 'square' | 'diamond';
+    size?: number;
+  };
+}
+
+/**
  * Module configuration
  */
 export interface ModuleConfig {
@@ -74,6 +88,7 @@ export interface ModuleConfig {
   theme?: ModuleTheme;
   taskOrder: Task[]; // Objects, not strings!
   unlockRequirement?: import('./unlock.js').UnlockRequirement | null;
+  worldmap?: ModuleWorldmapConfig; // Optional worldmap position and icon configuration
 }
 
 /**

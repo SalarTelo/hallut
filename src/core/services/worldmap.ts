@@ -11,7 +11,7 @@ import type { UnlockRequirement } from '../types/unlock.js';
 
 /**
  * Generate worldmap configuration from module IDs
- * Automatically generates layout based on dependency graph from requires fields
+ * Uses module-defined positions when available, otherwise auto-generates based on dependencies
  */
 export async function generateWorldmap(moduleIds: string[]): Promise<WorldmapConfig> {
   if (moduleIds.length === 0) {
@@ -22,6 +22,18 @@ export async function generateWorldmap(moduleIds: string[]): Promise<WorldmapCon
     };
   }
 
+  // Check if all modules have worldmap positions defined
+  const modulesWithPositions = moduleIds.filter(id => {
+    const module = getModule(id);
+    return module?.config.worldmap?.position !== undefined;
+  });
+
+  // If all modules have positions, use them
+  if (modulesWithPositions.length === moduleIds.length) {
+    return generateFromModulePositions(moduleIds);
+  }
+
+  // Otherwise, fall back to auto-generation
   return generateFromDependencies(moduleIds);
 }
 
@@ -36,6 +48,71 @@ function getIconTypeForRequirement(requirement: UnlockRequirement | null | undef
 
   // All locked modules use 'lock' icon - tooltip shows specific requirements
   return 'lock';
+}
+
+/**
+ * Generate worldmap from module-defined positions
+ */
+function generateFromModulePositions(moduleIds: string[]): WorldmapConfig {
+  const nodes: WorldmapNode[] = [];
+  const connections: WorldmapConnection[] = [];
+
+  // Create nodes from module configurations
+  moduleIds.forEach(moduleId => {
+    const module = getModule(moduleId);
+    if (!module || !module.config.worldmap?.position) {
+      return;
+    }
+
+    const unlockReq = module.config.unlockRequirement;
+    const iconType = getIconTypeForRequirement(unlockReq);
+    const reqTypes = unlockReq ? extractRequirementTypes(unlockReq) : undefined;
+    const reqDetails = unlockReq ? extractRequirementDetails(unlockReq) : undefined;
+
+    // Use module-defined icon or defaults
+    const moduleIcon = module.config.worldmap.icon;
+    const icon: WorldmapIcon = {
+      shape: moduleIcon?.shape || 'circle',
+      size: moduleIcon?.size || 48,
+      iconType,
+    };
+
+    nodes.push({
+      moduleId,
+      position: module.config.worldmap.position,
+      icon,
+      summary: module.config.manifest.summary,
+      unlockRequirementTypes: reqTypes,
+      unlockRequirementDetails: reqDetails,
+    });
+  });
+
+  // Generate connections based on unlock requirements
+  moduleIds.forEach(moduleId => {
+    const module = getModule(moduleId);
+    if (!module) return;
+
+    const unlockReq = module.config.unlockRequirement;
+    if (!unlockReq) return;
+
+    const dependencies = extractModuleDependencies(unlockReq);
+    dependencies.forEach(depId => {
+      if (moduleIds.includes(depId)) {
+        connections.push({
+          from: depId,
+          to: moduleId,
+          locked: true,
+          style: 'dashed',
+        });
+      }
+    });
+  });
+
+  return {
+    layout: 'branching', // Default to branching when using custom positions
+    nodes,
+    connections,
+  };
 }
 
 /**

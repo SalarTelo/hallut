@@ -28,11 +28,18 @@ const config = createModuleConfig({
     'You enter the dark cave...',
     'Who knows what lies within?',
   ]),
-  taskOrder: [task],
-  unlockRequirement: andRequirements(
-    moduleComplete('dungeon'),
-    moduleComplete('tower')
-  ), // Requires both dungeon and tower
+    taskOrder: [task],
+    unlockRequirement: andRequirements(
+      moduleComplete('dungeon'),
+      moduleComplete('tower')
+    ), // Requires both dungeon and tower
+    worldmap: {
+      position: { x: 75, y: 50 }, // Center - requires both dungeon and tower
+      icon: {
+        shape: 'diamond',
+        size: 52,
+      },
+    },
 });
 
 export default defineModule({

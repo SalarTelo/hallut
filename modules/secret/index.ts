@@ -70,6 +70,13 @@ const config = createModuleConfig({
   taskOrder: [task],
   // Example 1: Password unlock with hint
   unlockRequirement: passwordUnlock('ancient-key', 'It opens all doors'),
+  worldmap: {
+    position: { x: 90, y: 50 }, // Far right - password locked
+    icon: {
+      shape: 'diamond',
+      size: 48,
+    },
+  },
   
   // Example 2: Module dependency (uncomment to use instead)
   // unlockRequirement: moduleComplete('village'),

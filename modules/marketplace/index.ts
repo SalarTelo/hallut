@@ -28,8 +28,14 @@ const config = createModuleConfig({
     'Welcome to the Marketplace!',
     'What can I sell you today?',
   ]),
-  taskOrder: [task],
-  // No requires = accessible from start (will be auto-positioned)
+    taskOrder: [task],
+    worldmap: {
+      position: { x: 35, y: 50 }, // Middle branch
+      icon: {
+        shape: 'circle',
+        size: 48,
+      },
+    },
 });
 
 export default defineModule({
