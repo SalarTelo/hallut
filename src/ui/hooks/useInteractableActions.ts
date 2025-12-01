@@ -86,10 +86,25 @@ export function useInteractableActions({
 
           switch (interaction.type) {
             case 'dialogue':
-              onDialogueSelected?.(interaction.dialogue.id);
-              return { type: 'dialogue', dialogueId: interaction.dialogue.id };
+              // Dialogue IDs are prefixed with interactable ID in the loader
+              // For objects/locations: `${interactable.id}-dialogue`
+              // The loader always creates IDs like this, so we match that pattern
+              const dialogueId = `${interactable.id}-dialogue`;
+              onDialogueSelected?.(dialogueId);
+              return { type: 'dialogue', dialogueId };
 
             case 'component':
+              // Check if it's a note component
+              if (interaction.component === 'NoteViewer') {
+                const props = interaction.props as { content?: string; title?: string } | undefined;
+                onNoteOpen?.(props?.content || '', props?.title);
+                return {
+                  type: 'note',
+                  noteContent: props?.content || '',
+                  noteTitle: props?.title,
+                };
+              }
+              // Handle other components (like ChatWindow)
               onComponentOpen?.(interaction.component, interaction.props);
               return {
                 type: 'component',
@@ -105,17 +120,13 @@ export function useInteractableActions({
                 imageTitle: interaction.title,
               };
 
-            // Note is handled as component with NoteViewer
-            // Check if it's a note component
-            if (interaction && interaction.type === 'component' && interaction.component === 'NoteViewer') {
-              const props = interaction.props as { content?: string; title?: string } | undefined;
-              onNoteOpen?.(props?.content || '', props?.title);
+            case 'note':
+              onNoteOpen?.(interaction.content, interaction.title);
               return {
                 type: 'note',
-                noteContent: props?.content || '',
-                noteTitle: props?.title,
+                noteContent: interaction.content,
+                noteTitle: interaction.title,
               };
-            }
           }
         }
 

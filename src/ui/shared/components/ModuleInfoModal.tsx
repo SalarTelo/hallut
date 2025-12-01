@@ -128,6 +128,7 @@ export function ModuleInfoModal({
       size="md"
       closeOnEscape
       closeOnOverlayClick
+      showCloseButton={false}
     >
       <div
         className="bg-black border-2 rounded-lg animate-scale-in overflow-hidden"

@@ -46,5 +46,7 @@ export { LoadingState, type LoadingStateProps } from './LoadingState.js';
 export { ErrorDisplay, type ErrorDisplayProps } from './ErrorDisplay.js';
 export { EmptyState, type EmptyStateProps } from './EmptyState.js';
 export { ImageViewer, type ImageViewerProps } from './ImageViewer.js';
+export { NoteViewer, type NoteViewerProps } from './NoteViewer.js';
+export { SignViewer, type SignViewerProps } from './SignViewer.js';
 export { ErrorBoundary, type ErrorBoundaryProps } from './ErrorBoundary.js';
 

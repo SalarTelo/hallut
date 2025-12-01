@@ -10,12 +10,17 @@ import { useDialogueActions, useInteractableActions } from '../../hooks/index.js
 import { LoadingState } from '../../shared/components/LoadingState.js';
 import { ErrorDisplay } from '../../shared/components/ErrorDisplay.js';
 import { Overlay } from '../../shared/components/Overlay.js';
+import { ImageViewer } from '../../shared/components/ImageViewer.js';
+import { NoteViewer } from '../../shared/components/NoteViewer.js';
+import { SignViewer } from '../../shared/components/SignViewer.js';
+import { ChatWindow } from '../../shared/components/ChatWindow.js';
 import { InteractableView } from './views/InteractableView.js';
 import { DialogueView } from './views/DialogueView.js';
 import { TaskView } from './views/TaskView.js';
 import { WelcomeView } from './views/WelcomeView.js';
 import type { ModuleData } from '../../../core/types/module.js';
 import { ErrorCode, ModuleError } from '../../../core/types/errors.js';
+import { getThemeValue } from '@utils/theme.js';
 
 export interface ModuleEngineProps {
   moduleId: string;
@@ -35,6 +40,12 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
   const [currentView, setCurrentView] = useState<View>('welcome');
   const [selectedDialogueId, setSelectedDialogueId] = useState<string | null>(null);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  
+  // Modal states
+  const [imageModal, setImageModal] = useState<{ url: string; title?: string } | null>(null);
+  const [noteModal, setNoteModal] = useState<{ content: string; title?: string } | null>(null);
+  const [signModal, setSignModal] = useState<{ content: string; title?: string } | null>(null);
+  const [chatModal, setChatModal] = useState<{ title?: string; placeholder?: string } | null>(null);
 
   // Load module
   useEffect(() => {
@@ -88,16 +99,23 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
       setCurrentView('dialogue');
     },
     onComponentOpen: (component, props) => {
-      // TODO: Handle component opening
-      console.log('Open component:', component, props);
+      if (component === 'ChatWindow') {
+        setChatModal({
+          title: (props?.title as string) || 'AI Companion',
+          placeholder: (props?.placeholder as string) || 'Ask me anything...',
+        });
+      } else if (component === 'SignViewer') {
+        setSignModal({
+          content: (props?.content as string) || '',
+          title: (props?.title as string),
+        });
+      }
     },
     onImageOpen: (url, title) => {
-      // TODO: Handle image opening
-      console.log('Open image:', url, title);
+      setImageModal({ url, title });
     },
     onNoteOpen: (content, title) => {
-      // TODO: Handle note opening
-      console.log('Open note:', content, title);
+      setNoteModal({ content, title });
     },
     onError: setError,
   });
@@ -201,6 +219,8 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
     }
   }
 
+  const borderColor = getThemeValue('border-color', '#FFD700');
+
   return (
     <>
       <InteractableView
@@ -218,6 +238,41 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
       />
       {taskOverlay}
       {dialogueOverlay}
+      
+      {/* Image Modal */}
+      <ImageViewer
+        isOpen={imageModal !== null}
+        onClose={() => setImageModal(null)}
+        imageUrl={imageModal?.url || ''}
+        title={imageModal?.title}
+        borderColor={borderColor}
+      />
+      
+      {/* Note Modal */}
+      <NoteViewer
+        isOpen={noteModal !== null}
+        onClose={() => setNoteModal(null)}
+        content={noteModal?.content || ''}
+        title={noteModal?.title}
+        borderColor={borderColor}
+      />
+      
+      {/* Sign Modal */}
+      <SignViewer
+        isOpen={signModal !== null}
+        onClose={() => setSignModal(null)}
+        content={signModal?.content || ''}
+        title={signModal?.title}
+        borderColor={borderColor}
+      />
+      
+      {/* Chat Modal */}
+      <ChatWindow
+        isOpen={chatModal !== null}
+        onClose={() => setChatModal(null)}
+        title={chatModal?.title}
+        borderColor={borderColor}
+      />
     </>
   );
 }
