@@ -3,7 +3,7 @@
  * Verktygstips som visas vid hovring över en modulnod
  */
 
-import type { ModuleProgressionState } from '@types/core/moduleProgression.types.js';
+import type { ModuleProgressionState } from '../../../../core/state/types.js';
 import { PixelIcon } from '../PixelIcon.js';
 
 export interface ModuleTooltipProps {

@@ -1,277 +1,224 @@
 /**
- * Modulmotor-komponent
- * Huvudorchestrator för modulens livscykel
- * Använder moduleOrchestrator och alla stores
+ * Module Engine
+ * Main orchestrator for module lifecycle
  */
 
-import { useEffect } from 'react';
-import { useModuleLoading } from '@ui/shared/hooks/index.js';
-import { useModuleActions } from '@stores/moduleStore/index.js';
-import { getWelcomeDialogueId } from '@constants/module.constants.js';
-import { getThemeValue, applyTheme, resetTheme } from '@utils/theme.js';
-import { DEFAULT_THEME } from '@constants/module.constants.js';
-import { Button } from '@ui/shared/components/Button.js';
-import { Card } from '@ui/shared/components/Card.js';
-import { Badge } from '@ui/shared/components/Badge.js';
-import { LoadingState } from '@ui/shared/components/LoadingState.js';
-import { ErrorDisplay } from '@ui/shared/components/ErrorDisplay.js';
-import { Overlay } from '@ui/shared/components/Overlay.js';
-import { CenteredLayout } from '@ui/shared/components/layouts/index.js';
-import {
-  WelcomeView,
-  TaskView,
-  DialogueInteractableView,
-  InteractableView,
-} from './views/index.js';
-import { TaskError, DialogueError, ErrorCode } from '@types/core/error.types.js';
-import { handleError } from '@services/errorService.js';
-import { useModuleViewState, useModuleCallbacks } from './hooks/index.js';
+import { useEffect, useState } from 'react';
+import { loadModuleData } from '../../../core/module/loader.js';
+import { actions } from '../../../core/state/actions.js';
+import { useDialogueActions, useInteractableActions } from '../../hooks/index.js';
+import { LoadingState } from '../../shared/components/LoadingState.js';
+import { ErrorDisplay } from '../../shared/components/ErrorDisplay.js';
+import { Overlay } from '../../shared/components/Overlay.js';
+import { InteractableView } from './views/InteractableView.js';
+import { DialogueView } from './views/DialogueView.js';
+import { TaskView } from './views/TaskView.js';
+import { WelcomeView } from './views/WelcomeView.js';
+import type { ModuleData } from '../../../core/types/module.js';
+import { ErrorCode, ModuleError } from '../../../core/types/errors.js';
 
 export interface ModuleEngineProps {
-  /**
-   * Modul-ID att ladda
-   */
   moduleId: string;
-
-  /**
-   * Lokalisering
-   */
   locale?: string;
-
-  /**
-   * Callback när modulen ska avslutas
-   */
   onExit?: () => void;
 }
 
+type View = 'welcome' | 'interactable' | 'dialogue' | 'task';
+
 /**
- * Modulmotor-komponent
+ * Module Engine component
  */
-export function ModuleEngine({
-  moduleId,
-  locale,
-  onExit,
-}: ModuleEngineProps) {
-  // Vy- och valstatus
-  const {
-    currentView,
-    selectedTaskId,
-    selectedDialogueId,
-    setSelectedDialogueId,
-    chatOpen,
-    setChatOpen,
-    imageViewer,
-    imageAnalysisOpen,
-    setImageAnalysisOpen,
-    navigateToTask,
-    navigateToDialogue,
-    navigateToInteractable,
-    openImageViewer,
-    closeImageViewer,
-    openTaskSubmissionFromDialogue,
-  } = useModuleViewState();
+export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEngineProps) {
+  const [moduleData, setModuleData] = useState<ModuleData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [currentView, setCurrentView] = useState<View>('welcome');
+  const [selectedDialogueId, setSelectedDialogueId] = useState<string | null>(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
-  const { hasSeenGreeting, markGreetingSeen } = useModuleActions();
-
-  // Modulladdningshook
-  const { state, send, currentModule, isLoading, isError, error } = useModuleLoading({
-    moduleId,
-    locale: locale,
-    onError: (err) => {
-      handleError(err, { context: 'modulladdning' });
-    },
-  });
-
-  // Modulinteraktions-callbacks
-  const { handleTaskComplete, handleInteractableClick } = useModuleCallbacks({
-    moduleId,
-    locale,
-    currentModule,
-    selectedTaskId,
-    onNavigateToTask: navigateToTask,
-    onNavigateToDialogue: navigateToDialogue,
-    onNavigateToInteractable: navigateToInteractable,
-    onChatOpen: () => setChatOpen(true),
-    onImageOpen: openImageViewer,
-    onImageAnalysisOpen: () => setImageAnalysisOpen(true),
-  });
-
-  // Visa välkomstdialog om inte sedd
+  // Load module
   useEffect(() => {
-    if (state.value === 'running' && currentModule && currentView === 'welcome') {
-      const welcomeDialogueId = getWelcomeDialogueId(moduleId);
-      if (!hasSeenGreeting(moduleId, welcomeDialogueId)) {
-        markGreetingSeen(moduleId, welcomeDialogueId);
+    const loadModule = async () => {
+      try {
+        setLoading(true);
+        const data = await loadModuleData(moduleId);
+        if (!data) {
+          throw new ModuleError(ErrorCode.MODULE_NOT_FOUND, moduleId, `Module ${moduleId} not found`);
+        }
+        setModuleData(data);
+        actions.setCurrentModule(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to load module'));
+        setLoading(false);
+      }
+    };
+
+    loadModule();
+  }, [moduleId]);
+
+  // Check welcome dialogue
+  useEffect(() => {
+    if (moduleData && currentView === 'welcome') {
+      const welcomeDialogueId = `${moduleId}_welcome`;
+      if (!actions.hasSeenGreeting(moduleId, welcomeDialogueId)) {
+        actions.markGreetingSeen(moduleId, welcomeDialogueId);
       }
     }
-  }, [state.value, currentModule, currentView, moduleId, hasSeenGreeting, markGreetingSeen]);
+  }, [moduleData, currentView, moduleId]);
 
-  // Tillämpa modultema
-  useEffect(() => {
-    if (currentModule?.config.theme) {
-      applyTheme(currentModule.config.theme);
-    }
-    return () => {
-      resetTheme();
-    };
-  }, [currentModule]);
+  // Dialogue actions
+  const { handleDialogueActions } = useDialogueActions({
+    moduleId,
+    dialogueId: selectedDialogueId || '',
+    locale,
+    onTaskSubmissionOpen: (taskId) => {
+      setSelectedTaskId(taskId);
+      setCurrentView('task');
+    },
+    onError: setError,
+  });
 
-  // Rendera laddningsstatus
-  if (isLoading) {
-    return <LoadingState message="Laddar modul..." />;
+  // Interactable actions
+  const { handleInteractableAction } = useInteractableActions({
+    moduleId,
+    locale,
+    onDialogueSelected: (dialogueId) => {
+      setSelectedDialogueId(dialogueId);
+      setCurrentView('dialogue');
+    },
+    onComponentOpen: (component, props) => {
+      // TODO: Handle component opening
+      console.log('Open component:', component, props);
+    },
+    onImageOpen: (url, title) => {
+      // TODO: Handle image opening
+      console.log('Open image:', url, title);
+    },
+    onNoteOpen: (content, title) => {
+      // TODO: Handle note opening
+      console.log('Open note:', content, title);
+    },
+    onError: setError,
+  });
+
+  if (loading) {
+    return <LoadingState message="Loading module..." />;
   }
 
-  // Rendera felstatus
-  if (isError) {
+  if (error) {
     return (
       <ErrorDisplay
-        error={error || new Error('Kunde inte ladda modul')}
-        onAction={() => send({ type: 'EXIT_MODULE' })}
+        error={error}
+        onAction={onExit}
       />
     );
   }
 
-  // Rendera modulinnehåll
-  if (state.value === 'running' && currentModule) {
-    const welcomeDialogueId = getWelcomeDialogueId(moduleId);
-    const welcomeDialogue = currentModule.dialogues[welcomeDialogueId];
+  if (!moduleData) {
+    return null;
+  }
 
-    // Visa välkomstdialog (helsida, inte överlägg)
-    if (currentView === 'welcome' && welcomeDialogue) {
-      return (
-        <WelcomeView
-          moduleId={moduleId}
-          moduleData={currentModule}
-          onComplete={navigateToInteractable}
-        />
+  const welcomeDialogueId = `${moduleId}_welcome`;
+  const welcomeDialogue = moduleData.dialogues[welcomeDialogueId];
+
+  // Welcome view
+  if (currentView === 'welcome' && welcomeDialogue) {
+    return (
+      <WelcomeView
+        moduleId={moduleId}
+        moduleData={moduleData}
+        onComplete={() => setCurrentView('interactable')}
+      />
+    );
+  }
+
+  // Task overlay
+  let taskOverlay = null;
+  if (currentView === 'task' && selectedTaskId) {
+    const task = moduleData.tasks.find(t => t.id === selectedTaskId);
+    if (task) {
+      taskOverlay = (
+        <Overlay
+          isOpen={true}
+          onClose={() => {
+            setSelectedTaskId(null);
+            setCurrentView('interactable');
+          }}
+          closeOnEscape={true}
+          closeOnOverlayClick={true}
+        >
+          <TaskView
+            task={task}
+            moduleId={moduleId}
+            onComplete={() => {
+              actions.completeTask(moduleId, task);
+              setSelectedTaskId(null);
+              setCurrentView('interactable');
+            }}
+            onClose={() => {
+              setSelectedTaskId(null);
+              setCurrentView('interactable');
+            }}
+          />
+        </Overlay>
       );
     }
+  }
 
-    // Förbered uppgiftsöverlägg
-    let taskOverlay = null;
-    if (currentView === 'task' && selectedTaskId) {
-      const task = currentModule.tasks.find((t: { id: string }) => t.id === selectedTaskId);
-      if (!task) {
-        const taskError = new TaskError(
-          ErrorCode.TASK_NOT_FOUND,
-          selectedTaskId,
-          `Uppgift hittades inte: ${selectedTaskId}`,
-          moduleId
-        );
-        handleError(taskError);
-        navigateToInteractable();
-      } else {
-        taskOverlay = (
-          <Overlay
-            isOpen={true}
-            onClose={navigateToInteractable}
-            closeOnEscape={true}
-            closeOnOverlayClick={true}
-            blurIntensity="md"
-          >
-            <TaskView
-              task={task}
-              moduleId={moduleId}
-              onComplete={handleTaskComplete}
-              onClose={navigateToInteractable}
-            />
-          </Overlay>
-        );
-      }
-    }
-
-    let dialogueOverlay = null;
-    if (currentView === 'dialogue' && selectedDialogueId) {
-      const dialogue = currentModule.dialogues[selectedDialogueId];
-      if (!dialogue) {
-        const dialogueError = new DialogueError(
-          ErrorCode.DIALOGUE_NOT_FOUND,
-          selectedDialogueId,
-          `Dialog hittades inte: ${selectedDialogueId}. Tillgängliga dialoger: ${Object.keys(currentModule.dialogues).join(', ')}`,
-          moduleId
-        );
-        handleError(dialogueError);
-        setSelectedDialogueId(null);
-        navigateToInteractable();
-      } else {
-        dialogueOverlay = (
-          <Overlay
-            isOpen={true}
+  // Dialogue overlay
+  let dialogueOverlay = null;
+  if (currentView === 'dialogue' && selectedDialogueId) {
+    const dialogue = moduleData.dialogues[selectedDialogueId];
+    if (dialogue) {
+      dialogueOverlay = (
+        <Overlay
+          isOpen={true}
+          onClose={() => {
+            setSelectedDialogueId(null);
+            setCurrentView('interactable');
+          }}
+          closeOnEscape={true}
+          closeOnOverlayClick={true}
+        >
+          <DialogueView
+            dialogue={dialogue}
+            moduleId={moduleId}
+            onChoiceSelected={async (choice) => {
+              if (choice.action) {
+                await handleDialogueActions(choice.action);
+              }
+              setSelectedDialogueId(null);
+              setCurrentView('interactable');
+            }}
             onClose={() => {
               setSelectedDialogueId(null);
-              navigateToInteractable();
+              setCurrentView('interactable');
             }}
-            closeOnEscape={true}
-            closeOnOverlayClick={true}
-            blurIntensity="md"
-          >
-            <DialogueInteractableView
-              dialogueId={selectedDialogueId}
-              moduleId={moduleId}
-              dialogue={dialogue}
-              locale={locale}
-              onComplete={() => {
-                setSelectedDialogueId(null);
-                navigateToInteractable();
-              }}
-              onTaskSubmissionOpen={openTaskSubmissionFromDialogue}
-              onError={handleError}
-            />
-          </Overlay>
-        );
-      }
+          />
+        </Overlay>
+      );
     }
-
-    // Rendera alltid interaktiv vy som bas med överlägg ovanpå
-    return (
-      <>
-        <InteractableView
-          moduleData={currentModule}
-          moduleId={moduleId}
-          locale={locale}
-          onExit={onExit || (() => send({ type: 'EXIT_MODULE' }))}
-          onInteractableClick={handleInteractableClick}
-          chatOpen={chatOpen}
-          onChatClose={() => setChatOpen(false)}
-          imageViewerOpen={imageViewer.open}
-          imageViewerUrl={imageViewer.url}
-          imageViewerTitle={imageViewer.title}
-          onImageViewerClose={closeImageViewer}
-          imageAnalysisOpen={imageAnalysisOpen}
-          onImageAnalysisClose={() => setImageAnalysisOpen(false)}
-        />
-        {taskOverlay}
-        {dialogueOverlay}
-      </>
-    );
   }
 
-  // Rendera slutförd status
-  if (state.value === 'completed') {
-    const borderColor = getThemeValue('border-color', DEFAULT_THEME.BORDER_COLOR);
-    return (
-      <CenteredLayout>
-        <Card padding="lg" dark pixelated className="max-w-md animate-scale-in" borderColor={borderColor}>
-          <div className="text-center space-y-4">
-            <Badge variant="success" size="lg">
-              Modul slutförd!
-            </Badge>
-            <p className="text-gray-300">Grattis! Du har slutfört denna modul.</p>
-            <div className="flex justify-center space-x-2">
-              <Button
-                variant="primary"
-                pixelated
-                onClick={onExit || (() => send({ type: 'EXIT_MODULE' }))}
-                size="md"
-              >
-                Tillbaka till val
-              </Button>
-            </div>
-          </div>
-        </Card>
-      </CenteredLayout>
-    );
-  }
-
-  return null;
+  return (
+    <>
+      <InteractableView
+        moduleData={moduleData}
+        moduleId={moduleId}
+        onInteractableClick={async (interactable) => {
+          const result = await handleInteractableAction(interactable);
+          if (result.type === 'dialogue' && result.dialogueId) {
+            setSelectedDialogueId(result.dialogueId);
+            setCurrentView('dialogue');
+          }
+          // Note: task selection is handled through dialogue actions
+        }}
+        onExit={onExit}
+      />
+      {taskOverlay}
+      {dialogueOverlay}
+    </>
+  );
 }
+

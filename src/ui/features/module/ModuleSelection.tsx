@@ -1,118 +1,105 @@
 /**
- * Modulväljarkomponent
- * Visar tillgängliga moduler och möjliggör val
- * Visar låst/upplåst/slutförd status
+ * Module Selection
+ * Component for selecting a module to play
+ * Shows a worldmap-style view of available modules
  */
 
-import { useModuleStore } from '@stores/moduleStore/index.js';
-import { useModuleDiscovery } from '@ui/shared/hooks/useModuleDiscovery.js';
-import { ModulePath } from '@ui/shared/components/ModulePath.js';
-import { Card } from '@ui/shared/components/Card.js';
-import { LoadingState } from '@ui/shared/components/LoadingState.js';
-import { EmptyState } from '@ui/shared/components/EmptyState.js';
+import { useEffect, useState } from 'react';
+import { discoverModules } from '../../../core/module/registry.js';
+import { loadModuleInstance } from '../../../core/module/loader.js';
+import { generateWorldmap } from '../../../core/services/worldmap.js';
+import type { WorldmapConfig } from '../../../core/types/worldmap.js';
+import { actions } from '../../../core/state/actions.js';
+import { ModulePath } from '../../shared/components/ModulePath.js';
+import { LoadingState } from '../../shared/components/LoadingState.js';
+import { FullScreenLayout } from '../../shared/components/layouts/index.js';
 
 export interface ModuleSelectionProps {
-  /**
-   * Callback när en modul väljs
-   */
   onSelectModule: (moduleId: string) => void;
 }
 
 /**
- * Modulväljarkomponent
+ * Module Selection component
  */
 export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
-  const { moduleIds, loading, worldmap } = useModuleDiscovery();
-  const { getModuleProgression } = useModuleStore();
+  const [worldmap, setWorldmap] = useState<WorldmapConfig | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleSelectModule = (moduleId: string) => {
-    const progression = getModuleProgression(moduleId);
-    if (progression === 'unlocked' || progression === 'completed') {
-      onSelectModule(moduleId);
-    }
-  };
+  useEffect(() => {
+    const loadWorldmap = async () => {
+      try {
+        // Discover modules
+        const moduleIds = await discoverModules();
+        
+        // Load all modules to register them (needed for worldmap generation)
+        for (const moduleId of moduleIds) {
+          await loadModuleInstance(moduleId);
+        }
+        
+        // Initialize module progression: unlock first module if not already set
+        if (moduleIds.length > 0) {
+          const firstModuleId = moduleIds[0];
+          const progression = actions.getModuleProgression(firstModuleId);
+          if (progression === 'locked') {
+            actions.unlockModule(firstModuleId);
+          }
+        }
+        
+        // Generate worldmap configuration
+        const config = await generateWorldmap(moduleIds);
+        setWorldmap(config);
+      } catch (error) {
+        console.error('Error loading worldmap:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadWorldmap();
+  }, []);
 
   if (loading) {
-    return <LoadingState message="Laddar moduler..." />;
-  }
-
-  if (moduleIds.length === 0) {
-    return <EmptyState message="Inga moduler tillgängliga" />;
+    return <LoadingState message="Loading worldmap..." />;
   }
 
   if (!worldmap) {
-    return <LoadingState message="Laddar världskarta..." />;
+    return <LoadingState message="No modules found" />;
   }
 
   return (
-    <div className="min-h-screen relative" style={{ backgroundColor: 'var(--theme-background-color)' }}>
-      {/* Dekorativa gradient-överlägg */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-transparent to-black/20" />
+    <FullScreenLayout>
+      <div className="w-full h-screen flex flex-col" style={{ minHeight: '100vh' }}>
+        {/* Titlebar */}
         <div 
-          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full blur-3xl animate-pulse"
+          className="w-full px-6 py-4 border-b-2 flex items-center justify-between flex-shrink-0"
           style={{
-            background: 'radial-gradient(circle, rgba(255, 215, 0, 0.08) 0%, transparent 70%)',
+            borderColor: '#FFD700',
+            background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
           }}
-        />
-        <div 
-          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full blur-3xl animate-pulse"
-          style={{
-            background: 'radial-gradient(circle, rgba(255, 140, 0, 0.08) 0%, transparent 70%)',
-            animationDelay: '1s',
-          }}
-        />
-        <div 
-          className="absolute top-1/2 left-1/2 w-[400px] h-[400px] rounded-full blur-3xl"
-          style={{
-            background: 'radial-gradient(circle, rgba(135, 206, 235, 0.05) 0%, transparent 70%)',
-            transform: 'translate(-50%, -50%)',
-          }}
-        />
-      </div>
-
-      <div className="container mx-auto px-4 py-6 relative z-10">
-        <div className="text-center mb-6">
-          <h1 className="text-4xl font-bold mb-2 pixelated text-yellow-300 animate-fade-in">
-            Världskarta
-          </h1>
-          <p className="text-base pixelated text-white mt-1 animate-fade-in-delay">
-            Välj ditt nästa äventyr
-          </p>
-        </div>
-
-        {/* Världskarta */}
-        <div className="max-w-6xl mx-auto">
-          <Card 
-            padding="md" 
-            dark 
-            pixelated
-            className="min-h-[500px] relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, rgba(23, 23, 43, 0.98) 0%, rgba(15, 15, 35, 0.98) 100%)',
+        >
+          <h1 
+            className="text-2xl font-bold pixelated"
+            style={{ 
+              color: '#FFD700',
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(255, 215, 0, 0.5)',
             }}
           >
-            {/* Subtilt rutnätsmönster */}
-            <div 
-              className="absolute inset-0 opacity-10"
-              style={{
-                backgroundImage: `
-                  linear-gradient(var(--theme-border-color) 1px, transparent 1px),
-                  linear-gradient(90deg, var(--theme-border-color) 1px, transparent 1px)
-                `,
-                backgroundSize: '40px 40px',
-              }}
-            />
-            
-            <div className="relative z-10">
-              <ModulePath
-                worldmap={worldmap}
-                onSelectModule={handleSelectModule}
-              />
-            </div>
-          </Card>
+            Världskarta
+          </h1>
+          <div className="text-sm text-gray-400 pixelated">
+            Välj en modul att utforska
+          </div>
+        </div>
+
+        {/* Worldmap - takes up remaining space */}
+        <div className="flex-1 w-full p-4 overflow-hidden">
+          <div className="w-full h-full" style={{ position: 'relative' }}>
+            <ModulePath worldmap={worldmap} onSelectModule={onSelectModule} />
+          </div>
         </div>
       </div>
-    </div>
+    </FullScreenLayout>
   );
 }
+

@@ -1,51 +1,54 @@
 /**
  * useDialogueInteraction Hook
- * Handles keyboard and click interactions for dialogue progression
+ * Handles keyboard and click interactions for dialogue boxes
  */
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 
 export interface UseDialogueInteractionOptions {
   /**
-   * Whether text is currently being typed
+   * Whether typewriter is currently typing
    */
   isTyping: boolean;
 
   /**
-   * Whether we're on the last line
+   * Whether this is the last line of dialogue
    */
   isLastLine: boolean;
 
   /**
-   * Whether choices are currently visible
+   * Whether dialogue has choices available
    */
   hasChoices: boolean;
 
   /**
-   * Function to skip the typewriter effect
+   * Function to skip typewriter animation
    */
   skipTypewriter: () => void;
 
   /**
-   * Function to continue to the next line
+   * Callback when continuing to next line
    */
   onContinue: () => void;
 }
 
 export interface UseDialogueInteractionReturn {
   /**
-   * Ref to attach to the dialogue container
+   * Ref to attach to dialogue container
    */
-  dialogueRef: React.RefObject<HTMLDivElement | null>;
+  dialogueRef: React.RefObject<HTMLDivElement>;
 
   /**
-   * Click handler for the dialogue box
+   * Click handler for dialogue container
    */
-  handleClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  handleClick: () => void;
 }
 
 /**
- * Hook for managing dialogue keyboard and click interactions
+ * Hook for dialogue interaction handling
+ * 
+ * @param options - Interaction options
+ * @returns Dialogue ref and click handler
  */
 export function useDialogueInteraction({
   isTyping,
@@ -56,71 +59,56 @@ export function useDialogueInteraction({
 }: UseDialogueInteractionOptions): UseDialogueInteractionReturn {
   const dialogueRef = useRef<HTMLDivElement>(null);
 
-  // Auto-focus dialogue box
-  useEffect(() => {
-    if (dialogueRef.current) {
-      dialogueRef.current.focus();
+  /**
+   * Handle click on dialogue box
+   */
+  const handleClick = useCallback(() => {
+    // If typing, skip to end
+    if (isTyping) {
+      skipTypewriter();
+      return;
     }
-  }, []);
 
-  // Check if choices are showing
-  const isShowingChoices = isLastLine && !isTyping && hasChoices;
+    // If last line and has choices, don't continue (let user choose)
+    if (isLastLine && hasChoices) {
+      return;
+    }
 
-  // Global keyboard event listener
+    // Otherwise, continue to next line
+    onContinue();
+  }, [isTyping, isLastLine, hasChoices, skipTypewriter, onContinue]);
+
+  /**
+   * Handle keyboard events
+   */
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Skip modifier keys to avoid accidental triggers
-      if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ignore if user is typing in an input
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+      ) {
         return;
       }
 
-      // Don't handle if choices are showing
-      if (isShowingChoices) {
-        return;
+      // Space or Enter to interact
+      if (event.key === ' ' || event.key === 'Enter') {
+        event.preventDefault();
+        handleClick();
       }
 
-      // If currently typing, skip the typewriter
-      if (isTyping) {
-        e.preventDefault();
+      // Escape to skip typewriter
+      if (event.key === 'Escape' && isTyping) {
+        event.preventDefault();
         skipTypewriter();
-        return;
       }
-
-      // If not typing, advance to next line
-      e.preventDefault();
-      onContinue();
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onContinue, isTyping, isShowingChoices, skipTypewriter]);
-
-  // Click handler
-  const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      // Don't handle clicks on choice buttons
-      if ((e.target as HTMLElement).closest('button')) {
-        return;
-      }
-
-      // Don't allow clicking to advance when choices are shown
-      if (isShowingChoices) {
-        return;
-      }
-
-      // If currently typing, skip the typewriter
-      if (isTyping) {
-        skipTypewriter();
-        return;
-      }
-
-      // If not typing, advance to next line
-      onContinue();
-    },
-    [isTyping, isShowingChoices, skipTypewriter, onContinue]
-  );
+  }, [handleClick, isTyping, skipTypewriter]);
 
   return {
     dialogueRef,

@@ -1,111 +1,57 @@
 /**
  * Error Service
- * Centralized error handling and logging
+ * Centralized error handling and user-friendly error messages
  */
 
-import type { EngineError, ModuleError, TaskError, DialogueError } from '../types/core/error.types.js';
-import { isEngineError, isModuleError, isTaskError, isDialogueError } from '../types/core/error.types.js';
-
 /**
- * Error handler callback type
- */
-export type ErrorHandler = (error: Error) => void;
-
-/**
- * Global error handlers
- */
-const errorHandlers: ErrorHandler[] = [];
-
-/**
- * Register an error handler
- * 
- * @param handler - Error handler function
- * @returns Unregister function
- */
-export function registerErrorHandler(handler: ErrorHandler): () => void {
-  errorHandlers.push(handler);
-  return () => {
-    const index = errorHandlers.indexOf(handler);
-    if (index > -1) {
-      errorHandlers.splice(index, 1);
-    }
-  };
-}
-
-/**
- * Handle an error
- * Logs the error and calls all registered handlers
- * 
- * @param error - Error to handle
- * @param context - Additional context
+ * Handle an error (log and optionally report)
+ * @param error - Error object or message
+ * @param context - Additional context information
  */
 export function handleError(
-  error: unknown,
+  error: Error | string,
   context?: Record<string, unknown>
 ): void {
-  const errorObj = error instanceof Error ? error : new Error(String(error));
-  
-  // Add context to error if it's an EngineError
-  if (isEngineError(errorObj) && context) {
-    errorObj.context = { ...errorObj.context, ...context };
-  }
+  const errorMessage = typeof error === 'string' ? error : error.message;
+  const errorObj = typeof error === 'string' ? new Error(error) : error;
 
-  // Log error
-  if (isModuleError(errorObj)) {
-    console.error(`[ModuleError:${errorObj.moduleId}] ${errorObj.message}`, errorObj.context);
-  } else if (isTaskError(errorObj)) {
-    console.error(`[TaskError:${errorObj.taskId}] ${errorObj.message}`, errorObj.context);
-  } else if (isDialogueError(errorObj)) {
-    console.error(`[DialogueError:${errorObj.dialogueId}] ${errorObj.message}`, errorObj.context);
-  } else if (isEngineError(errorObj)) {
-    console.error(`[EngineError:${errorObj.code}] ${errorObj.message}`, errorObj.context);
-  } else {
-    console.error('[Error]', errorObj);
-  }
-
-  // Call all registered handlers
-  for (const handler of errorHandlers) {
-    try {
-      handler(errorObj);
-    } catch (handlerError) {
-      // Don't let handler errors break the error handling chain
-      console.error('Error in error handler:', handlerError);
+  // Log error in development
+  if (import.meta.env.DEV) {
+    console.error('Error:', errorMessage, context || '');
+    if (errorObj.stack) {
+      console.error('Stack:', errorObj.stack);
     }
   }
+
+  // In production, you might want to send to error tracking service
+  // e.g., Sentry, LogRocket, etc.
 }
 
 /**
- * Create a user-friendly error message
- * 
- * @param error - Error to format
+ * Get user-friendly error message
+ * @param error - Error object
  * @returns User-friendly message
  */
-export function getUserFriendlyMessage(error: unknown): string {
-  if (isEngineError(error)) {
-    switch (error.code) {
-      case 'MODULE_NOT_FOUND':
-        return 'Module not found. Please try selecting a different module.';
-      case 'MODULE_LOAD_FAILED':
-        return 'Failed to load module. Please try again later.';
-      case 'MODULE_INVALID':
-        return 'Module configuration is invalid.';
-      case 'TASK_NOT_FOUND':
-        return 'Task not found.';
-      case 'TASK_EVALUATION_ERROR':
-        return 'Error evaluating task. Please try again.';
-      case 'DIALOGUE_NOT_FOUND':
-        return 'Dialogue not found.';
-      case 'STATE_ACCESS_ERROR':
-        return 'Error accessing module state.';
-      default:
-        return error.message || 'An error occurred.';
-    }
+export function getUserFriendlyMessage(error: Error): string {
+  // Map common error types to user-friendly messages
+  if (error.message.includes('Network') || error.message.includes('fetch')) {
+    return 'Nätverksfel. Kontrollera din internetanslutning.';
   }
-  
-  if (error instanceof Error) {
-    return error.message;
+
+  if (error.message.includes('404') || error.message.includes('Not Found')) {
+    return 'Resursen kunde inte hittas.';
   }
-  
-  return 'An unexpected error occurred.';
+
+  if (error.message.includes('500') || error.message.includes('Internal Server')) {
+    return 'Ett serverfel uppstod. Försök igen senare.';
+  }
+
+  if (error.message.includes('timeout')) {
+    return 'Begäran tog för lång tid. Försök igen.';
+  }
+
+  // Return the error message if it's already user-friendly
+  // Otherwise return a generic message
+  return error.message || 'Ett oväntat fel uppstod.';
 }
 

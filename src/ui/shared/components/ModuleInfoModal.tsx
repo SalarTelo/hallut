@@ -9,9 +9,8 @@ import { Modal } from './Modal.js';
 import { Button } from './Button.js';
 import { PixelIcon } from './PixelIcon.js';
 import { getThemeValue } from '@utils/theme.js';
-import { getModuleConfig } from '@engine/moduleRegistry.js';
-import { DEFAULT_LOCALE } from '@constants/module.constants.js';
-import type { ModuleConfig } from '@types/module/moduleConfig.types.js';
+import { getModule } from '../../../core/module/registry.js';
+import type { ModuleDefinition } from '../../../core/types/module.js';
 
 export interface ModuleInfoModalProps {
   /**
@@ -74,30 +73,23 @@ export function ModuleInfoModal({
   onEnterModule,
   borderColor,
 }: ModuleInfoModalProps) {
-  const [moduleConfig, setModuleConfig] = useState<ModuleConfig | null>(null);
+  const [moduleDefinition, setModuleDefinition] = useState<ModuleDefinition | null>(null);
   const [loading, setLoading] = useState(false);
   const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
 
   useEffect(() => {
     if (isOpen) {
       setLoading(true);
-      getModuleConfig(moduleId, DEFAULT_LOCALE)
-        .then((config: ModuleConfig | null) => {
-          setModuleConfig(config);
-        })
-        .catch(() => {
-          setModuleConfig(null);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      const module = getModule(moduleId);
+      setModuleDefinition(module);
+      setLoading(false);
     }
   }, [isOpen, moduleId]);
 
-  const displayName = moduleConfig?.manifest.name || fallbackName;
-  const displayDescription = moduleConfig?.manifest.summary || fallbackDescription || '';
-  const taskCount = moduleConfig?.tasks.length || 0;
-  const interactableCount = moduleConfig?.interactables.length || 0;
+  const displayName = moduleDefinition?.config.manifest.name || fallbackName;
+  const displayDescription = moduleDefinition?.config.manifest.summary || fallbackDescription || '';
+  const taskCount = moduleDefinition?.content.tasks.length || 0;
+  const interactableCount = moduleDefinition?.content.interactables.length || 0;
 
   const getStatusInfo = () => {
     if (isCompleted) {
@@ -195,7 +187,7 @@ export function ModuleInfoModal({
           )}
 
           {/* Statistik */}
-          {!loading && moduleConfig && (
+          {!loading && moduleDefinition && (
             <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-700/50">
               <div className="bg-gray-900/50 rounded px-3 py-2 border border-gray-700/30">
                 <div className="text-[10px] text-gray-400 mb-0.5 pixelated uppercase tracking-wide">

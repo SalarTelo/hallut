@@ -3,8 +3,8 @@
  * Individuell modulnod i världskartan
  */
 
-import type { WorldmapNode } from '@types/worldmap.types.js';
-import type { ModuleProgressionState } from '@types/core/moduleProgression.types.js';
+import type { WorldmapNode } from '../../../../core/types/worldmap.js';
+import type { ModuleProgressionState } from '../../../../core/state/types.js';
 import { ModuleTooltip } from './ModuleTooltip.js';
 import { PixelIcon } from '../PixelIcon.js';
 import { formatModuleName } from './utils.js';

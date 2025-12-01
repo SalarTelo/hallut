@@ -5,8 +5,8 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '@types/worldmap.types.js';
-import { useModuleStore } from '@stores/moduleStore/index.js';
+import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '../../../core/types/worldmap.js';
+import { actions } from '../../../core/state/actions.js';
 import { ModuleInfoModal } from './ModuleInfoModal.js';
 import { getThemeValue } from '@utils/theme.js';
 import { ConnectionLines, ModuleNode } from './modulePath/index.js';
@@ -38,8 +38,11 @@ export function ModulePath({
 }: ModulePathProps) {
   const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
-  const { getModuleProgression } = useModuleStore();
   const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
+  
+  const getModuleProgression = useCallback((moduleId: string) => {
+    return actions.getModuleProgression(moduleId);
+  }, []);
 
   const handleModuleClick = useCallback(
     (moduleId: string) => {
@@ -72,7 +75,64 @@ export function ModulePath({
     : null;
 
   return (
-    <div className="relative w-full h-full min-h-[500px]">
+    <div 
+      className="relative w-full h-full rounded-lg overflow-hidden border-2" 
+      style={{ 
+        height: '100%',
+        borderColor: borderColorValue,
+        background: `
+          linear-gradient(to bottom, 
+            rgba(139, 115, 85, 0.15) 0%, 
+            rgba(101, 67, 33, 0.2) 50%, 
+            rgba(139, 115, 85, 0.15) 100%
+          ),
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(139, 115, 85, 0.1) 2px,
+            rgba(139, 115, 85, 0.1) 4px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(139, 115, 85, 0.1) 2px,
+            rgba(139, 115, 85, 0.1) 4px
+          ),
+          radial-gradient(
+            circle at 20% 30%,
+            rgba(255, 215, 0, 0.05) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 70%,
+            rgba(255, 215, 0, 0.05) 0%,
+            transparent 50%
+          ),
+          linear-gradient(135deg, #2a1f1a 0%, #1a1510 100%)
+        `,
+        boxShadow: `inset 0 0 100px rgba(0, 0, 0, 0.5), 0 0 20px ${borderColorValue}30`,
+      }}
+    >
+      {/* Decorative corner elements */}
+      <div 
+        className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2"
+        style={{ borderColor: borderColorValue, opacity: 0.3 }}
+      />
+      <div 
+        className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2"
+        style={{ borderColor: borderColorValue, opacity: 0.3 }}
+      />
+      <div 
+        className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2"
+        style={{ borderColor: borderColorValue, opacity: 0.3 }}
+      />
+      <div 
+        className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2"
+        style={{ borderColor: borderColorValue, opacity: 0.3 }}
+      />
+      
       {/* SVG för kopplingar */}
       <ConnectionLines
         nodes={worldmap.nodes}

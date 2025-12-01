@@ -1,13 +1,11 @@
 /**
- * Välkomstvy-komponent
- * Visar välkomstdialogen för en modul
+ * Welcome View
+ * Displays welcome dialogue when entering a module
  */
 
-import { memo } from 'react';
-import { DialogueView } from '../../dialogue/DialogueView.js';
-import { getWelcomeDialogueId } from '@constants/module.constants.js';
-import { ContainerLayout } from '@ui/shared/components/layouts/index.js';
-import type { ModuleData } from '@types/module/moduleConfig.types.js';
+import type { ModuleData } from '../../../../core/types/module.js';
+import { DialogueView } from './DialogueView.js';
+import { CenteredLayout } from '../../../shared/components/layouts/index.js';
 
 export interface WelcomeViewProps {
   moduleId: string;
@@ -16,10 +14,10 @@ export interface WelcomeViewProps {
 }
 
 /**
- * Välkomstvy-komponent
+ * Welcome View component
  */
-export const WelcomeView = memo(function WelcomeView({ moduleId, moduleData, onComplete }: WelcomeViewProps) {
-  const welcomeDialogueId = getWelcomeDialogueId(moduleId);
+export function WelcomeView({ moduleId, moduleData, onComplete }: WelcomeViewProps) {
+  const welcomeDialogueId = `${moduleId}_welcome`;
   const welcomeDialogue = moduleData.dialogues[welcomeDialogueId];
 
   if (!welcomeDialogue) {
@@ -27,13 +25,16 @@ export const WelcomeView = memo(function WelcomeView({ moduleId, moduleData, onC
   }
 
   return (
-    <ContainerLayout>
+    <CenteredLayout>
       <DialogueView
-        dialogueId={welcomeDialogueId}
+        dialogue={welcomeDialogue}
         moduleId={moduleId}
-        config={welcomeDialogue}
-        onComplete={onComplete}
+        onChoiceSelected={async () => {
+          onComplete();
+        }}
+        onClose={onComplete}
       />
-    </ContainerLayout>
+    </CenteredLayout>
   );
-});
+}
+

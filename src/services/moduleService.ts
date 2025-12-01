@@ -2,15 +2,25 @@
  * Module Service
  * Business logic for module progression, unlocking, and completion
  * Does NOT modify state - returns results for action creators to use
- * Depends on: engine (moduleRegistry), stores (read-only via getState)
+ * Depends on: core/module (moduleRegistry), core/state (read-only via actions)
  */
 
-import { getModuleConfig, getRegisteredModuleIds } from '../engine/moduleRegistry.js';
-import { moduleActions } from './actions/moduleActions.js';
-import type { ModuleProgressionState } from '../types/core/moduleProgression.types.js';
-import { handleError } from './errorService.js';
-import { ModuleError, ErrorCode } from '../types/core/error.types.js';
-import { INITIALLY_UNLOCKED_MODULES, USE_MANUAL_UNLOCK } from '../constants/worldmap.config.js';
+import { getModule, getRegisteredModuleIds } from '../core/module/registry.js';
+import { actions } from '../core/state/actions.js';
+import type { ModuleProgressionState } from '../core/state/types.js';
+import type { ModuleConfig } from '../core/types/module.js';
+
+// Configuration constants (can be moved to a config file if needed)
+const INITIALLY_UNLOCKED_MODULES: string[] = [];
+const USE_MANUAL_UNLOCK = false;
+
+/**
+ * Get module config helper
+ */
+function getModuleConfig(moduleId: string): ModuleConfig | null {
+  const module = getModule(moduleId);
+  return module?.config || null;
+}
 
 /**
  * Check if a module's dependencies are met
@@ -19,7 +29,7 @@ import { INITIALLY_UNLOCKED_MODULES, USE_MANUAL_UNLOCK } from '../constants/worl
  * @returns True if all dependencies are completed
  */
 export async function checkModuleDependencies(moduleId: string): Promise<boolean> {
-  const config = await getModuleConfig(moduleId);
+  const config = getModuleConfig(moduleId);
   if (!config) {
     return false;
   }
@@ -30,7 +40,7 @@ export async function checkModuleDependencies(moduleId: string): Promise<boolean
   }
 
   // Check if all required modules are completed
-  return config.requires.every((requiredModuleId) => moduleActions.isModuleCompleted(requiredModuleId));
+  return config.requires.every((requiredModuleId: string) => actions.isModuleCompleted(requiredModuleId));
 }
 
 /**
@@ -44,7 +54,7 @@ export async function checkModuleUnlockStatus(moduleId: string): Promise<{
   shouldUnlock: boolean;
   currentState: ModuleProgressionState;
 }> {
-  const currentState = moduleActions.getModuleProgression(moduleId);
+  const currentState = actions.getModuleProgression(moduleId);
   
   // Already unlocked or completed
   if (currentState === 'unlocked' || currentState === 'completed') {
@@ -63,18 +73,18 @@ export async function checkModuleUnlockStatus(moduleId: string): Promise<{
  * @returns True if all tasks are completed
  */
 export async function isModuleFullyCompleted(moduleId: string): Promise<boolean> {
-  const progress = moduleActions.getProgress(moduleId);
+  const progress = actions.getProgress(moduleId);
   if (!progress) {
     return false;
   }
 
-  const config = await getModuleConfig(moduleId);
+  const config = getModuleConfig(moduleId);
   if (!config) {
     return false;
   }
 
   const completedTasks = progress.state.completedTasks || [];
-  const totalTasks = config.tasks.length;
+  const totalTasks = config.taskOrder.length;
 
   return completedTasks.length === totalTasks && totalTasks > 0;
 }
@@ -110,13 +120,8 @@ export async function checkModuleCompletionStatus(moduleId: string): Promise<{
 
     return { isCompleted: true, modulesToUnlock };
   } catch (error) {
-    const moduleError = new ModuleError(
-      ErrorCode.MODULE_INVALID,
-      moduleId,
-      `Error checking module completion: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      { originalError: error }
-    );
-    handleError(moduleError);
+    // Log error but don't throw - return safe default
+    console.error('Error checking module completion:', error);
     return { isCompleted: false, modulesToUnlock: [] };
   }
 }
@@ -128,7 +133,7 @@ export async function checkModuleCompletionStatus(moduleId: string): Promise<{
  * @returns Current progression state
  */
 export function getModuleProgressionState(moduleId: string): ModuleProgressionState {
-  return moduleActions.getModuleProgression(moduleId);
+  return actions.getModuleProgression(moduleId);
 }
 
 /**
@@ -148,7 +153,7 @@ export async function getModuleProgressionInitActions(moduleIds: string[]): Prom
 
   for (let i = 0; i < ids.length; i++) {
     const moduleId = ids[i];
-    const currentState = moduleActions.getModuleProgression(moduleId);
+    const currentState = actions.getModuleProgression(moduleId);
     
     // Preserve completed modules
     if (currentState === 'completed') {
@@ -192,10 +197,10 @@ export async function initializeModuleProgression(moduleIds?: string[]): Promise
   const { toUnlock, toLock } = await getModuleProgressionInitActions(ids);
   
   for (const moduleId of toUnlock) {
-    moduleActions.unlockModuleDirect(moduleId);
+    actions.unlockModule(moduleId);
   }
   
   for (const moduleId of toLock) {
-    moduleActions.setModuleProgression(moduleId, 'locked');
+    actions.setModuleProgression(moduleId, 'locked');
   }
 }
