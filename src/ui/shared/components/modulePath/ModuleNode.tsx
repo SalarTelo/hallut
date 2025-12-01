@@ -5,6 +5,7 @@
 
 import type { WorldmapNode } from '../../../../core/types/worldmap.js';
 import type { ModuleProgressionState } from '../../../../core/state/types.js';
+import { useRef } from 'react';
 import { ModuleTooltip } from './ModuleTooltip.js';
 import { PixelIcon } from '../PixelIcon.js';
 import { formatModuleName } from './utils.js';
@@ -58,6 +59,7 @@ export function ModuleNode({
   onMouseEnter,
   onMouseLeave,
 }: ModuleNodeProps) {
+  const nodeRef = useRef<HTMLDivElement>(null);
   const isLocked = progression === 'locked';
   const isCompleted = progression === 'completed';
   const iconShape = node.icon?.shape || 'circle';
@@ -92,6 +94,7 @@ export function ModuleNode({
 
   return (
     <div
+      ref={nodeRef}
       className="absolute cursor-pointer transition-all duration-300"
       style={{
         left: `${node.position.x}%`,
@@ -140,16 +143,15 @@ export function ModuleNode({
         />
       </div>
 
-      {/* Verktygstips */}
       {isHovered && (
         <ModuleTooltip
           moduleName={formatModuleName(node.moduleId)}
           summary={node.summary}
           progression={progression}
           iconType={node.icon?.iconType}
-          unlockRequirementTypes={node.unlockRequirementTypes}
           unlockRequirementDetails={node.unlockRequirementDetails}
           borderColor={borderColor}
+          anchorElement={nodeRef.current}
         />
       )}
     </div>

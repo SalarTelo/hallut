@@ -3,56 +3,83 @@
  * Verktygstips som visas vid hovring över en modulnod
  */
 
+import { useEffect, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import type { ModuleProgressionState } from '../../../../core/state/types.js';
 import { PixelIcon } from '../PixelIcon.js';
 import { getModule } from '../../../../core/module/registry.js';
 import { formatModuleName } from './utils.js';
 
+type RequirementType = 'password' | 'module-complete' | 'task-complete' | 'state-check' | 'custom';
+
+interface RequirementDetail {
+  type: RequirementType;
+  moduleId?: string;
+  taskName?: string;
+  hint?: string;
+}
+
+interface RequirementDisplay {
+  prefix: string;
+  subject?: string;
+}
+
 export interface ModuleTooltipProps {
-  /**
-   * Modulnamn att visa
-   */
   moduleName: string;
-
-  /**
-   * Sammanfattningstext
-   */
   summary?: string;
-
-  /**
-   * Modulframstegsstatus
-   */
   progression: ModuleProgressionState;
-
-  /**
-   * Ikontyp baserat på unlock requirement (för att visa låstyp)
-   */
   iconType?: 'lock' | 'shield' | 'box' | 'pin' | 'star';
-
-  /**
-   * Array av requirement types för komplexa krav (stackas)
-   */
-  unlockRequirementTypes?: Array<'password' | 'module-complete' | 'task-complete' | 'state-check' | 'custom'>;
-
-  /**
-   * Detaljerad information om unlock requirements
-   */
-  unlockRequirementDetails?: Array<{
-    type: 'password' | 'module-complete' | 'task-complete' | 'state-check' | 'custom';
-    moduleId?: string;
-    taskName?: string;
-    hint?: string;
-  }>;
-
-  /**
-   * Kantfärg
-   */
+  unlockRequirementDetails?: RequirementDetail[];
   borderColor: string;
+  anchorElement: HTMLElement | null;
 }
 
 /**
  * Modulverktygstips-komponent
  */
+const STATUS_COLORS = {
+  locked: 'text-red-400',
+  completed: 'text-green-400',
+  unlocked: 'text-yellow-400',
+} as const;
+
+const STATUS_BG_COLORS = {
+  locked: 'rgba(239, 68, 68, 0.15)',
+  completed: 'rgba(34, 197, 94, 0.15)',
+  unlocked: 'rgba(234, 179, 8, 0.15)',
+} as const;
+
+const STATUS_BORDER_COLORS = {
+  locked: 'rgba(239, 68, 68, 0.3)',
+  completed: 'rgba(34, 197, 94, 0.3)',
+  unlocked: 'rgba(234, 179, 8, 0.3)',
+} as const;
+
+function getRequirementDisplay(detail: RequirementDetail): RequirementDisplay {
+  switch (detail.type) {
+    case 'password':
+      return { prefix: 'Lösenord krävs' };
+    case 'module-complete':
+      if (detail.moduleId) {
+        const module = getModule(detail.moduleId);
+        const moduleDisplayName = module?.config.manifest.name || formatModuleName(detail.moduleId);
+        return { prefix: 'Klarar', subject: moduleDisplayName };
+      }
+      return { prefix: 'Klarar modul' };
+    case 'task-complete':
+      if (detail.taskName) {
+        return { prefix: 'Klarar', subject: detail.taskName };
+      }
+      return { prefix: 'Klarar uppgift' };
+    case 'state-check':
+      return { prefix: 'Tillståndskrav' };
+    case 'custom':
+      return { prefix: 'Anpassat krav' };
+    default:
+      return { prefix: '' };
+  }
+}
+
 export function ModuleTooltip({
   moduleName,
   summary,
@@ -60,54 +87,43 @@ export function ModuleTooltip({
   iconType,
   unlockRequirementDetails,
   borderColor,
+  anchorElement,
 }: ModuleTooltipProps) {
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
   const isLocked = progression === 'locked';
   const isCompleted = progression === 'completed';
+  const statusKey = isLocked ? 'locked' : isCompleted ? 'completed' : 'unlocked';
 
-  interface RequirementDisplay {
-    prefix: string;
-    subject?: string;
-  }
+  useEffect(() => {
+    if (!anchorElement) return;
 
-  const getRequirementDisplay = (detail: {
-    type: 'password' | 'module-complete' | 'task-complete' | 'state-check' | 'custom';
-    moduleId?: string;
-    taskName?: string;
-    hint?: string;
-  }): RequirementDisplay => {
-    switch (detail.type) {
-      case 'password':
-        return { prefix: 'Lösenord krävs' };
-      case 'module-complete':
-        if (detail.moduleId) {
-          const module = getModule(detail.moduleId);
-          const moduleDisplayName = module?.config.manifest.name || formatModuleName(detail.moduleId);
-          return { prefix: 'Klarar', subject: moduleDisplayName };
-        }
-        return { prefix: 'Klarar modul' };
-      case 'task-complete':
-        if (detail.taskName) {
-          return { prefix: 'Klarar', subject: detail.taskName };
-        }
-        return { prefix: 'Klarar uppgift' };
-      case 'state-check':
-        return { prefix: 'Tillståndskrav' };
-      case 'custom':
-        return { prefix: 'Anpassat krav' };
-      default:
-        return { prefix: '' };
-    }
-  };
+    const updatePosition = () => {
+      const rect = anchorElement.getBoundingClientRect();
+      setPosition({
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
+      });
+    };
 
-  const getLockRequirements = (): RequirementDisplay[] => {
+    updatePosition();
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [anchorElement]);
+
+  const lockRequirements = useMemo((): RequirementDisplay[] => {
     if (!isLocked) return [];
     
-    // If we have detailed requirement info, use that (shows individual requirements)
-    if (unlockRequirementDetails && unlockRequirementDetails.length > 0) {
+    if (unlockRequirementDetails?.length) {
       return unlockRequirementDetails.map(getRequirementDisplay);
     }
     
-    // Fallback to iconType for simple requirements
+    // Fallback to iconType
     switch (iconType) {
       case 'lock':
         return [{ prefix: 'Lösenord krävs' }];
@@ -118,26 +134,22 @@ export function ModuleTooltip({
       default:
         return [];
     }
-  };
+  }, [isLocked, unlockRequirementDetails, iconType]);
 
-  const lockRequirements = getLockRequirements();
+  const statusIconType = isLocked ? 'lock' : isCompleted ? 'check' : 'play';
 
-  const getStatusColor = () => {
-    if (isLocked) return 'text-red-400';
-    if (isCompleted) return 'text-green-400';
-    return 'text-yellow-400';
-  };
+  if (!anchorElement) return null;
 
-  const getStatusIconType = (): 'lock' | 'check' | 'play' => {
-    if (isLocked) return 'lock';
-    if (isCompleted) return 'check';
-    return 'play';
-  };
-
-  return (
+  const tooltipContent = (
     <div
-      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-50"
-      style={{ pointerEvents: 'none' }}
+      className="fixed"
+      style={{ 
+        pointerEvents: 'none',
+        zIndex: 10,
+        top: `${position.top}px`,
+        left: `${position.left}px`,
+        transform: 'translate(-50%, calc(-100% - 10px))',
+      }}
     >
       <div
         className="bg-black border-2 rounded pixelated text-white shadow-xl min-w-[240px] max-w-[400px] animate-scale-in overflow-hidden"
@@ -147,7 +159,7 @@ export function ModuleTooltip({
           boxShadow: `0 4px 12px rgba(0, 0, 0, 0.9), 0 0 8px ${borderColor}40, inset 0 1px 0 rgba(255, 255, 255, 0.08)`,
         }}
       >
-        {/* Header with module name - Prominent */}
+        {/* Header */}
         <div 
           className="px-4 py-3 border-b flex items-center"
           style={{ 
@@ -161,55 +173,43 @@ export function ModuleTooltip({
           </div>
         </div>
 
-        {/* Content area */}
+        {/* Content */}
         <div className="px-4 py-3">
-          {/* Summary - Secondary information */}
           {summary && (
             <div className="text-gray-400 text-[10px] leading-relaxed mb-3 line-clamp-2">
               {summary}
             </div>
           )}
 
-          {/* Status and requirements section */}
           <div className="space-y-2.5">
-            {/* Status badge - Clear visual indicator */}
+            {/* Status badge */}
             <div 
-              className="flex items-center gap-2 px-2 py-1.5 rounded"
+              className="flex items-center gap-2 p-1 rounded"
               style={{
-                backgroundColor: isLocked 
-                  ? 'rgba(239, 68, 68, 0.15)' 
-                  : isCompleted 
-                    ? 'rgba(34, 197, 94, 0.15)' 
-                    : 'rgba(234, 179, 8, 0.15)',
-                border: `1px solid ${isLocked ? 'rgba(239, 68, 68, 0.3)' : isCompleted ? 'rgba(34, 197, 94, 0.3)' : 'rgba(234, 179, 8, 0.3)'}`,
+                backgroundColor: STATUS_BG_COLORS[statusKey],
+                border: `1px solid ${STATUS_BORDER_COLORS[statusKey]}`,
               }}
             >
               <PixelIcon
-                type={getStatusIconType()}
+                type={statusIconType}
                 size={11}
                 color="currentColor"
-                className={getStatusColor()}
+                className={STATUS_COLORS[statusKey]}
               />
-              <span className={`text-[11px] ${getStatusColor()} font-bold leading-none`}>
+              <span className={`text-[10px] ${STATUS_COLORS[statusKey]} font-bold leading-none`}>
                 {isLocked ? 'Låst' : isCompleted ? 'Slutförd' : 'Tillgänglig'}
               </span>
             </div>
             
-            {/* Lock requirements - Clear list */}
+            {/* Lock requirements */}
             {isLocked && lockRequirements.length > 0 && (
               <div className="space-y-1.5 pt-0.5">
                 <div className="text-[9px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5">
                   Krav:
                 </div>
                 {lockRequirements.map((req, index) => (
-                  <div 
-                    key={index} 
-                    className="flex items-baseline gap-2 pl-1"
-                  >
-                    <span 
-                      className="text-red-400 text-[10px] flex-shrink-0 leading-none font-bold"
-                      style={{ marginTop: '2px' }}
-                    >
+                  <div key={index} className="flex items-baseline gap-2 pl-1">
+                    <span className="text-red-400 text-[10px] flex-shrink-0 leading-none font-bold" style={{ marginTop: '2px' }}>
                       →
                     </span>
                     <div className="flex-1 text-[10px] leading-snug">
@@ -230,7 +230,7 @@ export function ModuleTooltip({
         </div>
       </div>
 
-      {/* Arrow pointing down */}
+      {/* Arrow */}
       <div
         className="absolute top-full left-1/2 -translate-x-1/2 -mt-px"
         style={{
@@ -244,4 +244,6 @@ export function ModuleTooltip({
       />
     </div>
   );
+
+  return createPortal(tooltipContent, document.body);
 }
