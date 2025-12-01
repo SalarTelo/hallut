@@ -5,7 +5,7 @@
  * Validates module structure and configuration
  * 
  * Usage: npm run module:validate <module-id>
- * Example: npm run module:validate example
+ * Example: npm run module:validate textGen
  * 
  * Checks:
  * - Required files exist
@@ -596,7 +596,7 @@ if (!moduleId) {
   console.error('       npm run module:validate --all');
   console.error('');
   console.error('Examples:');
-  console.error('  npm run module:validate example');
+  console.error('  npm run module:validate textGen');
   console.error('  npm run module:validate --all');
   console.error('');
   process.exit(1);

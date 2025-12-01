@@ -16,7 +16,7 @@ import type { TaskSolveResult } from '../types/core/taskSolveResult.types.js';
  * 
  * @param config - Optional additional configuration
  * 
- * @example
+ * @textGen
  * submission: textSubmission()
  * submission: textSubmission({ minLength: 200 })
  */
@@ -32,7 +32,7 @@ export function textSubmission(config?: Record<string, unknown>): TaskSubmission
  * 
  * @param config - Optional additional configuration
  * 
- * @example
+ * @textGen
  * submission: imageSubmission()
  */
 export function imageSubmission(config?: Record<string, unknown>): TaskSubmissionConfig {
@@ -48,7 +48,7 @@ export function imageSubmission(config?: Record<string, unknown>): TaskSubmissio
  * @param language - Programming language
  * @param config - Optional additional configuration
  * 
- * @example
+ * @textGen
  * submission: codeSubmission('javascript')
  */
 export function codeSubmission(
@@ -67,7 +67,7 @@ export function codeSubmission(
  * @param options - Available choices
  * @param config - Optional additional configuration
  * 
- * @example
+ * @textGen
  * submission: multipleChoiceSubmission(['Option A', 'Option B', 'Option C'])
  */
 export function multipleChoiceSubmission(
@@ -86,7 +86,7 @@ export function multipleChoiceSubmission(
  * @param component - Component name to render
  * @param config - Optional additional configuration
  * 
- * @example
+ * @textGen
  * submission: customSubmission('MyCustomForm')
  */
 export function customSubmission(
@@ -111,7 +111,7 @@ export function customSubmission(
  * @param details - Human-readable details
  * @param score - Optional score (0-100)
  * 
- * @example
+ * @textGen
  * return success('complete', 'Great work!', 100);
  */
 export function success(
@@ -133,7 +133,7 @@ export function success(
  * @param reason - Short reason code
  * @param details - Human-readable details
  * 
- * @example
+ * @textGen
  * return failure('too_short', 'Your answer needs to be longer.');
  */
 export function failure(reason: string, details: string): TaskSolveResult {
@@ -167,7 +167,7 @@ export function getTextFromSubmission(input: TaskSubmission): string | null {
  * @param minLength - Minimum required length
  * @param onValid - Callback when text is valid, returns solve result
  * 
- * @example
+ * @textGen
  * solveFunction: textLengthValidator(200, (text) => {
  *   if (text.includes('required-word')) {
  *     return success('complete', 'Well done!');
@@ -203,7 +203,7 @@ export function textLengthValidator(
  * @param minWords - Minimum required word count
  * @param onValid - Callback when word count is valid
  * 
- * @example
+ * @textGen
  * solveFunction: wordCountValidator(50, (text, wordCount) => {
  *   return success('complete', `Great! You wrote ${wordCount} words.`);
  * })
@@ -238,7 +238,7 @@ export function wordCountValidator(
  * @param keywords - Required keywords (case-insensitive)
  * @param onValid - Callback when all keywords are present
  * 
- * @example
+ * @textGen
  * solveFunction: keywordsValidator(['dragon', 'castle'], (text) => {
  *   return success('complete', 'You included all the key elements!');
  * })
@@ -276,7 +276,7 @@ export function keywordsValidator(
  * 
  * @param validators - Array of validator functions
  * 
- * @example
+ * @textGen
  * solveFunction: combineValidators([
  *   textLengthValidator(100, () => success('length_ok', '')),
  *   keywordsValidator(['dragon'], () => success('complete', 'Well done!'))
@@ -338,7 +338,7 @@ export interface TaskOptions {
  * @param options - Task configuration
  * @returns Task object
  * 
- * @example
+ * @textGen
  * const storyTask = createTask('task-1', {
  *   name: 'Write a Story',
  *   description: 'Create a short story about adventure.',
@@ -398,7 +398,7 @@ export function createTask(id: string, options: TaskOptions): Task {
  * @param minLength - Minimum text length
  * @param successMessage - Message shown on success
  * 
- * @example
+ * @textGen
  * const task = simpleTextTask(
  *   'task-1',
  *   'Write Your Story',

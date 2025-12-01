@@ -10,6 +10,7 @@ import { useModuleStore } from '../stores/moduleStore/index.js';
 import type { ModuleProgressionState } from '../types/core/moduleProgression.types.js';
 import { handleError } from './errorService.js';
 import { ModuleError, ErrorCode } from '../types/core/error.types.js';
+import { INITIALLY_UNLOCKED_MODULES, USE_MANUAL_UNLOCK } from '../constants/worldmap.config.js';
 
 /**
  * Get store state (read-only helper)
@@ -166,14 +167,26 @@ export async function getModuleProgressionInitActions(moduleIds: string[]): Prom
       continue;
     }
     
-    // Unlock first two modules, lock the rest
-    if (i < 2) {
-      const { shouldUnlock, currentState: state } = await checkModuleUnlockStatus(moduleId);
-      if (shouldUnlock || state !== 'unlocked') {
-        toUnlock.push(moduleId);
+    // Use manual unlock configuration if enabled
+    if (USE_MANUAL_UNLOCK && INITIALLY_UNLOCKED_MODULES.length > 0) {
+      if (INITIALLY_UNLOCKED_MODULES.includes(moduleId)) {
+        const { shouldUnlock, currentState: state } = await checkModuleUnlockStatus(moduleId);
+        if (shouldUnlock || state !== 'unlocked') {
+          toUnlock.push(moduleId);
+        }
+      } else {
+        toLock.push(moduleId);
       }
     } else {
-      toLock.push(moduleId);
+      // Default behavior: unlock first two modules, lock the rest
+      if (i < 2) {
+        const { shouldUnlock, currentState: state } = await checkModuleUnlockStatus(moduleId);
+        if (shouldUnlock || state !== 'unlocked') {
+          toUnlock.push(moduleId);
+        }
+      } else {
+        toLock.push(moduleId);
+      }
     }
   }
 

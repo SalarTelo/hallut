@@ -37,7 +37,7 @@ export interface Position {
  * @param x - X position (0-100)
  * @param y - Y position (0-100)
  * 
- * @example
+ * @textGen
  * position: pos(50, 50) // Center of screen
  */
 export function pos(x: number, y: number): Position {
@@ -53,7 +53,7 @@ export function pos(x: number, y: number): Position {
  * 
  * @param dialogueId - ID of the dialogue to trigger
  * 
- * @example
+ * @textGen
  * action: dialogueAction('guard-greeting')
  */
 export function dialogueAction(dialogueId: string): InteractableAction {
@@ -68,7 +68,7 @@ export function dialogueAction(dialogueId: string): InteractableAction {
  * 
  * @param taskId - ID of the task to offer
  * 
- * @example
+ * @textGen
  * action: taskAction('task-1')
  */
 export function taskAction(taskId: string): InteractableAction {
@@ -83,7 +83,7 @@ export function taskAction(taskId: string): InteractableAction {
  * 
  * @param functionName - Name of the function to call
  * 
- * @example
+ * @textGen
  * action: functionAction('guard-interact')
  */
 export function functionAction(functionName: string): InteractableAction {
@@ -98,7 +98,7 @@ export function functionAction(functionName: string): InteractableAction {
  * 
  * @param chatId - Optional chat ID for different chat instances
  * 
- * @example
+ * @textGen
  * action: chatAction() // Default chat
  * action: chatAction('helper-chat') // Named chat
  */
@@ -115,7 +115,7 @@ export function chatAction(chatId?: string): InteractableAction {
  * @param imageUrl - URL of the image to display
  * @param title - Optional title for the image viewer
  * 
- * @example
+ * @textGen
  * action: imageAction('/fridge.jpg', 'Fridge Contents')
  */
 export function imageAction(imageUrl: string, title?: string): InteractableAction {
@@ -212,7 +212,7 @@ export interface NPCOptions extends Omit<BaseInteractableOptions, 'action'> {
  * @param id - Unique ID
  * @param options - NPC configuration
  * 
- * @example
+ * @textGen
  * // NPC with dialogue
  * const guard = createNPC('guard', {
  *   name: 'Castle Guard',
@@ -267,7 +267,7 @@ export interface ObjectOptions extends Omit<BaseInteractableOptions, 'action'> {
  * @param id - Unique ID
  * @param options - Object configuration
  * 
- * @example
+ * @textGen
  * // Object showing an image
  * const fridge = createObject('fridge', {
  *   name: 'Fridge',
@@ -321,7 +321,7 @@ export interface LocationOptions extends Omit<BaseInteractableOptions, 'action'>
  * @param id - Unique ID
  * @param options - Location configuration
  * 
- * @example
+ * @textGen
  * const entrance = createLocation('entrance', {
  *   name: 'Castle Entrance',
  *   position: pos(50, 80),
@@ -351,7 +351,7 @@ export function createLocation(id: string, options: LocationOptions): Interactab
  * @param id - Unique ID (default: 'ai-companion')
  * @param options - Partial options to override defaults
  * 
- * @example
+ * @textGen
  * const companion = createAICompanion(); // Uses defaults
  * const customCompanion = createAICompanion('helper', {
  *   name: 'Study Buddy',

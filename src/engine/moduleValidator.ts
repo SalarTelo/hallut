@@ -551,7 +551,7 @@ function validateDialogues(
  * @param config - Modulkonfiguration att validera
  * @returns Valideringsresultat med problem
  * 
- * @example
+ * @textGen
  * const result = validateModuleConfig(config);
  * if (!result.valid) {
  *   console.error('Modulvalidering misslyckades:', result.issues);

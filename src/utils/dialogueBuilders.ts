@@ -14,7 +14,7 @@ import type { ModuleConfig } from '../types/module/moduleConfig.types.js';
  * Create an "accept task" action
  * Used when a dialogue choice should start a task
  * 
- * @example
+ * @textGen
  * choice('Yes, I\'ll help', acceptTask('task-1'))
  */
 export function acceptTask(taskId: string): DialogueCompletionAction {
@@ -25,7 +25,7 @@ export function acceptTask(taskId: string): DialogueCompletionAction {
  * Create a "set state" action
  * Used to set a value in module state
  * 
- * @example
+ * @textGen
  * choice('Not now', setState('declined', true))
  */
 export function setState(key: string, value: unknown): DialogueCompletionAction {
@@ -36,7 +36,7 @@ export function setState(key: string, value: unknown): DialogueCompletionAction 
  * Create a "function" action
  * Used to call a custom function handler
  * 
- * @example
+ * @textGen
  * choice('Submit', callFunction('submit-task'))
  */
 export function callFunction(functionName: string): DialogueCompletionAction {
@@ -53,7 +53,7 @@ export function callFunction(functionName: string): DialogueCompletionAction {
  * @param text - The text to display for the choice
  * @param action - Action(s) to perform when selected, or null to just continue
  * 
- * @example
+ * @textGen
  * // Simple continue choice
  * choice('Continue')
  * 
@@ -73,7 +73,7 @@ export function choice(
 /**
  * Create a simple "Continue" choice with no action
  * 
- * @example
+ * @textGen
  * choices: [continueChoice()]
  */
 export function continueChoice(text: string = 'Continue'): DialogueChoice {
@@ -109,7 +109,7 @@ export type DialogueEntry = NonNullable<ModuleConfig['dialogues']>[string];
  * @param options - Dialogue configuration
  * @returns Dialogue entry object
  * 
- * @example
+ * @textGen
  * const guardGreeting = createDialogue({
  *   speaker: 'guard',
  *   lines: ['Halt! Who goes there?', 'State your business.'],
@@ -145,7 +145,7 @@ export function createDialogue(options: DialogueOptions): DialogueEntry {
  * @param lines - Lines of dialogue
  * @param continueText - Optional custom text for continue button
  * 
- * @example
+ * @textGen
  * const intro = simpleDialogue('narrator', [
  *   'Welcome to the castle.',
  *   'Your adventure begins here.'
@@ -173,7 +173,7 @@ export function simpleDialogue(
  * @param declineText - Text for decline button
  * @param declineStateKey - Optional state key to set when declined
  * 
- * @example
+ * @textGen
  * const taskOffer = taskOfferDialogue(
  *   'guard',
  *   ['I need your help with a task.', 'Will you assist me?'],
@@ -214,7 +214,7 @@ export function taskOfferDialogue(
  * @param submitText - Text for submit button
  * @param notReadyText - Text for not ready button
  * 
- * @example
+ * @textGen
  * const taskReady = taskReadyDialogue(
  *   'guard',
  *   ['Have you completed the task?'],
@@ -250,7 +250,7 @@ export function taskReadyDialogue(
  * @param entries - Array of dialogue entries
  * @returns Dialogues record
  * 
- * @example
+ * @textGen
  * const dialogues = createDialogues([
  *   ['greeting', createDialogue({ speaker: 'guard', lines: ['Hello!'] })],
  *   ['farewell', simpleDialogue('guard', ['Goodbye!'])],

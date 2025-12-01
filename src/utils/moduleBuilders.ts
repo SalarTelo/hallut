@@ -25,7 +25,7 @@ export * from './interactableBuilders.js';
  * @param version - Semantisk version (standard: '1.0.0')
  * @param summary - Valfri sammanfattning för världskarteverktygstips
  * 
- * @example
+ * @textGen
  * manifest: createManifest('min-modul', 'Min modul', '1.0.0', 'En kort beskrivning')
  */
 export function createManifest(
@@ -42,7 +42,7 @@ export function createManifest(
  * 
  * @param options - Background options (color or image)
  * 
- * @example
+ * @textGen
  * background: createBackground({ color: '#2d1b1b' })
  * background: createBackground({ image: '/backgrounds/castle.jpg' })
  */
@@ -56,7 +56,7 @@ export function createBackground(options: {
 /**
  * Shorthand for color background
  * 
- * @example
+ * @textGen
  * background: colorBackground('#2d1b1b')
  */
 export function colorBackground(color: string): ModuleConfig['background'] {
@@ -66,7 +66,7 @@ export function colorBackground(color: string): ModuleConfig['background'] {
 /**
  * Shorthand for image background
  * 
- * @example
+ * @textGen
  * background: imageBackground('/backgrounds/castle.jpg')
  */
 export function imageBackground(image: string, fallbackColor?: string): ModuleConfig['background'] {
@@ -79,7 +79,7 @@ export function imageBackground(image: string, fallbackColor?: string): ModuleCo
  * @param speaker - Speaker name
  * @param lines - Welcome message lines
  * 
- * @example
+ * @textGen
  * welcome: createWelcome('Guard', [
  *   'Welcome to the castle!',
  *   'I am the guard of this gate.'
@@ -98,7 +98,7 @@ export function createWelcome(
  * @param borderColor - Border color (default: yellow #FFD700)
  * @param accentColors - Optional accent colors
  * 
- * @example
+ * @textGen
  * theme: createTheme('#fbbf24')
  * theme: createTheme('#fbbf24', { primary: '#3b82f6' })
  */
@@ -149,7 +149,7 @@ export interface ModuleConfigOptions {
  * @param options - Module configuration options
  * @returns ModuleConfig object
  * 
- * @example
+ * @textGen
  * const config = createModuleConfig({
  *   manifest: createManifest('my-module', 'My Module'),
  *   background: colorBackground('#2d1b1b'),
@@ -238,7 +238,7 @@ export interface ModuleOptions {
  * @param options - Module options
  * @returns IModule implementation
  * 
- * @example
+ * @textGen
  * // Simple module with static config
  * export default createModule({
  *   config: createModuleConfig({
@@ -340,7 +340,7 @@ export interface SimpleModuleOptions {
  * @param options - Simple module options
  * @returns IModule implementation
  * 
- * @example
+ * @textGen
  * export default createSimpleModule({
  *   id: 'village',
  *   name: 'Quaint Village',

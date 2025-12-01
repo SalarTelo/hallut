@@ -7,13 +7,39 @@
 import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '../types/worldmap.types.js';
 import { getRegisteredModuleIds, getModuleConfig } from '../engine/moduleRegistry.js';
 import { DEFAULT_LOCALE } from '../constants/module.constants.js';
+import { MODULE_ORDER, USE_MANUAL_ORDER } from '../constants/worldmap.config.js';
 
 /**
  * Generera världskartekonfiguration från registrerade moduler
  * Skapar ett enhetligt layoutalgoritm som fungerar för valfritt antal moduler
  */
 export async function generateWorldmap(): Promise<WorldmapConfig> {
-  const moduleIds = getRegisteredModuleIds();
+  let moduleIds = getRegisteredModuleIds();
+  
+  // Apply manual order configuration if enabled
+  if (USE_MANUAL_ORDER && MODULE_ORDER.length > 0) {
+    // Create ordered array: modules in MODULE_ORDER first, then any remaining modules
+    const orderedModules: string[] = [];
+    const remainingModules: string[] = [];
+    
+    // Add modules in the configured order
+    for (const moduleId of MODULE_ORDER) {
+      if (moduleIds.includes(moduleId)) {
+        orderedModules.push(moduleId);
+      }
+    }
+    
+    // Add any modules not in the configuration
+    for (const moduleId of moduleIds) {
+      if (!MODULE_ORDER.includes(moduleId)) {
+        remainingModules.push(moduleId);
+      }
+    }
+    
+    // Combine: configured order first, then remaining modules
+    moduleIds = [...orderedModules, ...remainingModules];
+  }
+  
   const nodes: WorldmapNode[] = [];
   const connections: WorldmapConnection[] = [];
 
