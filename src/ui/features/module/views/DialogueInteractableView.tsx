@@ -40,15 +40,11 @@ export function DialogueInteractableView({
   });
 
   const handleDialogueComplete = async () => {
-    // Handle dialogue completion actions if configured (only if no choices)
-    if (dialogue.onComplete && !dialogue.choices) {
-      await handleDialogueActions(dialogue.onComplete);
-    }
     onComplete();
   };
 
   const handleChoiceAction = async (
-    actions: import('../../../../types/dialogue.types.js').DialogueCompletionAction | import('../../../../types/dialogue.types.js').DialogueCompletionAction[]
+    actions: import('../../../../types/choiceTypes.js').ChoiceAction | import('../../../../types/choiceTypes.js').ChoiceAction[]
   ) => {
     const viewChanged = await handleDialogueActions(actions);
     // If view was changed (e.g., task submission opened), don't close dialogue yet

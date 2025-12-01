@@ -5,7 +5,9 @@
  */
 
 import type { ModuleConfig } from '../module/moduleConfig.types.js';
-import type { DialogueCompletionAction } from '../dialogue.types.js';
+import type { ChoiceAction } from '../choiceTypes.js';
+
+import type { Task } from '../module/moduleConfig.types.js';
 
 /**
  * Context provided to modules by the engine
@@ -32,29 +34,34 @@ export interface ModuleContext {
   getModuleStateField: (key: string) => unknown;
 
   /**
-   * Accept a task
+   * Accept a task (supports both string ID and direct task reference)
    */
-  acceptTask: (taskId: string) => void;
+  acceptTask: (task: Task | string) => void;
 
   /**
-   * Complete a task
+   * Complete a task (supports both string ID and direct task reference)
    */
-  completeTask: (taskId: string) => void;
+  completeTask: (task: Task | string) => void;
 
   /**
-   * Check if a task is completed
+   * Check if a task is completed (supports both string ID and direct task reference)
    */
-  isTaskCompleted: (taskId: string) => boolean;
+  isTaskCompleted: (task: Task | string) => boolean;
 
   /**
-   * Get current active task ID
+   * Get current active task (returns Task object or null)
+   */
+  getCurrentTask: () => Task | null;
+
+  /**
+   * Get current active task ID (for backward compatibility)
    */
   getCurrentTaskId: () => string | null;
 
   /**
-   * Open task submission view for a task
+   * Open task submission view for a task (supports both string ID and direct task reference)
    */
-  openTaskSubmission?: (taskId: string) => void;
+  openTaskSubmission?: (task: Task | string) => void;
 }
 
 /**
@@ -102,14 +109,14 @@ export interface IModule {
   ): InteractableFunctionResult | Promise<InteractableFunctionResult>;
 
   /**
-   * Handle dialogue completion action
-   * Called when a dialogue completes with an onComplete action
-   * Only called for actions that the engine doesn't handle automatically ('function' type)
-   * Optional - modules can implement this to handle custom dialogue completion logic
+   * Handle choice action
+   * Called when a dialogue choice is selected with a call-function action
+   * Only called for 'call-function' actions that need custom handling
+   * Optional - modules can implement this to handle custom choice logic
    */
-  handleDialogueCompletion?(
+  handleChoiceAction?(
     dialogueId: string,
-    action: DialogueCompletionAction,
+    action: ChoiceAction,
     context: ModuleContext
   ): void | Promise<void>;
 }

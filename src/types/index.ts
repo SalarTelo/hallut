@@ -18,10 +18,8 @@ export * from './ui/index.js';
 
 // Dialogue types
 export type {
-  DialogueCompletionAction,
-  AcceptTaskAction,
-  SetStateAction,
-  FunctionAction,
+  DialogueConfig,
+  DialogueContext,
 } from './dialogue.types.js';
 
 // Interactable types
@@ -30,9 +28,6 @@ export {
   taskComplete,
   moduleComplete,
   stateCheck,
-  isTaskCompleteRequirement,
-  isModuleCompleteRequirement,
-  isStateCheckRequirement,
 } from './interactable.types.js';
 
 export type {
@@ -46,7 +41,41 @@ export type {
 
 // Worldmap types
 export type {
-  WorldmapModule,
   WorldmapConfig,
 } from './worldmap.types.js';
+
+// Task types (type-safe)
+export type {
+  TextTaskSubmission,
+  ImageTaskSubmission,
+  CodeTaskSubmission,
+  MultipleChoiceTaskSubmission,
+  CustomTaskSubmission,
+  TaskSubmission,
+  TaskSubmissionConfig,
+  TaskSolveFunction,
+} from './taskTypes.js';
+
+export {
+  isTextSubmission,
+  isImageSubmission,
+  isCodeSubmission,
+  isMultipleChoiceSubmission,
+} from './taskTypes.js';
+
+// Choice types (unified)
+export type {
+  ChoiceAction,
+  DialogueChoice,
+  ChoiceBuilder,
+} from './choiceTypes.js';
+
+// Interactable types (includes task sequence)
+export type {
+  Position,
+  HandlerFunction,
+  GetDialogueFunction,
+  TaskSequence,
+  TaskSequenceEntry,
+} from './interactable.types.js';
 

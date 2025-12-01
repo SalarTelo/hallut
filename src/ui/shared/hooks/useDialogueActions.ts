@@ -4,10 +4,9 @@
  */
 
 import { useCallback } from 'react';
-import { getModuleInstance } from '@engine/moduleRegistry.js';
 import { createModuleContext } from '@engine/engineApi.js';
 import { useModuleActions } from '@stores/moduleStore/index.js';
-import type { DialogueCompletionAction } from '@types/dialogue.types.js';
+import type { ChoiceAction } from '@types/choiceTypes.js';
 import { DEFAULT_LOCALE } from '@constants/module.constants.js';
 import { DialogueError, ErrorCode } from '@types/core/error.types.js';
 import { handleError } from '@services/errorService.js';
@@ -21,7 +20,7 @@ export interface UseDialogueActionsOptions {
 }
 
 /**
- * Hook for handling dialogue completion actions
+ * Hook for handling choice actions
  */
 export function useDialogueActions({
   moduleId,
@@ -34,13 +33,14 @@ export function useDialogueActions({
 
   const handleDialogueActions = useCallback(
     async (
-      actions: DialogueCompletionAction | DialogueCompletionAction[]
+      actions: ChoiceAction | ChoiceAction[]
     ): Promise<boolean> => {
       const context = createModuleContext(moduleId, locale);
       let viewChanged = false;
 
       // Add UI action callback for opening task submission
-      context.openTaskSubmission = (taskId: string) => {
+      context.openTaskSubmission = (task: import('@types/module/moduleConfig.types.js').Task | string) => {
+        const taskId = typeof task === 'string' ? task : task.id;
         onTaskSubmissionOpen?.(taskId);
         viewChanged = true;
       };
@@ -51,29 +51,29 @@ export function useDialogueActions({
         try {
           // Handle common actions in engine
           if (action.type === 'accept-task') {
-            context.acceptTask(action.taskId);
+            context.acceptTask(action.task);
           } else if (action.type === 'set-state') {
             context.setModuleStateField(action.key, action.value);
-          } else if (action.type === 'function') {
-            // All function actions go to module handler
-            const moduleInstance = getModuleInstance(moduleId);
-            if (moduleInstance?.handleDialogueCompletion) {
-              await moduleInstance.handleDialogueCompletion(dialogueId, action, context);
-            }
+          } else if (action.type === 'call-function') {
+            // Call the handler function directly
+            await action.handler(context);
+          } else if (action.type === 'go-to') {
+            // go-to actions are handled by dialogue routing, not here
+            // This is a no-op in the action handler
           }
         } catch (error) {
           const engineError = error instanceof Error
             ? new DialogueError(
                 ErrorCode.DIALOGUE_INVALID,
                 dialogueId,
-                `Error handling dialogue action: ${error.message}`,
+                `Error handling choice action: ${error.message}`,
                 moduleId,
                 { action, originalError: error }
               )
             : new DialogueError(
                 ErrorCode.DIALOGUE_INVALID,
                 dialogueId,
-                'Error handling dialogue action',
+                'Error handling choice action',
                 moduleId,
                 { action }
               );
@@ -85,7 +85,7 @@ export function useDialogueActions({
 
       return viewChanged;
     },
-    [moduleId, dialogueId, locale, onTaskSubmissionOpen, onError]
+    [moduleId, dialogueId, locale, onTaskSubmissionOpen, onError, acceptTask, setModuleStateField]
   );
 
   return {

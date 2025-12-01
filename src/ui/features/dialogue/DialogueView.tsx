@@ -27,8 +27,7 @@ export interface DialogueViewProps {
     id: string;
     speaker: string;
     greeting: string[];
-    choices?: import('../../../types/dialogue.types.js').DialogueChoice[];
-    onComplete?: import('../../../types/dialogue.types.js').DialogueCompletionAction | import('../../../types/dialogue.types.js').DialogueCompletionAction[];
+    choices?: import('../../../types/choiceTypes.js').DialogueChoice[];
   };
 
   /**
@@ -40,7 +39,7 @@ export interface DialogueViewProps {
    * Callback to handle choice actions
    * Returns true if a view change occurred (e.g., task submission opened)
    */
-  onChoiceAction?: (action: import('../../../types/dialogue.types.js').DialogueCompletionAction | import('../../../types/dialogue.types.js').DialogueCompletionAction[]) => boolean | Promise<boolean> | void | Promise<void>;
+  onChoiceAction?: (action: import('../../../types/choiceTypes.js').ChoiceAction | import('../../../types/choiceTypes.js').ChoiceAction[]) => boolean | Promise<boolean> | void | Promise<void>;
 
   /**
    * Auto-advance delay (ms). If 0, requires manual click

@@ -4,7 +4,7 @@
  * Depends on: Task, Interactable, DialogueConfig
  */
 
-import type { TaskSubmissionConfig, TaskSolveFunction } from './task.types.js';
+import type { TaskSubmissionConfig, TaskSolveFunction } from '../taskTypes.js';
 import type { Interactable } from '../interactable.types.js';
 import type { DialogueConfig, DialogueContext } from '../dialogue.types.js';
 import type { ComponentType } from 'react';
@@ -124,6 +124,7 @@ export interface ModuleConfig {
 
   /**
    * Interactable objects in the module
+   * Uses the encapsulated Interactable type with dialogues, tasks, and handlers
    */
   interactables: Interactable[];
 
@@ -140,8 +141,7 @@ export interface ModuleConfig {
   dialogues?: Record<string, {
     speaker: string;
     lines: string[];
-    choices?: import('../dialogue.types.js').DialogueChoice[];
-    onComplete?: import('../dialogue.types.js').DialogueCompletionAction | import('../dialogue.types.js').DialogueCompletionAction[];
+    choices?: import('../choiceTypes.js').DialogueChoice[];
   }>;
 
   /**
@@ -149,6 +149,12 @@ export interface ModuleConfig {
    * Array of module IDs that must be completed before this module can be unlocked
    */
   requires?: string[];
+
+  /**
+   * Optional task sequence
+   * Defines the order of tasks across all interactables
+   */
+  taskSequence?: import('../interactable.types.js').TaskSequence;
 }
 
 /**

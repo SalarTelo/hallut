@@ -49,9 +49,9 @@ export interface UseTaskSubmissionReturn {
   state: TaskState;
 
   /**
-   * Current submission value
+   * Current submission (type-safe)
    */
-  submissionValue: string;
+  submission: TaskSubmission | null;
 
   /**
    * Evaluation result (if evaluated)
@@ -74,9 +74,9 @@ export interface UseTaskSubmissionReturn {
   handleStartWorking: () => void;
 
   /**
-   * Update submission value
+   * Update submission (type-safe)
    */
-  handleSubmissionChange: (value: string) => void;
+  handleSubmissionChange: (submission: TaskSubmission) => void;
 
   /**
    * Submit the task
@@ -101,7 +101,6 @@ export function useTaskSubmission({
 }: UseTaskSubmissionOptions): UseTaskSubmissionReturn {
   const [state, setState] = useState<TaskState>('idle');
   const [submission, setSubmission] = useState<TaskSubmission | null>(null);
-  const [submissionValue, setSubmissionValue] = useState('');
   const [result, setResult] = useState<TaskSolveResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { setCurrentTask, setCurrentSubmission, submitTask } = useTaskStore();
@@ -129,19 +128,15 @@ export function useTaskSubmission({
     setState('working');
   }, []);
 
-  // Handle submission change
-  const handleSubmissionChange = useCallback((value: string) => {
-    setError(null);
-    setSubmissionValue(value);
-    
-    const newSubmission: TaskSubmission = {
-      type: task.submission.type,
-      ...(task.submission.type === 'text' && { text: value }),
-      ...(task.submission.type === 'code' && { code: value }),
-    };
-    setSubmission(newSubmission);
-    setCurrentSubmission(newSubmission);
-  }, [task.submission.type, setCurrentSubmission]);
+  // Handle submission change (type-safe)
+  const handleSubmissionChange = useCallback(
+    (newSubmission: TaskSubmission) => {
+      setError(null);
+      setSubmission(newSubmission);
+      setCurrentSubmission(newSubmission);
+    },
+    [setCurrentSubmission]
+  );
 
   // Handle submit
   const handleSubmit = useCallback(() => {
@@ -183,7 +178,7 @@ export function useTaskSubmission({
 
   return {
     state,
-    submissionValue,
+    submission,
     result,
     error,
     handleAccept,

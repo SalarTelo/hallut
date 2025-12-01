@@ -1,64 +1,67 @@
 /**
- * Uppgiftsarbetsformulärkomponent
- * Formulär för att skicka in uppgiftssvar
+ * Task Working Form Component
+ * Form for submitting task answers using type-safe submission components
  */
 
+import { useMemo } from 'react';
 import { Button } from '@ui/shared/components/Button.js';
 import { Card } from '@ui/shared/components/Card.js';
 import { ContainerLayout } from '@ui/shared/components/layouts/index.js';
 import { getThemeValue } from '@utils/theme.js';
 import { addOpacityToColor } from '@utils/color.js';
 import { DEFAULT_THEME } from '@constants/module.constants.js';
+import { getSubmissionComponent } from '../submissions/index.js';
+import type { TaskSubmissionConfig, TaskSubmission } from '../../../../types/taskTypes.js';
 
 export interface TaskWorkingFormProps {
   /**
-   * Uppgiftsnamn
+   * Task name
    */
   taskName: string;
 
   /**
-   * Uppgiftsbeskrivning
+   * Task description
    */
   taskDescription?: string;
 
   /**
-   * Inlämningstyp (text, kod, etc.)
+   * Submission configuration
    */
-  submissionType: string;
+  submissionConfig: TaskSubmissionConfig;
 
   /**
-   * Aktuellt inlämningsvärde
+   * Current submission value
    */
-  value: string;
+  value: TaskSubmission | null;
 
   /**
-   * Om formuläret är inaktiverat (utvärderas)
+   * Whether form is disabled (evaluating)
    */
   isEvaluating: boolean;
 
   /**
-   * Felmeddelande att visa
+   * Error message to display
    */
   error: string | null;
 
   /**
-   * Callback när värdet ändras
+   * Callback when submission changes
    */
-  onChange: (value: string) => void;
+  onChange: (submission: TaskSubmission) => void;
 
   /**
-   * Callback när formuläret skickas in
+   * Callback when form is submitted
    */
   onSubmit: () => void;
 }
 
 /**
- * Uppgiftsarbetsformulärkomponent
+ * Task Working Form Component
  */
 export function TaskWorkingForm({
   taskName,
   taskDescription,
-  submissionType,
+  submissionConfig,
   value,
   isEvaluating,
   error,
@@ -67,15 +70,48 @@ export function TaskWorkingForm({
 }: TaskWorkingFormProps) {
   const borderColorValue = getThemeValue('border-color', DEFAULT_THEME.BORDER_COLOR);
 
-  const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    e.currentTarget.style.borderColor = borderColorValue;
-    e.currentTarget.style.boxShadow = `0 0 8px ${borderColorValue}`;
-  };
+  // Get the appropriate submission component
+  const SubmissionComponent = useMemo(() => {
+    return getSubmissionComponent(submissionConfig.type);
+  }, [submissionConfig.type]);
 
-  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    e.currentTarget.style.borderColor = borderColorValue;
-    e.currentTarget.style.boxShadow = 'none';
-  };
+  // Check if submission has value (for submit button)
+  const hasValue = useMemo(() => {
+    if (!value) return false;
+    if (value.type === 'text' && 'text' in value) {
+      return (value.text as string).trim().length > 0;
+    }
+    if (value.type === 'code' && 'code' in value) {
+      return (value.code as string).trim().length > 0;
+    }
+    if (value.type === 'image' && 'image' in value) {
+      return value.image !== null && value.image !== '';
+    }
+    if (value.type === 'multiple_choice' && 'choice' in value) {
+      return (value.choice as string).length > 0;
+    }
+    return false;
+  }, [value]);
+
+  // If no component registered, show fallback
+  if (!SubmissionComponent) {
+    return (
+      <ContainerLayout className="max-w-2xl">
+        <Card padding="md" dark pixelated borderColor={borderColorValue}>
+          <div className="p-4 border-2 rounded" style={{ borderColor: '#ff4444' }}>
+            <p className="text-red-400">
+              No UI component registered for submission type: {submissionConfig.type}
+            </p>
+            {submissionConfig.component && (
+              <p className="text-xs text-gray-400 mt-2">
+                Expected custom component: {submissionConfig.component}
+              </p>
+            )}
+          </div>
+        </Card>
+      </ContainerLayout>
+    );
+  }
 
   return (
     <ContainerLayout className="max-w-2xl">
@@ -86,93 +122,49 @@ export function TaskWorkingForm({
         className="animate-scale-in"
         borderColor={borderColorValue}
       >
-          <div className="space-y-3">
-            {/* Rubrik */}
-            <div
-              className="pb-2 border-b"
-              style={{ borderColor: addOpacityToColor(borderColorValue, 0.3) }}
-            >
-              <h3 className="!text-yellow-200 text-base font-bold pixelated mb-1.5">
-                {taskName}
-              </h3>
-              {taskDescription && (
-                <p className="!text-white text-xs pixelated leading-relaxed">
-                  {taskDescription}
-                </p>
-              )}
-            </div>
-
-            {/* Textinlämningsinmatning */}
-            {submissionType === 'text' && (
-              <div>
-                <label className="!text-yellow-200 block text-xs font-bold pixelated mb-1.5 uppercase tracking-wide">
-                  Ditt svar
-                </label>
-                <textarea
-                  value={value}
-                  onChange={(e) => onChange(e.target.value)}
-                  disabled={isEvaluating}
-                  rows={8}
-                  className="w-full bg-black border-2 pixelated text-white text-xs p-2.5 rounded focus:outline-none focus:ring-2 transition-all placeholder:text-gray-500"
-                  style={{ borderColor: borderColorValue }}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder="Skriv ditt svar här..."
-                />
-              </div>
+        <div className="space-y-3">
+          {/* Header */}
+          <div
+            className="pb-2 border-b"
+            style={{ borderColor: addOpacityToColor(borderColorValue, 0.3) }}
+          >
+            <h3 className="!text-yellow-200 text-base font-bold pixelated mb-1.5">
+              {taskName}
+            </h3>
+            {taskDescription && (
+              <p className="!text-white text-xs pixelated leading-relaxed">
+                {taskDescription}
+              </p>
             )}
-
-            {/* Kodinlämningsinmatning */}
-            {submissionType === 'code' && (
-              <div>
-                <label className="!text-yellow-200 block text-xs font-bold pixelated mb-1.5 uppercase tracking-wide">
-                  Din kod
-                </label>
-                <textarea
-                  value={value}
-                  onChange={(e) => onChange(e.target.value)}
-                  disabled={isEvaluating}
-                  rows={12}
-                  className="w-full bg-black border-2 pixelated text-white text-xs p-2.5 rounded font-mono resize-y focus:outline-none focus:ring-2 transition-all placeholder:text-gray-500"
-                  style={{ borderColor: borderColorValue }}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder="Skriv din kod här..."
-                />
-              </div>
-            )}
-
-            {/* Felmeddelande */}
-            {error && (
-              <div
-                className="p-2.5 border-2 rounded-md pixelated"
-                style={{
-                  borderColor: '#ff4444',
-                  backgroundColor: 'rgba(255, 68, 68, 0.1)',
-                }}
-              >
-                <p className="text-xs text-red-400">{error}</p>
-              </div>
-            )}
-
-            {/* Skicka in-knapp */}
-            <div
-              className="flex justify-end pt-2 border-t"
-              style={{ borderColor: addOpacityToColor(borderColorValue, 0.2) }}
-            >
-              <Button
-                variant="primary"
-                onClick={onSubmit}
-                disabled={!value || isEvaluating}
-                loading={isEvaluating}
-                size="sm"
-                pixelated
-              >
-                Skicka in
-              </Button>
-            </div>
           </div>
-        </Card>
+
+          {/* Type-specific submission component */}
+          <SubmissionComponent
+            config={submissionConfig}
+            value={value}
+            onChange={onChange}
+            disabled={isEvaluating}
+            error={error}
+          />
+
+          {/* Submit button */}
+          <div
+            className="flex justify-end pt-2 border-t"
+            style={{ borderColor: addOpacityToColor(borderColorValue, 0.2) }}
+          >
+            <Button
+              variant="primary"
+              onClick={onSubmit}
+              disabled={!hasValue || isEvaluating}
+              loading={isEvaluating}
+              size="sm"
+              pixelated
+            >
+              Submit
+            </Button>
+          </div>
+        </div>
+      </Card>
     </ContainerLayout>
   );
 }

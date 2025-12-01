@@ -54,7 +54,7 @@ export function TaskSubmission({
 }: TaskSubmissionProps) {
   const {
     state,
-    submissionValue,
+    submission,
     result,
     error,
     handleAccept,
@@ -98,8 +98,8 @@ export function TaskSubmission({
       <TaskWorkingForm
         taskName={task.name}
         taskDescription={task.description}
-        submissionType={task.submission.type}
-        value={submissionValue}
+        submissionConfig={task.submission}
+        value={submission}
         isEvaluating={state === 'evaluating'}
         error={error}
         onChange={handleSubmissionChange}

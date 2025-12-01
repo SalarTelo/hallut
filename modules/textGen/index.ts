@@ -20,17 +20,16 @@
  * - handleDialogueCompletion(): Hantera åtgärder vid dialogslut
  */
 
-import type { IModule, InteractableFunctionResult, ModuleContext } from '../../src/types/core/moduleClass.types.js';
+import type { IModule, ModuleContext } from '../../src/types/core/moduleClass.types.js';
 import type { ModuleConfig } from '../../src/types/module/moduleConfig.types.js';
-import type { DialogueCompletionAction } from '../../src/types/dialogue.types.js';
+import type { ChoiceAction } from '../../src/types/choiceTypes.js';
 
 // Importera separerad konfiguration
 import { manifest, background, welcome } from './config.js';
 import { dialogues } from './dialogues.js';
-import { interactables } from './interactables.js';
+import { guard1 } from './guard1.js';
 import { tasks } from './tasks/index.js';
-import { getGuardDialogue, handleDialogueCompletion } from './handlers/index.js';
-import { INTERACTABLE_IDS, FUNCTION_NAMES } from './constants.js';
+import { handleDialogueCompletion } from './handlers/index.js';
 
 /**
  * Exempelmodulens implementation
@@ -42,28 +41,17 @@ const exampleModule: IModule = {
       background,
       welcome,
       dialogues,
-      interactables,
+      interactables: [guard1],
       tasks,
       requires: [],
     };
   },
 
-  handleInteractableFunction(
-    interactableId: string,
-    functionName: string,
-    context: ModuleContext
-  ): InteractableFunctionResult {
-    // Vaktens villkorliga dialoglogik
-    if (interactableId === INTERACTABLE_IDS.GUARD && functionName === FUNCTION_NAMES.GUARD_INTERACT) {
-      return getGuardDialogue(context);
-    }
+  // handleInteractableFunction is no longer needed - guard1 handles everything internally
 
-    return { type: 'none' };
-  },
-
-  async handleDialogueCompletion(
+  async handleChoiceAction(
     dialogueId: string,
-    action: DialogueCompletionAction,
+    action: ChoiceAction,
     context: ModuleContext
   ): Promise<void> {
     await handleDialogueCompletion(dialogueId, action, context);

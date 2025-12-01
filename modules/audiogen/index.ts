@@ -14,7 +14,7 @@
 
 import type { IModule, InteractableFunctionResult, ModuleContext } from '../../src/types/core/moduleClass.types.js';
 import type { ModuleConfig } from '../../src/types/module/moduleConfig.types.js';
-import type { DialogueCompletionAction } from '../../src/types/dialogue.types.js';
+import type { ChoiceAction } from '../../src/types/choiceTypes.js';
 
 import { manifest, background, welcome } from './config.js';
 import { dialogues } from './dialogues.js';
@@ -47,9 +47,9 @@ const audiogenModule: IModule = {
     return handleInteraction(interactableId, functionName, context);
   },
 
-  async handleDialogueCompletion(
+  async handleChoiceAction(
     dialogueId: string,
-    action: DialogueCompletionAction,
+    action: ChoiceAction,
     context: ModuleContext
   ): Promise<void> {
     await handleDialogueCompletion(dialogueId, action, context);

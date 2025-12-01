@@ -5,13 +5,13 @@
 
 import type { IModule, ModuleContext, InteractableFunctionResult } from '../types/core/moduleClass.types.js';
 import type { ModuleConfig, Task } from '../types/module/moduleConfig.types.js';
-import type { DialogueCompletionAction } from '../types/dialogue.types.js';
 import type { Interactable } from '../types/interactable.types.js';
 
 // Re-export all builders from sub-modules for convenience
-export * from './dialogueBuilders.js';
+export * from './dialogueBuilder.js';
+export * from './choiceBuilder.js';
 export * from './taskBuilders.js';
-export * from './interactableBuilders.js';
+export * from './interactableBuilder.js';
 
 // ============================================================================
 // Module Config Builders
@@ -208,11 +208,11 @@ export type FunctionHandler = (
 ) => InteractableFunctionResult | Promise<InteractableFunctionResult>;
 
 /**
- * Dialogue completion handler type
+ * Choice action handler type
  */
-export type DialogueHandler = (
+export type ChoiceHandler = (
   dialogueId: string,
-  action: DialogueCompletionAction,
+  action: import('../types/choiceTypes.js').ChoiceAction,
   context: ModuleContext
 ) => void | Promise<void>;
 
@@ -224,8 +224,8 @@ export interface ModuleOptions {
   config: ModuleConfig | ((locale: string) => ModuleConfig);
   /** Optional function handler */
   onInteractableFunction?: FunctionHandler;
-  /** Optional dialogue completion handler */
-  onDialogueComplete?: DialogueHandler;
+  /** Optional choice action handler */
+  onChoiceAction?: ChoiceHandler;
   /** Optional run callback */
   onRun?: (moduleId: string, context: ModuleContext) => void;
   /** Optional cleanup callback */
@@ -268,7 +268,7 @@ export function createModule(options: ModuleOptions): IModule {
   const {
     config,
     onInteractableFunction,
-    onDialogueComplete,
+    onChoiceAction,
     onRun,
     onCleanup,
   } = options;
@@ -294,8 +294,8 @@ export function createModule(options: ModuleOptions): IModule {
     module.handleInteractableFunction = onInteractableFunction;
   }
 
-  if (onDialogueComplete) {
-    module.handleDialogueCompletion = onDialogueComplete;
+  if (onChoiceAction) {
+    module.handleChoiceAction = onChoiceAction;
   }
 
   return module;

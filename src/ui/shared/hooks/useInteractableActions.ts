@@ -4,10 +4,7 @@
  */
 
 import { useCallback } from 'react';
-import { getModuleInstance } from '@engine/moduleRegistry.js';
 import { createModuleContext } from '@engine/engineApi.js';
-import { useModuleActions } from '@stores/moduleStore/index.js';
-import { InteractableActionType } from '@types/interactable.types.js';
 import type { Interactable } from '@types/interactable.types.js';
 import { DEFAULT_LOCALE } from '@constants/module.constants.js';
 import { ModuleError, ErrorCode } from '@types/core/error.types.js';
@@ -38,92 +35,30 @@ export interface UseInteractableActionsOptions {
 export function useInteractableActions({
   moduleId,
   locale = DEFAULT_LOCALE,
-  onTaskSelected,
   onDialogueSelected,
-  onChatOpen,
-  onImageOpen,
-  onImageAnalysisOpen,
   onError,
 }: UseInteractableActionsOptions) {
-  const { acceptTask } = useModuleActions();
 
   const handleInteractableAction = useCallback(
     async (interactable: Interactable): Promise<InteractableActionResult> => {
-      const { action } = interactable;
-
       try {
-        switch (action.type) {
-          case InteractableActionType.Task: {
-            const taskId = action.task;
-            acceptTask(moduleId, taskId);
-            onTaskSelected?.(taskId);
-            return { type: 'task', taskId };
-          }
-
-          case InteractableActionType.Dialogue: {
-            const dialogueId = action.dialogue;
-            onDialogueSelected?.(dialogueId);
-            return { type: 'dialogue', dialogueId };
-          }
-
-          case InteractableActionType.Chat: {
-            onChatOpen?.();
-            return { type: 'chat' };
-          }
-
-          case InteractableActionType.Image: {
-            onImageOpen?.(action.imageUrl, action.title || 'Image');
-            return { type: 'image', imageUrl: action.imageUrl, imageTitle: action.title };
-          }
-
-          case InteractableActionType.ImageAnalysis: {
-            onImageAnalysisOpen?.();
-            return { type: 'image-analysis' };
-          }
-
-          case InteractableActionType.Function: {
-            // Handle function action - let module decide what to do
-            const moduleInstance = getModuleInstance(moduleId);
-            if (moduleInstance?.handleInteractableFunction) {
-              const context = createModuleContext(moduleId, locale);
-              const result = await moduleInstance.handleInteractableFunction(
-                interactable.id,
-                action.function,
-                context
-              );
-
-              if (result.type === 'dialogue') {
-                onDialogueSelected?.(result.dialogueId);
-                return { type: 'dialogue', dialogueId: result.dialogueId };
-              } else if (result.type === 'task') {
-                acceptTask(moduleId, result.taskId);
-                onTaskSelected?.(result.taskId);
-                return { type: 'task', taskId: result.taskId };
-              }
-              return { type: 'none' };
-            } else {
-              const error = new ModuleError(
-                ErrorCode.MODULE_INVALID,
-                moduleId,
-                `Interactable ${interactable.id} has Function action but module doesn't implement handleInteractableFunction`
-              );
-              handleError(error);
-              onError?.(error);
-              return { type: 'none' };
-            }
-          }
-
-          default: {
-            const error = new ModuleError(
-              ErrorCode.MODULE_INVALID,
-              moduleId,
-              `Unknown interactable action type: ${JSON.stringify(action)}`
-            );
-            handleError(error);
-            onError?.(error);
-            return { type: 'none' };
-          }
+        // Interactable type uses getDialogue function to determine which dialogue to show
+        if (interactable.getDialogue) {
+          const context = createModuleContext(moduleId, locale);
+          const dialogue = interactable.getDialogue(context);
+          onDialogueSelected?.(dialogue.id);
+          return { type: 'dialogue', dialogueId: dialogue.id };
         }
+
+        // If no getDialogue, use first dialogue
+        const dialogueIds = Object.keys(interactable.dialogues);
+        if (dialogueIds.length > 0) {
+          const dialogueId = `${interactable.id}-${dialogueIds[0]}`;
+          onDialogueSelected?.(dialogueId);
+          return { type: 'dialogue', dialogueId };
+        }
+
+        return { type: 'none' };
       } catch (error) {
         const engineError = error instanceof Error
           ? new ModuleError(
@@ -142,7 +77,7 @@ export function useInteractableActions({
         return { type: 'none' };
       }
     },
-    [moduleId, locale, acceptTask, onTaskSelected, onDialogueSelected, onChatOpen, onImageOpen, onImageAnalysisOpen, onError]
+    [moduleId, locale, onDialogueSelected, onError]
   );
 
   return {

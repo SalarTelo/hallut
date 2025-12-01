@@ -158,8 +158,27 @@ export function stateCheck(key: string, value: unknown): StateCheckRequirement {
 }
 
 /**
+ * Position in percentage coordinates
+ */
+export interface Position {
+  x: number;
+  y: number;
+}
+
+/**
+ * Handler function type
+ */
+export type HandlerFunction = (context: import('./core/moduleClass.types.js').ModuleContext) => void | Promise<void>;
+
+/**
+ * Get dialogue function - determines which dialogue to show based on context
+ */
+export type GetDialogueFunction = (context: import('./core/moduleClass.types.js').ModuleContext) => import('./dialogue.types.js').DialogueConfig;
+
+/**
  * Interactable object
- * Represents an interactive element in a module (NPC, object, etc.)
+ * Encapsulates tasks, dialogues, handlers, and conditional logic
+ * This is the main interactable type used throughout the system
  */
 export interface Interactable {
   /**
@@ -180,7 +199,7 @@ export interface Interactable {
   /**
    * Position in the environment (percentage coordinates)
    */
-  position: { x: number; y: number };
+  position: Position;
 
   /**
    * Avatar/icon (emoji or image URL)
@@ -190,21 +209,69 @@ export interface Interactable {
   /**
    * Whether this interactable is initially locked
    */
-  locked: boolean;
+  locked?: boolean;
 
   /**
-   * Typed requirement to unlock
-   * null if always unlocked (or use locked: false)
+   * Unlock requirement
    */
-  unlockRequirement: UnlockRequirement | null;
+  unlockRequirement?: UnlockRequirement | null;
 
   /**
-   * Action to perform when interacted with
+   * All dialogues this interactable can show
+   * Key is dialogue ID, value is dialogue config
    */
-  action: InteractableAction;
+  dialogues: Record<string, import('./dialogue.types.js').DialogueConfig>;
 
   /**
-   * Optional list of task IDs this interactable can offer
+   * Conditional dialogue routing function
+   * Determines which dialogue to show based on context
    */
-  tasks?: string[];
+  getDialogue?: GetDialogueFunction;
+
+  /**
+   * Tasks this interactable offers
+   * Key is task alias, value is task object
+   */
+  tasks?: Record<string, import('./module/moduleConfig.types.js').Task>;
+
+  /**
+   * Handler functions for custom logic
+   * Key is handler name, value is handler function
+   */
+  handlers?: Record<string, HandlerFunction>;
+}
+
+
+/**
+ * Task sequence entry
+ * Defines task order and prerequisites
+ */
+export interface TaskSequenceEntry {
+  /**
+   * The task (direct reference)
+   */
+  task: import('./module/moduleConfig.types.js').Task;
+
+  /**
+   * Which interactable offers this task (direct reference)
+   */
+  offeredBy: Interactable;
+
+  /**
+   * Prerequisites - tasks that must be completed first
+   */
+  after?: import('./module/moduleConfig.types.js').Task[];
+
+  /**
+   * Interactables to unlock when this task completes
+   */
+  unlocks?: Interactable[];
+}
+
+/**
+ * Task sequence
+ * Defines the order of tasks across all interactables
+ */
+export interface TaskSequence {
+  entries: TaskSequenceEntry[];
 }

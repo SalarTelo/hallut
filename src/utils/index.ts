@@ -13,9 +13,10 @@ export * from './theme.js';
 export * from './moduleBuilders.js';
 
 // Also export from sub-builders for direct imports
-export * from './dialogueBuilders.js';
+export * from './dialogueBuilder.js';
+export * from './choiceBuilder.js';
 export * from './taskBuilders.js';
-export * from './interactableBuilders.js';
+export * from './interactableBuilder.js';
 
 
 

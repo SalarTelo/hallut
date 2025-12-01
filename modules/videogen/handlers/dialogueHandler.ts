@@ -4,8 +4,7 @@
  */
 
 import type { ModuleContext } from '../../../src/types/core/moduleClass.types.js';
-import type { DialogueCompletionAction } from '../../../src/types/dialogue.types.js';
-import { FUNCTION_NAMES } from '../constants.js';
+import type { ChoiceAction } from '../../../src/types/choiceTypes.js';
 
 /**
  * Hantera åtgärder vid dialogslut
@@ -13,18 +12,12 @@ import { FUNCTION_NAMES } from '../constants.js';
  */
 export async function handleDialogueCompletion(
   _dialogueId: string,
-  action: DialogueCompletionAction,
+  action: ChoiceAction,
   context: ModuleContext
 ): Promise<void> {
   // Hantera funktionsåtgärder
-  if (action.type === 'function') {
-    if (action.functionName === FUNCTION_NAMES.SUBMIT_TASK) {
-      // Öppna uppgiftsinlämning för aktuell aktiv uppgift
-      const currentTaskId = context.getCurrentTaskId();
-      if (currentTaskId && context.openTaskSubmission) {
-        context.openTaskSubmission(currentTaskId);
-      }
-    }
-    // Lägg till fler funktionshanterare här
+  if (action.type === 'call-function') {
+    // Call the handler function directly
+    await action.handler(context);
   }
 }

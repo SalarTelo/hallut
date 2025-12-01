@@ -6,18 +6,11 @@
  */
 
 import { getModuleConfig, getRegisteredModuleIds } from '../engine/moduleRegistry.js';
-import { useModuleStore } from '../stores/moduleStore/index.js';
+import { moduleActions } from './actions/moduleActions.js';
 import type { ModuleProgressionState } from '../types/core/moduleProgression.types.js';
 import { handleError } from './errorService.js';
 import { ModuleError, ErrorCode } from '../types/core/error.types.js';
 import { INITIALLY_UNLOCKED_MODULES, USE_MANUAL_UNLOCK } from '../constants/worldmap.config.js';
-
-/**
- * Get store state (read-only helper)
- */
-function getStoreState() {
-  return useModuleStore.getState();
-}
 
 /**
  * Check if a module's dependencies are met
@@ -37,8 +30,7 @@ export async function checkModuleDependencies(moduleId: string): Promise<boolean
   }
 
   // Check if all required modules are completed
-  const { isModuleCompleted } = getStoreState();
-  return config.requires.every((requiredModuleId) => isModuleCompleted(requiredModuleId));
+  return config.requires.every((requiredModuleId) => moduleActions.isModuleCompleted(requiredModuleId));
 }
 
 /**
@@ -52,8 +44,7 @@ export async function checkModuleUnlockStatus(moduleId: string): Promise<{
   shouldUnlock: boolean;
   currentState: ModuleProgressionState;
 }> {
-  const { getModuleProgression } = getStoreState();
-  const currentState = getModuleProgression(moduleId);
+  const currentState = moduleActions.getModuleProgression(moduleId);
   
   // Already unlocked or completed
   if (currentState === 'unlocked' || currentState === 'completed') {
@@ -72,8 +63,7 @@ export async function checkModuleUnlockStatus(moduleId: string): Promise<{
  * @returns True if all tasks are completed
  */
 export async function isModuleFullyCompleted(moduleId: string): Promise<boolean> {
-  const { getProgress } = getStoreState();
-  const progress = getProgress(moduleId);
+  const progress = moduleActions.getProgress(moduleId);
   if (!progress) {
     return false;
   }
@@ -138,8 +128,7 @@ export async function checkModuleCompletionStatus(moduleId: string): Promise<{
  * @returns Current progression state
  */
 export function getModuleProgressionState(moduleId: string): ModuleProgressionState {
-  const { getModuleProgression } = getStoreState();
-  return getModuleProgression(moduleId);
+  return moduleActions.getModuleProgression(moduleId);
 }
 
 /**
@@ -159,8 +148,7 @@ export async function getModuleProgressionInitActions(moduleIds: string[]): Prom
 
   for (let i = 0; i < ids.length; i++) {
     const moduleId = ids[i];
-    const { getModuleProgression } = getStoreState();
-    const currentState = getModuleProgression(moduleId);
+    const currentState = moduleActions.getModuleProgression(moduleId);
     
     // Preserve completed modules
     if (currentState === 'completed') {
@@ -203,13 +191,11 @@ export async function initializeModuleProgression(moduleIds?: string[]): Promise
   const ids = moduleIds || getRegisteredModuleIds();
   const { toUnlock, toLock } = await getModuleProgressionInitActions(ids);
   
-  const { unlockModule, setModuleProgression } = getStoreState();
-  
   for (const moduleId of toUnlock) {
-    unlockModule(moduleId);
+    moduleActions.unlockModuleDirect(moduleId);
   }
   
   for (const moduleId of toLock) {
-    setModuleProgression(moduleId, 'locked');
+    moduleActions.setModuleProgression(moduleId, 'locked');
   }
 }

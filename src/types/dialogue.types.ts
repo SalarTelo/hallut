@@ -5,30 +5,7 @@
  */
 
 import type { ModuleState } from './core/moduleState.types.js';
-
-/**
- * Dialogue completion action types
- */
-export type DialogueCompletionAction =
-  | { type: 'accept-task'; taskId: string }
-  | { type: 'set-state'; key: string; value: unknown }
-  | { type: 'function'; functionName: string };
-
-/**
- * Dialogue choice option
- */
-export interface DialogueChoice {
-  /**
-   * Choice text to display
-   */
-  text: string;
-
-  /**
-   * Action to perform when this choice is selected
-   * If null, the dialogue will simply continue/end without performing any action
-   */
-  action: DialogueCompletionAction | DialogueCompletionAction[] | null;
-}
+import type { DialogueChoice } from './choiceTypes.js';
 
 /**
  * Dialogue configuration
@@ -56,11 +33,6 @@ export interface DialogueConfig {
    */
   choices?: DialogueChoice[];
 
-  /**
-   * Optional action to perform when dialogue completes
-   * Only used if choices are not provided (for backward compatibility)
-   */
-  onComplete?: DialogueCompletionAction | DialogueCompletionAction[];
 }
 
 /**
