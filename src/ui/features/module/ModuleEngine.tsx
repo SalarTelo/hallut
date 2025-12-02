@@ -109,13 +109,27 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
           content: (props?.content as string) || '',
           title: (props?.title as string),
         });
+      } else if (component === 'NoteViewer') {
+        setNoteModal({
+          content: (props?.content as string) || '',
+          title: (props?.title as string),
+        });
+      } else if (component === 'ImageViewer') {
+        setImageModal({
+          url: (props?.imageUrl as string) || '',
+          title: (props?.title as string),
+        });
+      } else {
+        // Custom/unknown component - log warning for developers
+        console.warn(
+          `[ModuleEngine] Unknown component "${component}" requested. ` +
+          `Predefined components: ChatWindow, SignViewer, NoteViewer, ImageViewer. ` +
+          `Custom components need to be handled by module-specific code.`,
+          { component, props }
+        );
+        // For now, we don't render unknown components automatically.
+        // Modules can extend ModuleEngine or use module-specific handlers to support custom components.
       }
-    },
-    onImageOpen: (url, title) => {
-      setImageModal({ url, title });
-    },
-    onNoteOpen: (content, title) => {
-      setNoteModal({ content, title });
     },
     onError: setError,
   });

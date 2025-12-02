@@ -13,6 +13,10 @@ import {
   showComponent,
   showImage,
   showNote,
+  showNoteViewer,
+  showSignViewer,
+  showChatWindow,
+  showImageViewer,
   createNPC,
   createObject,
   createLocation,
@@ -74,19 +78,89 @@ describe('Interactable Builders', () => {
     });
 
     it('should create component interaction', () => {
-      const interaction = showComponent('MyComponent', { prop: 'value' });
+      const interaction = showComponent('NoteViewer', { content: 'test', title: 'Test' });
 
       expect(interaction.type).toBe('component');
-      expect(interaction.component).toBe('MyComponent');
-      expect(interaction.props).toEqual({ prop: 'value' });
+      if (interaction.type === 'component') {
+        expect(interaction.component).toBe('NoteViewer');
+      }
     });
 
-    it('should create image interaction', () => {
+    it('should create NoteViewer interaction', () => {
+      const interaction = showNoteViewer({
+        content: 'Note content',
+        title: 'Note title',
+      });
+
+      expect(interaction.type).toBe('component');
+      if (interaction.type === 'component') {
+        expect(interaction.component).toBe('NoteViewer');
+        expect(interaction.props).toEqual({
+          content: 'Note content',
+          title: 'Note title',
+        });
+      }
+    });
+
+    it('should create SignViewer interaction', () => {
+      const interaction = showSignViewer({
+        content: 'Sign content',
+        title: 'Sign title',
+      });
+
+      expect(interaction.type).toBe('component');
+      if (interaction.type === 'component') {
+        expect(interaction.component).toBe('SignViewer');
+        expect(interaction.props).toEqual({
+          content: 'Sign content',
+          title: 'Sign title',
+        });
+      }
+    });
+
+    it('should create ChatWindow interaction', () => {
+      const interaction = showChatWindow({
+        title: 'Chat Title',
+        placeholder: 'Enter message...',
+      });
+
+      expect(interaction.type).toBe('component');
+      if (interaction.type === 'component') {
+        expect(interaction.component).toBe('ChatWindow');
+        expect(interaction.props).toEqual({
+          title: 'Chat Title',
+          placeholder: 'Enter message...',
+        });
+      }
+    });
+
+    it('should create image interaction (uses component pattern)', () => {
       const interaction = showImage('image.jpg', 'Title');
 
-      expect(interaction.type).toBe('image');
-      expect(interaction.imageUrl).toBe('image.jpg');
-      expect(interaction.title).toBe('Title');
+      expect(interaction.type).toBe('component');
+      if (interaction.type === 'component') {
+        expect(interaction.component).toBe('ImageViewer');
+        expect(interaction.props).toEqual({
+          imageUrl: 'image.jpg',
+          title: 'Title',
+        });
+      }
+    });
+
+    it('should create ImageViewer interaction', () => {
+      const interaction = showImageViewer({
+        imageUrl: 'image.jpg',
+        title: 'Image Title',
+      });
+
+      expect(interaction.type).toBe('component');
+      if (interaction.type === 'component') {
+        expect(interaction.component).toBe('ImageViewer');
+        expect(interaction.props).toEqual({
+          imageUrl: 'image.jpg',
+          title: 'Image Title',
+        });
+      }
     });
 
     it('should create note interaction', () => {
@@ -187,7 +261,7 @@ describe('Interactable Builders', () => {
       }
     });
 
-    it('should create an image object', () => {
+    it('should create an image object (uses component pattern)', () => {
       const obj = createImageObject({
         id: 'image',
         name: 'Image',
@@ -197,9 +271,13 @@ describe('Interactable Builders', () => {
       });
 
       expect(obj.type).toBe('object');
-      expect(obj.interaction?.type).toBe('image');
-      if (obj.interaction && obj.interaction.type === 'image') {
-        expect(obj.interaction.imageUrl).toBe('image.jpg');
+      expect(obj.interaction?.type).toBe('component');
+      if (obj.interaction && obj.interaction.type === 'component') {
+        expect(obj.interaction.component).toBe('ImageViewer');
+        expect(obj.interaction.props).toEqual({
+          imageUrl: 'image.jpg',
+          title: 'Image Title',
+        });
       }
     });
   });

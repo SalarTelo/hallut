@@ -8,6 +8,7 @@ import {
   pos,
   choice,
   createDialogue,
+  showNoteViewer,
 } from '../../../src/utils/builders/index.js';
 import { greetingTask } from './tasks.js';
 
@@ -47,14 +48,10 @@ export const signObject = createObject({
   name: 'Sign',
   position: pos(60, 50),
   avatar: '📜',
-  interaction: {
-    type: 'component',
-    component: 'NoteViewer',
-    props: {
-      content: 'This is an example sign. You can read it!',
-      title: 'Welcome Sign',
-    },
-  },
+  interaction: showNoteViewer({
+    content: 'This is an example sign. You can read it!',
+    title: 'Welcome Sign',
+  }),
 });
 
 /**

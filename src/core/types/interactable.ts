@@ -19,13 +19,48 @@ export interface Position {
 }
 
 /**
- * Object interaction types
+ * Valid component names for component interactions
+ */
+export type InteractableComponentName = 
+  | 'NoteViewer'
+  | 'SignViewer'
+  | 'ChatWindow'
+  | 'ImageViewer';
+
+/**
+ * Component-specific props based on component type
+ */
+export interface NoteViewerProps {
+  content: string;
+  title?: string;
+}
+
+export interface SignViewerProps {
+  content: string;
+  title?: string;
+}
+
+export interface ChatWindowProps {
+  title?: string;
+  placeholder?: string;
+}
+
+export interface ImageViewerProps {
+  imageUrl: string;
+  title?: string;
+}
+
+/**
+ * Object interaction types with type-safe component names
+ * Predefined components have type-safe props, custom components use generic props
  */
 export type ObjectInteraction =
   | { type: 'dialogue'; dialogue: DialogueConfig }
-  | { type: 'component'; component: string; props?: Record<string, unknown> }
-  | { type: 'image'; imageUrl: string; title?: string }
-  | { type: 'note'; content: string; title?: string }
+  | { type: 'component'; component: 'NoteViewer'; props?: NoteViewerProps }
+  | { type: 'component'; component: 'SignViewer'; props?: SignViewerProps }
+  | { type: 'component'; component: 'ChatWindow'; props?: ChatWindowProps }
+  | { type: 'component'; component: 'ImageViewer'; props?: ImageViewerProps }
+  | { type: 'component'; component: string; props?: Record<string, unknown> } // Generic fallback for custom components
   | { type: 'none' };
 
 /**

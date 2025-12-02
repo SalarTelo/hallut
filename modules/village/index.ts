@@ -14,7 +14,8 @@ import {
   createImageObject,
   pos,
   showDialogue,
-  showComponent,
+  showSignViewer,
+  showChatWindow,
   showNote,
 } from '../../src/utils/builders/interactables.js';
 import { createDialogue } from '../../src/utils/builders/dialogues.js';
@@ -87,7 +88,7 @@ const sign = createObject({
   name: 'Village Sign',
   position: pos(20, 20),
   avatar: '📜',
-  interaction: showComponent('SignViewer', {
+  interaction: showSignViewer({
     content: 'Welcome to Peaceful Village!\n\nPopulation: 150\nEstablished: 1205',
     title: 'Village Sign',
   }),
@@ -126,7 +127,7 @@ const aiCompanion = createObject({
   name: 'AI Companion',
   position: pos(15, 60),
   avatar: '🤖',
-  interaction: showComponent('ChatWindow', {
+  interaction: showChatWindow({
     title: 'AI Companion',
     placeholder: 'Ask me anything about the village...',
   }),

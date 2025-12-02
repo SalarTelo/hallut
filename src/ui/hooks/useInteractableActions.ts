@@ -9,14 +9,10 @@ import type { Interactable, ObjectInteraction } from '../../core/types/interacta
 import { ModuleError, ErrorCode } from '../../core/types/errors.js';
 
 export interface InteractableActionResult {
-  type: 'dialogue' | 'component' | 'image' | 'note' | 'none';
+  type: 'dialogue' | 'component' | 'none';
   dialogueId?: string;
   component?: string;
   componentProps?: Record<string, unknown>;
-  imageUrl?: string;
-  imageTitle?: string;
-  noteContent?: string;
-  noteTitle?: string;
 }
 
 export interface UseInteractableActionsOptions {
@@ -24,8 +20,6 @@ export interface UseInteractableActionsOptions {
   locale?: string;
   onDialogueSelected?: (dialogueId: string) => void;
   onComponentOpen?: (component: string, props?: Record<string, unknown>) => void;
-  onImageOpen?: (url: string, title?: string) => void;
-  onNoteOpen?: (content: string, title?: string) => void;
   onError?: (error: Error) => void;
 }
 
@@ -37,8 +31,6 @@ export function useInteractableActions({
   locale = 'sv',
   onDialogueSelected,
   onComponentOpen,
-  onImageOpen,
-  onNoteOpen,
   onError,
 }: UseInteractableActionsOptions) {
   const handleInteractableAction = useCallback(
@@ -94,38 +86,14 @@ export function useInteractableActions({
               return { type: 'dialogue', dialogueId };
 
             case 'component':
-              // Check if it's a note component
-              if (interaction.component === 'NoteViewer') {
-                const props = interaction.props as { content?: string; title?: string } | undefined;
-                onNoteOpen?.(props?.content || '', props?.title);
-                return {
-                  type: 'note',
-                  noteContent: props?.content || '',
-                  noteTitle: props?.title,
-                };
-              }
-              // Handle other components (like ChatWindow)
-              onComponentOpen?.(interaction.component, interaction.props);
+              // Handle all components through the same callback
+              // Props can be specific types or generic Record, normalize to Record for callback
+              const componentProps = interaction.props as Record<string, unknown> | undefined;
+              onComponentOpen?.(interaction.component, componentProps);
               return {
                 type: 'component',
                 component: interaction.component,
-                componentProps: interaction.props,
-              };
-
-            case 'image':
-              onImageOpen?.(interaction.imageUrl, interaction.title);
-              return {
-                type: 'image',
-                imageUrl: interaction.imageUrl,
-                imageTitle: interaction.title,
-              };
-
-            case 'note':
-              onNoteOpen?.(interaction.content, interaction.title);
-              return {
-                type: 'note',
-                noteContent: interaction.content,
-                noteTitle: interaction.title,
+                componentProps,
               };
           }
         }
@@ -148,7 +116,7 @@ export function useInteractableActions({
         return { type: 'none' };
       }
     },
-    [moduleId, locale, onDialogueSelected, onComponentOpen, onImageOpen, onNoteOpen, onError]
+    [moduleId, locale, onDialogueSelected, onComponentOpen, onError]
   );
 
   return {
