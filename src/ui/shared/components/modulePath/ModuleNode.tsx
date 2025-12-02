@@ -197,7 +197,7 @@ export function ModuleNode({
                 width: '18px',
                 height: '18px',
                 backgroundColor: COLORS.completed.bg,
-                border: `2px solid ${styles.borderColor}`,
+                border: `1px solid ${styles.borderColor}`,
                 boxShadow: '0 2px 6px rgba(0, 0, 0, 0.5)',
               }}
             >
@@ -214,7 +214,7 @@ export function ModuleNode({
           backgroundColor: COLORS.label.bg,
           color: isLocked ? '#666666' : COLORS.label.text,
           borderColor: isLocked ? COLORS.locked.border : borderColor,
-          borderWidth: '2px',
+          borderWidth: '1px',
           boxShadow: isHovered
             ? `0 3px 8px rgba(0, 0, 0, 0.5)`
             : '0 2px 6px rgba(0, 0, 0, 0.4)',

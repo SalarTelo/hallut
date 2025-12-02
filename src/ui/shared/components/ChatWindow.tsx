@@ -214,7 +214,7 @@ export function ChatWindow({
       style={{ maxWidth: '1152px' }}
     >
       <div
-        className="bg-black border-2 rounded-lg flex flex-col h-[700px] overflow-hidden w-full"
+        className="bg-black border rounded-lg flex flex-col h-[700px] overflow-hidden w-full"
         style={{
           borderColor: borderColorValue,
           background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.98) 0%, rgba(15, 15, 35, 0.98) 100%)',
@@ -251,7 +251,7 @@ export function ChatWindow({
             {localMessages.length > 0 && (
               <button
                 onClick={handleReset}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 border-2"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 border"
                 style={{
                   borderColor: borderColorValue,
                   backgroundColor: `${borderColorValue}15`,
@@ -299,7 +299,7 @@ export function ChatWindow({
                 className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
                 style={{
                   backgroundColor: `${borderColorValue}15`,
-                  border: `2px solid ${borderColorValue}30`,
+                  border: `1px solid ${borderColorValue}30`,
                 }}
               >
                 <PixelIcon type="star" size={32} color={borderColorValue} className="opacity-70" />
@@ -326,7 +326,7 @@ export function ChatWindow({
                           className="w-9 h-9 rounded-full flex items-center justify-center"
                           style={{
                             backgroundColor: `${borderColorValue}25`,
-                            border: `2px solid ${borderColorValue}50`,
+                            border: `1px solid ${borderColorValue}50`,
                           }}
                         >
                           <PixelIcon type="star" size={18} color={borderColorValue} />
@@ -438,7 +438,7 @@ export function ChatWindow({
                 onKeyDown={handleKeyDown}
                 placeholder="Skriv ditt meddelande... (Tryck Enter för att skicka, Shift+Enter för ny rad)"
                 rows={1}
-                className="w-full bg-gray-900 border-2 rounded-xl px-4 py-3 pr-12 text-sm text-white placeholder-gray-500 resize-none focus:outline-none transition-all leading-normal"
+                className="w-full bg-gray-900 border rounded-xl px-4 py-3 pr-12 text-sm text-white placeholder-gray-500 resize-none focus:outline-none transition-all leading-normal"
                 style={{
                   borderColor: inputValue.trim() ? borderColorValue : `${borderColorValue}60`,
                   minHeight: '52px',
@@ -469,7 +469,7 @@ export function ChatWindow({
             <button
               onClick={handleSend}
               disabled={!inputValue.trim()}
-              className="flex-shrink-0 h-[52px] w-[52px] rounded-xl flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 active:scale-95 border-2"
+              className="flex-shrink-0 h-[52px] w-[52px] rounded-xl flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 active:scale-95 border"
               style={{
                 backgroundColor: inputValue.trim() ? borderColorValue : `${borderColorValue}40`,
                 borderColor: inputValue.trim() ? borderColorValue : `${borderColorValue}60`,

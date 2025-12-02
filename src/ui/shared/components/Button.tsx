@@ -117,7 +117,7 @@ export function Button({
   
   // Kantstil - konturvariant använder kant, andra använder glöd
   const borderStyle = variant === 'outline' 
-    ? { borderColor: borderColorValue, borderWidth: '2px' }
+    ? { borderColor: borderColorValue, borderWidth: '1px' }
     : {};
   
   // Glödeffektstil - använd endast för betoning/aktiva tillstånd

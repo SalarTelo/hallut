@@ -45,7 +45,7 @@ export function ModalContent({
 }: ModalContentProps) {
   return (
     <div
-      className={`bg-black border-2 rounded-lg ${padding} ${className}`}
+      className={`bg-black border rounded-lg ${padding} ${className}`}
       style={{
         borderColor,
         ...style,

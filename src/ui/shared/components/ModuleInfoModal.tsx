@@ -132,7 +132,7 @@ export function ModuleInfoModal({
       className="max-w-2xl"
     >
       <div
-        className="bg-black border-2 rounded-lg animate-scale-in overflow-hidden"
+        className="bg-black border rounded-lg animate-scale-in overflow-hidden"
         style={{
           borderColor: borderColorValue,
           background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.98) 0%, rgba(15, 15, 35, 0.98) 100%)',
@@ -159,7 +159,7 @@ export function ModuleInfoModal({
             </div>
             {/* Status badge - improved */}
             <div
-              className={`px-3 py-1.5 rounded-lg border-2 flex items-center gap-1.5 flex-shrink-0 ${statusInfo.bgColor} ${statusInfo.borderColor}`}
+              className={`px-3 py-1.5 rounded-lg border flex items-center gap-1.5 flex-shrink-0 ${statusInfo.bgColor} ${statusInfo.borderColor}`}
               style={{
                 boxShadow: `0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
               }}
@@ -249,7 +249,7 @@ export function ModuleInfoModal({
         >
           <button
             onClick={onClose}
-            className="px-4 py-2 border-2 rounded pixelated text-xs font-bold transition-all hover:scale-105 active:scale-95"
+            className="px-4 py-2 border rounded pixelated text-xs font-bold transition-all hover:scale-105 active:scale-95"
             style={{
               borderColor: borderColorValue,
               backgroundColor: 'rgba(0, 0, 0, 0.4)',
@@ -272,7 +272,7 @@ export function ModuleInfoModal({
           {isUnlocked && (
             <button
               onClick={onEnterModule}
-              className="px-5 py-2 border-2 rounded pixelated text-xs font-bold transition-all hover:scale-105 active:scale-95"
+              className="px-5 py-2 border rounded pixelated text-xs font-bold transition-all hover:scale-105 active:scale-95"
               style={{
                 borderColor: borderColorValue,
                 backgroundColor: `${borderColorValue}20`,

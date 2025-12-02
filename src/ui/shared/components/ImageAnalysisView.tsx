@@ -127,7 +127,7 @@ export function ImageAnalysisView({
       className="max-w-4xl"
     >
       <div
-        className="bg-black border-2 rounded-lg flex flex-col overflow-hidden"
+        className="bg-black border rounded-lg flex flex-col overflow-hidden"
         style={{
           borderColor: borderColorValue,
           background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.98) 0%, rgba(15, 15, 35, 0.98) 100%)',
@@ -186,7 +186,7 @@ export function ImageAnalysisView({
             </div>
 
             {selectedImage ? (
-              <div className="relative bg-gray-900 rounded-lg overflow-hidden border-2" style={{ borderColor: `${borderColorValue}40` }}>
+              <div className="relative bg-gray-900 rounded-lg overflow-hidden border" style={{ borderColor: `${borderColorValue}40` }}>
                 <img
                   src={selectedImage}
                   alt="Vald bild"
@@ -203,7 +203,7 @@ export function ImageAnalysisView({
             ) : (
               <div
                 onClick={handleSelectImage}
-                className="flex flex-col items-center justify-center py-12 bg-gray-900/50 rounded-lg border-2 border-dashed cursor-pointer hover:bg-gray-900/70 transition-colors"
+                className="flex flex-col items-center justify-center py-12 bg-gray-900/50 rounded-lg border border-dashed cursor-pointer hover:bg-gray-900/70 transition-colors"
                 style={{ borderColor: `${borderColorValue}30` }}
               >
                 <PixelIcon type="box" size={48} color={borderColorValue} className="opacity-50 mb-3" />
@@ -231,7 +231,7 @@ export function ImageAnalysisView({
 
           {/* Analysresultat */}
           {isAnalyzing && (
-            <div className="bg-gray-900/50 rounded-lg border-2 p-4" style={{ borderColor: `${borderColorValue}30` }}>
+            <div className="bg-gray-900/50 rounded-lg border p-4" style={{ borderColor: `${borderColorValue}30` }}>
               <div className="flex items-center gap-3 mb-2">
                 <PixelIcon type="star" size={16} color={borderColorValue} className="animate-pulse" />
                 <p className="text-sm text-gray-300 font-medium">Analyserar bild...</p>
@@ -245,7 +245,7 @@ export function ImageAnalysisView({
           )}
 
           {analysisResult && (
-            <div className="bg-gray-800 rounded-lg border-2 p-4 space-y-2" style={{ borderColor: `${borderColorValue}50` }}>
+            <div className="bg-gray-800 rounded-lg border p-4 space-y-2" style={{ borderColor: `${borderColorValue}50` }}>
               <div className="flex items-center gap-2 mb-2">
                 <PixelIcon type="check" size={16} color={borderColorValue} />
                 <h4 className="text-sm font-semibold text-yellow-300">AI-analys</h4>

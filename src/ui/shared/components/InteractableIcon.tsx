@@ -229,7 +229,7 @@ export function InteractableIcon({
           <div
             className={`absolute inset-0 ${shapeClass} animate-pulse pointer-events-none`}
             style={{
-              border: `2px solid ${borderColor}`,
+              border: `1px solid ${borderColor}`,
               opacity: 0.3,
             }}
           />

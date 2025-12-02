@@ -152,7 +152,7 @@ export function ModuleTooltip({
       }}
     >
       <div
-        className="bg-black border-2 rounded pixelated text-white shadow-xl min-w-[240px] max-w-[400px] animate-scale-in overflow-hidden"
+        className="bg-black border rounded pixelated text-white shadow-xl min-w-[240px] max-w-[400px] animate-scale-in overflow-hidden"
         style={{
           borderColor,
           backgroundColor: 'rgba(0, 0, 0, 0.98)',
