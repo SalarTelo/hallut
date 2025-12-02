@@ -62,7 +62,7 @@ export function InteractableIcon({
   size = 64,
 }: InteractableIconProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const shapeClass = shape === 'circle' ? 'rounded-full' : shape === 'square' ? 'rounded' : '';
+  const shapeClass = shape === 'circle' ? 'rounded-full' : shape === 'square' ? 'rounded-lg' : '';
 
   const handleClick = () => {
     if (!locked && onClick) {
