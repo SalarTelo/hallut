@@ -44,6 +44,11 @@ export interface InteractableIconProps {
   locked?: boolean;
 
   /**
+   * Badge type to display in top-right corner
+   */
+  badge?: 'task' | 'task-active' | 'completed' | 'new' | 'locked' | null;
+
+  /**
    * Click handler
    */
   onClick?: () => void;
@@ -63,6 +68,7 @@ export function InteractableIcon({
   position,
   label,
   locked = false,
+  badge,
   onClick,
   size = 56,
   interactableType,
@@ -227,6 +233,50 @@ export function InteractableIcon({
               opacity: 0.3,
             }}
           />
+        )}
+
+        {/* Badge in top-right corner */}
+        {badge && (
+          <div
+            className="absolute rounded-full flex items-center justify-center pointer-events-none z-20"
+            style={{
+              top: '-6px',
+              right: '-6px',
+              width: '20px',
+              height: '20px',
+              backgroundColor: badge === 'task' 
+                ? '#FFD700' 
+                : badge === 'task-active'
+                  ? '#9ca3af' // Light gray for active tasks
+                  : badge === 'completed'
+                    ? '#10b981'
+                    : badge === 'new'
+                      ? '#3b82f6'
+                      : '#666',
+              border: '2px solid rgba(0, 0, 0, 0.4)',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            {(badge === 'task' || badge === 'task-active') && (
+              <span style={{ 
+                color: badge === 'task-active' ? '#fff' : '#000', 
+                fontSize: '14px', 
+                fontWeight: '900', 
+                lineHeight: '1',
+                textShadow: badge === 'task-active' ? '0 1px 2px rgba(0, 0, 0, 0.5)' : '0 1px 2px rgba(255, 255, 255, 0.5)',
+                fontFamily: 'Arial, sans-serif',
+              }}>!</span>
+            )}
+            {badge === 'completed' && (
+              <PixelIcon type="check" size={14} color="#000" />
+            )}
+            {badge === 'new' && (
+              <PixelIcon type="star" size={14} color="#000" />
+            )}
+            {badge === 'locked' && (
+              <PixelIcon type="lock" size={14} color="white" />
+            )}
+          </div>
         )}
       </div>
 

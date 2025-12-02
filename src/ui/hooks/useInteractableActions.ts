@@ -5,7 +5,9 @@
 
 import { useCallback } from 'react';
 import { createModuleContext } from '@core/module/context.js';
-import type { Interactable, ObjectInteraction } from '@core/types/interactable.js';
+import { actions } from '@core/state/actions.js';
+import type { Interactable, ObjectInteraction, NPC } from '@core/types/interactable.js';
+import type { Task } from '@core/types/task.js';
 import { ModuleError, ErrorCode } from '@core/types/errors.js';
 
 export interface InteractableActionResult {
@@ -21,6 +23,92 @@ export interface UseInteractableActionsOptions {
   onDialogueSelected?: (dialogueId: string) => void;
   onComponentOpen?: (component: string, props?: Record<string, unknown>) => void;
   onError?: (error: Error) => void;
+}
+
+/**
+ * Extract tasks from NPC dialogues (from accept-task actions in choices)
+ */
+function getTasksFromDialogues(npc: NPC, moduleData?: { tasks: Task[] }): Task[] {
+  const tasks: Task[] = [];
+
+  // Check all dialogues for accept-task actions
+  Object.values(npc.dialogues || {}).forEach(dialogue => {
+    dialogue.choices?.forEach(choice => {
+      const actions = Array.isArray(choice.action) ? choice.action : [choice.action];
+      actions.forEach(action => {
+        if (action && action.type === 'accept-task') {
+          // If we have module data, find the full task object
+          if (moduleData) {
+            const task = moduleData.tasks.find(t => t.id === action.task.id);
+            if (task) {
+              tasks.push(task);
+            }
+          } else {
+            // Otherwise, use the task from the action
+            tasks.push(action.task);
+          }
+        }
+      });
+    });
+  });
+
+  return tasks;
+}
+
+/**
+ * Select appropriate dialogue for NPC based on task state
+ */
+function selectNPCDialogue(npc: NPC, moduleId: string): string | null {
+  // Get tasks from NPC
+  let npcTasks: Task[] = [];
+  
+  // Get tasks from NPC's tasks property
+  if (npc.tasks) {
+    npcTasks = Object.values(npc.tasks);
+  }
+  
+  // Also get tasks from dialogue choices (we can't access moduleData here, so we'll use the task from the action)
+  const dialogueTasks = getTasksFromDialogues(npc);
+  dialogueTasks.forEach(dialogueTask => {
+    if (!npcTasks.find(t => t.id === dialogueTask.id)) {
+      npcTasks.push(dialogueTask);
+    }
+  });
+  
+  if (npcTasks.length === 0) {
+    return null; // No tasks, use default dialogue
+  }
+  
+  const currentTaskId = actions.getCurrentTaskId(moduleId);
+  
+  // Check if any task is active
+  const activeTask = npcTasks.find(task => task.id === currentTaskId);
+  if (activeTask) {
+    // Task is active - try to find task-ready dialogue
+    const taskReadyId = `${npc.id}-task-ready`;
+    if (npc.dialogues['task-ready']) {
+      return taskReadyId;
+    }
+    // If not found, will fall back to default (getDialogue will generate default)
+    return taskReadyId;
+  }
+  
+  // Check if all tasks are completed
+  const allCompleted = npcTasks.every(task => actions.isTaskCompleted(moduleId, task.id));
+  if (allCompleted) {
+    // All tasks completed - try to find task-complete dialogue
+    if (npc.dialogues['task-complete']) {
+      return `${npc.id}-task-complete`;
+    }
+    if (npc.dialogues['complete']) {
+      return `${npc.id}-complete`;
+    }
+    // If not found, will fall back to default (getDialogue will generate default)
+    return `${npc.id}-task-complete`;
+  }
+  
+  // No active task and not all completed - use default dialogue
+  return null;
 }
 
 /**
@@ -52,7 +140,14 @@ export function useInteractableActions({
             return { type: 'dialogue', dialogueId: dialogue.id };
           }
 
-          // Use first dialogue
+          // Automatically select dialogue based on task state
+          const selectedDialogueId = selectNPCDialogue(interactable, moduleId);
+          if (selectedDialogueId) {
+            onDialogueSelected?.(selectedDialogueId);
+            return { type: 'dialogue', dialogueId: selectedDialogueId };
+          }
+
+          // Fallback: Use first dialogue
           const dialogueIds = Object.keys(interactable.dialogues);
           if (dialogueIds.length > 0) {
             const dialogueId = `${interactable.id}-${dialogueIds[0]}`;
