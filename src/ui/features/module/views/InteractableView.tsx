@@ -3,13 +3,13 @@
  * Main environment view with interactables
  */
 
-import type { ModuleData } from '../../../../core/types/module.js';
-import type { Interactable } from '../../../../core/types/interactable.js';
-import { actions } from '../../../../core/state/actions.js';
-import { ModuleBackground } from '../../../shared/components/ModuleBackground.js';
-import { InteractableIcon } from '../../../shared/components/InteractableIcon.js';
-import { Button } from '../../../shared/components/Button.js';
-import { TaskTracker } from '../../../shared/components/TaskTracker.js';
+import type { ModuleData } from '@core/types/module.js';
+import type { Interactable } from '@core/types/interactable.js';
+import { actions } from '@core/state/actions.js';
+import { ModuleBackground } from '@ui/shared/components/ModuleBackground.js';
+import { InteractableIcon } from '@ui/shared/components/InteractableIcon.js';
+import { Button } from '@ui/shared/components/Button.js';
+import { TaskTracker } from '@ui/shared/components/TaskTracker.js';
 
 export interface InteractableViewProps {
   moduleData: ModuleData;

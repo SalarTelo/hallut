@@ -3,8 +3,8 @@
  * Individuell modulnod i världskartan med ren, karthiknande stil
  */
 
-import type { WorldmapNode } from '../../../../core/types/worldmap.js';
-import type { ModuleProgressionState } from '../../../../core/state/types.js';
+import type { WorldmapNode } from '@core/types/worldmap.js';
+import type { ModuleProgressionState } from '@core/state/types.js';
 import { useRef, useMemo } from 'react';
 import { ModuleTooltip } from './ModuleTooltip.js';
 import { PixelIcon } from '../PixelIcon.js';

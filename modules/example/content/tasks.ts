@@ -8,7 +8,7 @@ import {
   textLengthValidator,
   success,
   failure,
-} from '../../../src/utils/builders/tasks.js';
+} from '@utils/builders/tasks.js';
 
 /**
  * Example task: Write a greeting

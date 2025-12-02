@@ -3,7 +3,7 @@
  * A simple example module demonstrating the new system
  */
 
-import { defineModule } from '../../src/core/module/define.js';
+import { defineModule } from '@core/module/define.js';
 import { createConfig } from './config.js';
 import { tasks, interactables } from './content/index.js';
 

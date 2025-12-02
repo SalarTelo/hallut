@@ -4,8 +4,8 @@
  */
 
 import { useState } from 'react';
-import type { DialogueConfig, DialogueChoice } from '../../../../core/types/dialogue.js';
-import { DialogueBox, type DialogueChoice as UIDialogueChoice } from '../../../shared/components/DialogueBox.js';
+import type { DialogueConfig, DialogueChoice } from '@core/types/dialogue.js';
+import { DialogueBox, type DialogueChoice as UIDialogueChoice } from '@ui/shared/components/DialogueBox.js';
 
 export interface DialogueViewProps {
   dialogue: DialogueConfig;

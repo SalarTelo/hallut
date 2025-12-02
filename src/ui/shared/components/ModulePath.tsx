@@ -5,10 +5,10 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '../../../core/types/worldmap.js';
-import { actions } from '../../../core/state/actions.js';
-import { canUnlockModule } from '../../../core/services/unlockService.js';
-import { getModule } from '../../../core/module/registry.js';
+import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '@core/types/worldmap.js';
+import { actions } from '@core/state/actions.js';
+import { canUnlockModule } from '@core/services/unlockService.js';
+import { getModule } from '@core/module/registry.js';
 import { ModuleInfoModal } from './ModuleInfoModal.js';
 import { getThemeValue } from '@utils/theme.js';
 import { ConnectionLines, ModuleNode } from './modulePath/index.js';

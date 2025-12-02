@@ -3,7 +3,7 @@
  * Demonstrates various unlock requirement types
  */
 
-import { defineModule } from '../../src/core/module/define.js';
+import { defineModule } from '@core/module/define.js';
 import {
   createModuleConfig,
   createManifest,
@@ -14,10 +14,10 @@ import {
   // moduleComplete,
   // andRequirements,
   // orRequirements,
-} from '../../src/utils/builders/modules.js';
-import { createTask, textSubmission, textLengthValidator, success } from '../../src/utils/builders/tasks.js';
-import { createNPC } from '../../src/utils/builders/interactables.js';
-import { pos } from '../../src/utils/builders/interactables.js';
+} from '@utils/builders/modules.js';
+import { createTask, textSubmission, textLengthValidator, success } from '@utils/builders/tasks.js';
+import { createNPC } from '@utils/builders/interactables.js';
+import { pos } from '@utils/builders/interactables.js';
 
 const task = createTask({
   id: 'solve-riddle',

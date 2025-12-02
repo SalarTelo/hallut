@@ -4,9 +4,9 @@
  */
 
 import { useCallback } from 'react';
-import { createModuleContext } from '../../core/module/context.js';
-import type { Interactable, ObjectInteraction } from '../../core/types/interactable.js';
-import { ModuleError, ErrorCode } from '../../core/types/errors.js';
+import { createModuleContext } from '@core/module/context.js';
+import type { Interactable, ObjectInteraction } from '@core/types/interactable.js';
+import { ModuleError, ErrorCode } from '@core/types/errors.js';
 
 export interface InteractableActionResult {
   type: 'dialogue' | 'component' | 'none';

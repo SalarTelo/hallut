@@ -5,14 +5,14 @@
  */
 
 import { useEffect, useState } from 'react';
-import { discoverModules, getModule } from '../../../core/module/registry.js';
-import { loadModuleInstance } from '../../../core/module/loader.js';
-import { generateWorldmap } from '../../../core/services/worldmap.js';
-import type { WorldmapConfig } from '../../../core/types/worldmap.js';
-import { initializeModuleProgression, unlockModule } from '../../../core/services/unlockService.js';
-import { ModulePath } from '../../shared/components/ModulePath.js';
-import { LoadingState } from '../../shared/components/LoadingState.js';
-import { FullScreenLayout } from '../../shared/components/layouts/index.js';
+import { discoverModules, getModule } from '@core/module/registry.js';
+import { loadModuleInstance } from '@core/module/loader.js';
+import { generateWorldmap } from '@core/services/worldmap.js';
+import type { WorldmapConfig } from '@core/types/worldmap.js';
+import { initializeModuleProgression, unlockModule } from '@core/services/unlockService.js';
+import { ModulePath } from '@ui/shared/components/ModulePath.js';
+import { LoadingState } from '@ui/shared/components/LoadingState.js';
+import { FullScreenLayout } from '@ui/shared/components/layouts/index.js';
 import { PasswordUnlockModal } from '../../shared/components/PasswordUnlockModal.js';
 
 export interface ModuleSelectionProps {

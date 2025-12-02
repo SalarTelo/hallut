@@ -3,7 +3,7 @@
  * Type-safe builders for creating tasks
  */
 
-import type { Task, TaskSubmission, TaskSubmissionConfig, TaskSolveFunction, TaskSolveResult } from '../../core/types/task.js';
+import type { Task, TaskSubmission, TaskSubmissionConfig, TaskSolveFunction, TaskSolveResult } from '@core/types/task.js';
 
 // ============================================================================
 // Submission Config Builders

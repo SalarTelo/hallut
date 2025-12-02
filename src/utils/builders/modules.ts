@@ -9,9 +9,9 @@ import type {
   ModuleBackground,
   ModuleWelcome,
   ModuleTheme,
-} from '../../core/types/module.js';
-import type { Task } from '../../core/types/task.js';
-import type { UnlockRequirement } from '../../core/types/unlock.js';
+} from '@core/types/module.js';
+import type { Task } from '@core/types/task.js';
+import type { UnlockRequirement } from '@core/types/unlock.js';
 
 /**
  * Create a module manifest

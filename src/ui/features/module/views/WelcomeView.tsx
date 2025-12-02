@@ -3,9 +3,9 @@
  * Displays welcome dialogue when entering a module
  */
 
-import type { ModuleData } from '../../../../core/types/module.js';
+import type { ModuleData } from '@core/types/module.js';
 import { DialogueView } from './DialogueView.js';
-import { CenteredLayout } from '../../../shared/components/layouts/index.js';
+import { CenteredLayout } from '@ui/shared/components/layouts/index.js';
 
 export interface WelcomeViewProps {
   moduleId: string;

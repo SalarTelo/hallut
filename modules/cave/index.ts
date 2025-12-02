@@ -3,9 +3,9 @@
  * A dark cave to explore
  */
 
-import { defineModule } from '../../src/core/module/define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome, andRequirements, moduleComplete } from '../../src/utils/builders/modules.js';
-import { createTask, textSubmission, textLengthValidator, success } from '../../src/utils/builders/tasks.js';
+import { defineModule } from '@core/module/define.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome, andRequirements, moduleComplete } from '@utils/builders/modules.js';
+import { createTask, textSubmission, textLengthValidator, success } from '@utils/builders/tasks.js';
 
 const task = createTask({
   id: 'explore-cave',

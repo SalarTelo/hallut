@@ -5,10 +5,10 @@
  * Depends on: core/module (moduleRegistry), core/state (read-only via actions)
  */
 
-import { getModule, getRegisteredModuleIds } from '../core/module/registry.js';
-import { actions } from '../core/state/actions.js';
-import type { ModuleProgressionState } from '../core/state/types.js';
-import type { ModuleConfig } from '../core/types/module.js';
+import { getModule, getRegisteredModuleIds } from '@core/module/registry.js';
+import { actions } from '@core/state/actions.js';
+import type { ModuleProgressionState } from '@core/state/types.js';
+import type { ModuleConfig } from '@core/types/module.js';
 
 // Configuration constants (can be moved to a config file if needed)
 const INITIALLY_UNLOCKED_MODULES: string[] = [];

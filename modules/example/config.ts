@@ -2,8 +2,8 @@
  * Example Module Configuration
  */
 
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '../../src/utils/builders/modules.js';
-import type { Task } from '../../src/core/types/task.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@utils/builders/modules.js';
+import type { Task } from '@core/types/task.js';
 
 // Tasks will be imported from content
 export function createConfig(tasks: Task[]) {

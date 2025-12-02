@@ -9,7 +9,7 @@ import {
   choice,
   createDialogue,
   showNoteViewer,
-} from '../../../src/utils/builders/index.js';
+} from '@utils/builders/index.js';
 import { greetingTask } from './tasks.js';
 
 /**

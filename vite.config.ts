@@ -16,7 +16,7 @@ export default defineConfig({
   resolve: {
     alias: {
       // Core application aliases
-      '@engine': path.resolve(__dirname, 'src/engine'),
+      '@core': path.resolve(__dirname, 'src/core'),
       '@ui': path.resolve(__dirname, 'src/ui'),
       '@services': path.resolve(__dirname, 'src/services'),
       '@stores': path.resolve(__dirname, 'src/stores'),

@@ -3,8 +3,8 @@
  * Helper functions for the module path components
  */
 
-import type { WorldmapConnection, WorldmapNode } from '../../../../core/types/worldmap.js';
-import type { ModuleProgressionState } from '../../../../core/state/types.js';
+import type { WorldmapConnection, WorldmapNode } from '@core/types/worldmap.js';
+import type { ModuleProgressionState } from '@core/state/types.js';
 
 /**
  * Convert hex color to rgba

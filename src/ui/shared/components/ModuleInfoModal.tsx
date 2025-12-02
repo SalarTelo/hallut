@@ -8,8 +8,8 @@ import { useEffect, useState } from 'react';
 import { Modal } from './Modal.js';
 import { PixelIcon } from './PixelIcon.js';
 import { getThemeValue } from '@utils/theme.js';
-import { getModule } from '../../../core/module/registry.js';
-import type { ModuleDefinition } from '../../../core/types/module.js';
+import { getModule } from '@core/module/registry.js';
+import type { ModuleDefinition } from '@core/types/module.js';
 
 export interface ModuleInfoModalProps {
   /**

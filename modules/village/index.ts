@@ -3,9 +3,9 @@
  * A peaceful village to visit
  */
 
-import { defineModule } from '../../src/core/module/define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '../../src/utils/builders/modules.js';
-import { createTask, textSubmission, textLengthValidator, success } from '../../src/utils/builders/tasks.js';
+import { defineModule } from '@core/module/define.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@utils/builders/modules.js';
+import { createTask, textSubmission, textLengthValidator, success } from '@utils/builders/tasks.js';
 import {
   createNPC,
   createObject,
@@ -17,8 +17,8 @@ import {
   showSignViewer,
   showChatWindow,
   showNote,
-} from '../../src/utils/builders/interactables.js';
-import { createDialogue } from '../../src/utils/builders/dialogues.js';
+} from '@utils/builders/interactables.js';
+import { createDialogue } from '@utils/builders/dialogues.js';
 
 const task = createTask({
   id: 'help-villagers',

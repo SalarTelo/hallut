@@ -9,7 +9,7 @@ import {
   choice,
   simpleChoice,
 } from '../dialogues.js';
-import type { Task } from '../../../core/types/task.js';
+import type { Task } from '@core/types/task.js';
 
 describe('Dialogue Builders', () => {
   const mockTask: Task = {

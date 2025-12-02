@@ -19,7 +19,7 @@ import {
   keywordsValidator,
   combineValidators,
 } from '../tasks.js';
-import type { TaskSubmission } from '../../../core/types/task.js';
+import type { TaskSubmission } from '@core/types/task.js';
 
 describe('Task Builders', () => {
   describe('Submission Config Builders', () => {

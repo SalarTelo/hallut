@@ -17,9 +17,9 @@ import type {
   SignViewerProps,
   ChatWindowProps,
   ImageViewerProps,
-} from '../../core/types/interactable.js';
-import type { DialogueConfig } from '../../core/types/dialogue.js';
-import type { Task } from '../../core/types/task.js';
+} from '@core/types/interactable.js';
+import type { DialogueConfig } from '@core/types/dialogue.js';
+import type { Task } from '@core/types/task.js';
 
 /**
  * Position helper

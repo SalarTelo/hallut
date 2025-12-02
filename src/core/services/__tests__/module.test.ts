@@ -13,7 +13,7 @@ import {
 import { getModule } from '../../module/registry.js';
 import { actions } from '../../state/actions.js';
 import { defineModule } from '../../module/define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '../../../utils/builders/modules.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@utils/builders/modules.js';
 import type { Task } from '../../types/task.js';
 
 // Mock the actions

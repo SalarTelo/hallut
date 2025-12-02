@@ -27,7 +27,7 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@engine/*": ["src/engine/*"],
+      "@core/*": ["src/core/*"],
       "@ui/*": ["src/ui/*"],
       "@services/*": ["src/services/*"],
       "@stores/*": ["src/stores/*"],

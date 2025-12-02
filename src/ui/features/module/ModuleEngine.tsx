@@ -4,22 +4,22 @@
  */
 
 import { useEffect, useState } from 'react';
-import { loadModuleData } from '../../../core/module/loader.js';
-import { actions } from '../../../core/state/actions.js';
-import { useDialogueActions, useInteractableActions } from '../../hooks/index.js';
-import { LoadingState } from '../../shared/components/LoadingState.js';
-import { ErrorDisplay } from '../../shared/components/ErrorDisplay.js';
-import { Overlay } from '../../shared/components/Overlay.js';
-import { ImageViewer } from '../../shared/components/ImageViewer.js';
-import { NoteViewer } from '../../shared/components/NoteViewer.js';
-import { SignViewer } from '../../shared/components/SignViewer.js';
-import { ChatWindow } from '../../shared/components/ChatWindow.js';
+import { loadModuleData } from '@core/module/loader.js';
+import { actions } from '@core/state/actions.js';
+import { useDialogueActions, useInteractableActions } from '@ui/hooks/index.js';
+import { LoadingState } from '@ui/shared/components/LoadingState.js';
+import { ErrorDisplay } from '@ui/shared/components/ErrorDisplay.js';
+import { Overlay } from '@ui/shared/components/Overlay.js';
+import { ImageViewer } from '@ui/shared/components/ImageViewer.js';
+import { NoteViewer } from '@ui/shared/components/NoteViewer.js';
+import { SignViewer } from '@ui/shared/components/SignViewer.js';
+import { ChatWindow } from '@ui/shared/components/ChatWindow.js';
 import { InteractableView } from './views/InteractableView.js';
 import { DialogueView } from './views/DialogueView.js';
 import { TaskView } from './views/TaskView.js';
 import { WelcomeView } from './views/WelcomeView.js';
-import type { ModuleData } from '../../../core/types/module.js';
-import { ErrorCode, ModuleError } from '../../../core/types/errors.js';
+import type { ModuleData } from '@core/types/module.js';
+import { ErrorCode, ModuleError } from '@core/types/errors.js';
 import { getThemeValue } from '@utils/theme.js';
 
 export interface ModuleEngineProps {

@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react';
-import type { Task } from '../../../core/types/task.js';
+import type { Task } from '@core/types/task.js';
 import { Card } from './Card.js';
 import { Badge } from './Badge.js';
 import { PixelIcon } from './PixelIcon.js';

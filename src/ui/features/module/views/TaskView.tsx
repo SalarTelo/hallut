@@ -4,12 +4,12 @@
  */
 
 import { useState } from 'react';
-import type { Task, TaskSubmission } from '../../../../core/types/task.js';
-import { validateTask } from '../../../../core/services/task.js';
-import { actions } from '../../../../core/state/actions.js';
-import { Card } from '../../../shared/components/Card.js';
-import { Button } from '../../../shared/components/Button.js';
-import { Textarea } from '../../../shared/components/Textarea.js';
+import type { Task, TaskSubmission } from '@core/types/task.js';
+import { validateTask } from '@core/services/task.js';
+import { actions } from '@core/state/actions.js';
+import { Card } from '@ui/shared/components/Card.js';
+import { Button } from '@ui/shared/components/Button.js';
+import { Textarea } from '@ui/shared/components/Textarea.js';
 import { Badge } from '../../../shared/components/Badge.js';
 
 export interface TaskViewProps {

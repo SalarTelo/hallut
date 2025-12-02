@@ -3,9 +3,9 @@
  * Type-safe builders for creating dialogues
  */
 
-import type { DialogueConfig, DialogueChoice, ChoiceAction } from '../../core/types/dialogue.js';
-import type { Task } from '../../core/types/task.js';
-import type { ModuleContext } from '../../core/types/module.js';
+import type { DialogueConfig, DialogueChoice, ChoiceAction } from '@core/types/dialogue.js';
+import type { Task } from '@core/types/task.js';
+import type { ModuleContext } from '@core/types/module.js';
 
 /**
  * Dialogue options

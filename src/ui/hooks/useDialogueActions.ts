@@ -4,10 +4,10 @@
  */
 
 import { useCallback } from 'react';
-import { createModuleContext } from '../../core/module/context.js';
-import { processDialogueActions } from '../../core/services/dialogue.js';
-import type { ChoiceAction } from '../../core/types/dialogue.js';
-import { DialogueError, ErrorCode } from '../../core/types/errors.js';
+import { createModuleContext } from '@core/module/context.js';
+import { processDialogueActions } from '@core/services/dialogue.js';
+import type { ChoiceAction } from '@core/types/dialogue.js';
+import { DialogueError, ErrorCode } from '@core/types/errors.js';
 
 export interface UseDialogueActionsOptions {
   moduleId: string;

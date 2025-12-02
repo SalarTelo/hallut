@@ -24,7 +24,7 @@ import {
   createImageObject,
 } from '../interactables.js';
 import { createDialogue } from '../dialogues.js';
-import type { Task } from '../../../core/types/task.js';
+import type { Task } from '@core/types/task.js';
 
 describe('Interactable Builders', () => {
   const mockTask: Task = {
