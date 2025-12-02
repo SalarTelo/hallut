@@ -3,10 +3,8 @@
  */
 
 import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@utils/builders/modules.js';
-import type { Task } from '@core/types/task.js';
 
-// Tasks will be imported from content
-export function createConfig(tasks: Task[]) {
+export function createConfig() {
   return createModuleConfig({
     manifest: createManifest('example', 'Starting Point', '1.0.0', 'Your journey begins here. Choose your path and explore the world!'),
     background: colorBackground('#1a1a2e'),
@@ -15,7 +13,6 @@ export function createConfig(tasks: Task[]) {
       'This is a demonstration of the new module system.',
       'Click on NPCs and objects to interact with them.',
     ]),
-    taskOrder: tasks, // Direct object references
     worldmap: {
       position: { x: 15, y: 50 }, // Starting point - left center
       icon: {

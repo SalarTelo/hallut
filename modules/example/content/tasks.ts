@@ -28,6 +28,12 @@ export const greetingTask = createTask({
     requirements: 'Write at least 10 characters',
     goals: ['Include a greeting word', 'Make it friendly'],
   },
+  unlockRequirement: null, // No requirement - always available
+  dialogues: {
+    offer: ['I have a task for you if you\'re interested.'],
+    ready: ['Are you ready to submit your task?'],
+    complete: ['Excellent work! You have completed the task.'],
+  },
 });
 
 /**

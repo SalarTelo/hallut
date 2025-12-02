@@ -8,7 +8,7 @@ import { createConfig } from './config.js';
 import { tasks, interactables } from './content/index.js';
 
 // Create config with tasks
-const config = createConfig(tasks);
+const config = createConfig();
 
 // Define module
 export default defineModule({
