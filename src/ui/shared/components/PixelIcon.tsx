@@ -17,6 +17,13 @@ import AvatarIcon from 'pixelarticons/svg/avatar.svg?react';
 import BoxIcon from 'pixelarticons/svg/add-box.svg?react';
 import ChatIcon from 'pixelarticons/svg/chat.svg?react';
 import ReloadIcon from 'pixelarticons/svg/reload.svg?react';
+import HumanIcon from 'pixelarticons/svg/human.svg?react';
+import ClipboardIcon from 'pixelarticons/svg/clipboard.svg?react';
+import ImageIcon from 'pixelarticons/svg/image.svg?react';
+import NoteIcon from 'pixelarticons/svg/note.svg?react';
+import BookIcon from 'pixelarticons/svg/book.svg?react';
+import MessageIcon from 'pixelarticons/svg/message.svg?react';
+import ArticleIcon from 'pixelarticons/svg/article.svg?react';
 
 export type PixelIconType =
   | 'lock'
@@ -31,7 +38,14 @@ export type PixelIconType =
   | 'avatar'
   | 'box'
   | 'chat'
-  | 'reload';
+  | 'reload'
+  | 'human'
+  | 'clipboard'
+  | 'image'
+  | 'note'
+  | 'book'
+  | 'message'
+  | 'article';
 
 export interface PixelIconProps {
   /**
@@ -90,6 +104,13 @@ const iconComponents: Record<PixelIconType, React.ComponentType<React.SVGProps<S
   box: BoxIcon,
   chat: ChatIcon,
   reload: ReloadIcon,
+  human: HumanIcon,
+  clipboard: ClipboardIcon,
+  image: ImageIcon,
+  note: NoteIcon,
+  book: BookIcon,
+  message: MessageIcon,
+  article: ArticleIcon,
 };
 
 /**

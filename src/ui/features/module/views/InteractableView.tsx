@@ -60,6 +60,7 @@ export function InteractableView({
           key={interactable.id}
           icon={interactable.avatar || (interactable.type === 'npc' ? 'avatar' : 'box')}
           shape={interactable.type === 'npc' ? 'circle' : 'square'}
+          interactableType={interactable.type}
           position={interactable.position}
           label={interactable.name}
           locked={interactable.locked}

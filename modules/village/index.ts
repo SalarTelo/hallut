@@ -39,7 +39,7 @@ const mayor = createNPC({
   id: 'mayor',
   name: 'Mayor',
   position: pos(30, 40),
-  avatar: '👨‍💼',
+  avatar: 'avatar',
   dialogues: {
     greeting: createDialogue({
       id: 'mayor-greeting',
@@ -66,7 +66,7 @@ const blacksmith = createNPC({
   id: 'blacksmith',
   name: 'Blacksmith',
   position: pos(70, 30),
-  avatar: '🔨',
+  avatar: 'avatar',
   dialogues: {
     greeting: createDialogue({
       id: 'blacksmith-greeting',
@@ -87,7 +87,7 @@ const sign = createObject({
   id: 'village-sign',
   name: 'Village Sign',
   position: pos(20, 20),
-  avatar: '📜',
+  avatar: 'note',
   interaction: showSignViewer({
     content: 'Welcome to Peaceful Village!\n\nPopulation: 150\nEstablished: 1205',
     title: 'Village Sign',
@@ -99,7 +99,7 @@ const noticeBoard = createNoteObject({
   id: 'notice-board',
   name: 'Notice Board',
   position: pos(80, 60),
-  avatar: '📋',
+  avatar: 'clipboard',
   content: `Village Announcements
 
 1. The annual harvest festival is coming soon!
@@ -116,7 +116,7 @@ const painting = createImageObject({
   id: 'village-painting',
   name: 'Village Painting',
   position: pos(50, 70),
-  avatar: '🖼️',
+  avatar: 'image',
   imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
   title: 'Village Landscape',
 });
@@ -126,7 +126,7 @@ const aiCompanion = createObject({
   id: 'ai-companion',
   name: 'AI Companion',
   position: pos(15, 60),
-  avatar: '🤖',
+  avatar: 'chat',
   interaction: showChatWindow({
     title: 'AI Companion',
     placeholder: 'Ask me anything about the village...',
@@ -138,7 +138,7 @@ const well = createLocation({
   id: 'village-well',
   name: 'Old Well',
   position: pos(40, 50),
-  avatar: '⛲',
+  avatar: 'box',
   interaction: showDialogue(createDialogue({
     id: 'well-dialogue',
     speaker: 'Well',
@@ -155,7 +155,7 @@ const treasureChest = createObject({
   id: 'treasure-chest',
   name: 'Treasure Chest',
   position: pos(60, 80),
-  avatar: '💎',
+  avatar: 'box',
   locked: true,
   unlockRequirement: {
     type: 'task-complete',
