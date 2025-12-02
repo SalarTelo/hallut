@@ -43,7 +43,7 @@ export function DialogueAvatar({
       case 'image':
         if (typeof data === 'string') {
           return (
-            <div className="w-full h-full flex items-center justify-center p-1.5 min-h-[8rem]">
+            <div className="w-full h-full flex items-center justify-center p-1.5 min-h-[8rem] sm:min-h-[6rem] sm:p-1">
               <img
                 src={data}
                 alt={speaker}
@@ -56,7 +56,7 @@ export function DialogueAvatar({
 
       case 'icon':
         return (
-          <div className="flex items-center justify-center w-full min-h-[8rem] p-2">
+          <div className="flex items-center justify-center w-full min-h-[8rem] sm:min-h-[6rem] p-2 sm:p-1.5">
             {data}
           </div>
         );
@@ -64,8 +64,8 @@ export function DialogueAvatar({
       case 'silhouette':
       default:
         return (
-          <div className="w-full bg-blue-400 flex items-center justify-center p-2 min-h-[8rem]">
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex-shrink-0" />
+          <div className="w-full bg-blue-400 flex items-center justify-center p-2 min-h-[8rem] sm:min-h-[6rem] sm:p-1.5">
+            <div className="w-12 h-12 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex-shrink-0" />
           </div>
         );
     }
@@ -73,7 +73,7 @@ export function DialogueAvatar({
 
   return (
     <div
-      className="w-24 border-r-2 flex-shrink-0 overflow-hidden rounded-l-lg flex items-center justify-center"
+      className="w-24 sm:w-20 border-r flex-shrink-0 overflow-hidden rounded-l-lg flex items-center justify-center"
       style={{ borderColor }}
     >
       {renderContent()}

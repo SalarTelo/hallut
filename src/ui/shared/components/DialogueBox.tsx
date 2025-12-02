@@ -5,6 +5,7 @@
  */
 
 import type { ReactNode } from 'react';
+import { useEffect, useRef } from 'react';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { useTypewriter, useDialogueInteraction } from '../hooks/index.js';
 import {
@@ -59,6 +60,11 @@ export interface DialogueBoxProps {
    * Kantfärg (standard från tema)
    */
   borderColor?: string;
+
+  /**
+   * Callback när dialogen stängs
+   */
+  onClose?: () => void;
 }
 
 /**
@@ -74,11 +80,13 @@ export function DialogueBox({
   onContinue,
   choices,
   borderColor,
+  onClose,
 }: DialogueBoxProps) {
   const currentLine = lines[currentLineIndex] || '';
   const maxLines = lines.length;
   const isLastLine = currentLineIndex >= maxLines - 1;
   const borderColorValue = useThemeBorderColor(borderColor);
+  const choiceCount = choices?.length ?? 0;
 
   // Skrivmaskineffekt med anpassad hook
   const { displayedText, isTyping, skip } = useTypewriter({
@@ -87,14 +95,45 @@ export function DialogueBox({
     autoStart: true,
   });
 
+  // Handle choice selection
+  const handleChoiceSelect = (index: number) => {
+    if (choices && choices[index]) {
+      choices[index].action();
+    }
+  };
+
   // Tangentbords- och klickinteraktionshantering
-  const { dialogueRef, handleClick } = useDialogueInteraction({
+  const { dialogueRef, handleClick, selectedChoiceIndex, setSelectedChoiceIndex } = useDialogueInteraction({
     isTyping,
     isLastLine,
     hasChoices: Boolean(choices && choices.length > 0),
+    choiceCount,
     skipTypewriter: skip,
     onContinue,
+    onChoiceSelect: handleChoiceSelect,
+    onClose,
   });
+
+  // Focus management: auto-focus dialogue box when it opens
+  useEffect(() => {
+    if (dialogueRef.current) {
+      dialogueRef.current.focus();
+    }
+  }, [currentLineIndex]);
+
+  // Focus trapping: keep focus within dialogue
+  useEffect(() => {
+    const handleFocusIn = (e: FocusEvent) => {
+      if (dialogueRef.current && !dialogueRef.current.contains(e.target as Node)) {
+        dialogueRef.current.focus();
+      }
+    };
+
+    document.addEventListener('focusin', handleFocusIn);
+    return () => {
+      document.removeEventListener('focusin', handleFocusIn);
+    };
+  }, []);
 
   // Bestäm om val ska visas
   const showChoices = isLastLine && !isTyping && choices && choices.length > 0;
@@ -102,21 +141,24 @@ export function DialogueBox({
   return (
     <div
       ref={dialogueRef}
-      className="fixed bottom-0 left-0 right-0 z-50 p-2 outline-none"
+      className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-1 outline-none"
       onClick={handleClick}
-      tabIndex={-1}
+      tabIndex={0}
       role="dialog"
       aria-label={`Dialog med ${speaker}`}
+      aria-modal="true"
+      aria-live="polite"
+      aria-atomic="true"
       style={{ outline: 'none' }}
     >
       <div
-        className="max-w-5xl mx-auto bg-black border-2 rounded-lg animate-scale-in cursor-pointer overflow-hidden"
+        className="max-w-5xl mx-auto bg-black border rounded-lg animate-scale-in cursor-pointer overflow-hidden transition-all duration-300 sm:mx-2"
         style={{
           borderColor: borderColorValue,
           background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(15, 15, 35, 0.95) 100%)',
         }}
       >
-        <div className="flex min-h-[8rem]">
+        <div className="flex min-h-[8rem] sm:min-h-[6rem]">
           {/* Avatar */}
           <DialogueAvatar
             type={avatarType}
@@ -139,6 +181,8 @@ export function DialogueBox({
               <DialogueChoices
                 choices={choices}
                 borderColor={borderColorValue}
+                selectedIndex={selectedChoiceIndex ?? undefined}
+                onSelectedIndexChange={setSelectedChoiceIndex}
               />
             )}
           </DialogueText>
