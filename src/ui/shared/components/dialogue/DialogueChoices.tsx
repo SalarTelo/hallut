@@ -86,13 +86,13 @@ export function DialogueChoices({
             onClick={() => choice.action()}
             onMouseEnter={() => handleMouseEnter(index)}
             onFocus={() => handleFocus(index)}
-            className={`w-full text-left pixelated text-white text-sm sm:text-xs px-4 py-3 sm:px-3 sm:py-2.5 bg-gray-800 border rounded transition-all duration-200 min-h-[44px] sm:min-h-[48px] flex items-center touch-manipulation ${
+            className={`w-full text-left pixelated text-sm sm:text-xs px-4 py-3 sm:px-3 sm:py-2.5 border rounded transition-all duration-200 min-h-[44px] sm:min-h-[48px] flex items-center touch-manipulation ${
               isFocused
-                ? 'bg-gray-700 scale-[1.02] sm:scale-[1.01] shadow-lg'
-                : 'hover:bg-gray-700 hover:scale-[1.01] sm:hover:scale-[1.005] hover:shadow-md active:scale-[0.98]'
+                ? 'bg-gray-700 text-white scale-[1.02] sm:scale-[1.01] shadow-lg opacity-100'
+                : 'bg-gray-800/60 text-gray-300 opacity-60 hover:bg-gray-700/80 hover:text-gray-200 hover:opacity-80 hover:scale-[1.01] sm:hover:scale-[1.005] hover:shadow-md active:scale-[0.98]'
             } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black animate-fade-in`}
             style={{
-              borderColor: isFocused ? borderColor : borderColor,
+              borderColor: isFocused ? borderColor : `${borderColor}40`,
               boxShadow: isFocused
                 ? `0 0 12px ${borderColor}, 0 4px 8px rgba(0, 0, 0, 0.3)`
                 : undefined,
@@ -105,7 +105,9 @@ export function DialogueChoices({
             tabIndex={selectedIndex === index ? 0 : -1}
           >
             <span className="flex items-center gap-2">
-              <span className="text-yellow-400 font-bold text-xs w-5 flex-shrink-0">
+              <span className={`font-bold text-xs w-5 flex-shrink-0 ${
+                isFocused ? 'text-yellow-400' : 'text-yellow-400/50'
+              }`}>
                 {index + 1}.
               </span>
               <span>{choice.text}</span>

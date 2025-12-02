@@ -152,7 +152,7 @@ export function DialogueBox({
       style={{ outline: 'none' }}
     >
       <div
-        className="max-w-5xl mx-auto bg-black border rounded-lg animate-scale-in cursor-pointer overflow-hidden transition-all duration-300 sm:mx-2"
+        className="max-w-5xl mx-auto bg-black border rounded-lg animate-scale-in cursor-pointer overflow-hidden transition-all duration-300"
         style={{
           borderColor: borderColorValue,
           background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(15, 15, 35, 0.95) 100%)',
