@@ -1,6 +1,9 @@
 /**
  * Dialogavatar-komponent
  * Renderar avatar-delen av dialogrutan
+ * 
+ * @deprecated This component is deprecated. Use FloatingAvatarBadge instead for the new floating avatar design.
+ * This component is kept for backwards compatibility.
  */
 
 import type { ReactNode } from 'react';

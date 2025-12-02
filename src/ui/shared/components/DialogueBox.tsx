@@ -5,11 +5,11 @@
  */
 
 import type { ReactNode } from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { useTypewriter, useDialogueInteraction } from '../hooks/index.js';
 import {
-  DialogueAvatar,
+  FloatingAvatarBadge,
   DialogueText,
   DialogueChoices,
   type AvatarType,
@@ -95,10 +95,19 @@ export function DialogueBox({
     autoStart: true,
   });
 
-  // Handle choice selection
+  // State for selection animation
+  const [selectingIndex, setSelectingIndex] = useState<number | null>(null);
+
+  // Handle choice selection with animation
   const handleChoiceSelect = (index: number) => {
     if (choices && choices[index]) {
-      choices[index].action();
+      // Trigger animation immediately (use flushSync for instant state update)
+      setSelectingIndex(index);
+      // Execute action after animation
+      setTimeout(() => {
+        choices[index].action();
+        setSelectingIndex(null);
+      }, 150);
     }
   };
 
@@ -151,41 +160,47 @@ export function DialogueBox({
       aria-atomic="true"
       style={{ outline: 'none' }}
     >
-      <div
-        className="max-w-5xl mx-auto bg-black border rounded-lg animate-scale-in cursor-pointer overflow-hidden transition-all duration-300"
-        style={{
-          borderColor: borderColorValue,
-          background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(15, 15, 35, 0.95) 100%)',
-        }}
-      >
-        <div className="flex min-h-[8rem] sm:min-h-[6rem]">
-          {/* Avatar */}
-          <DialogueAvatar
-            type={avatarType}
-            data={avatarData}
-            speaker={speaker}
-            borderColor={borderColorValue}
-          />
+      <div className="max-w-5xl mx-auto relative pl-32 sm:pl-24">
+        {/* Floating Avatar Badge */}
+        <FloatingAvatarBadge
+          type={avatarType}
+          data={avatarData}
+          speaker={speaker}
+          borderColor={borderColorValue}
+        />
 
-          {/* Text och val */}
-          <DialogueText
-            speaker={speaker}
-            displayedText={displayedText}
-            isTyping={isTyping}
-            currentLine={currentLineIndex}
-            totalLines={maxLines}
-            isLastLine={isLastLine}
-            borderColor={borderColorValue}
-          >
-            {showChoices && (
-              <DialogueChoices
-                choices={choices}
-                borderColor={borderColorValue}
-                selectedIndex={selectedChoiceIndex ?? undefined}
-                onSelectedIndexChange={setSelectedChoiceIndex}
-              />
-            )}
-          </DialogueText>
+        {/* Dialogue Box - offset to accommodate avatar */}
+        <div
+          className="bg-black border rounded-lg animate-scale-in overflow-hidden transition-all duration-200"
+          style={{
+            borderColor: borderColorValue,
+            background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(15, 15, 35, 0.95) 100%)',
+            willChange: 'height',
+          }}
+        >
+          <div className="min-h-[8rem] sm:min-h-[6rem]">
+            {/* Text och val */}
+            <DialogueText
+              speaker={speaker}
+              displayedText={displayedText}
+              isTyping={isTyping}
+              currentLine={currentLineIndex}
+              totalLines={maxLines}
+              isLastLine={isLastLine}
+              borderColor={borderColorValue}
+            >
+              {showChoices && (
+                <DialogueChoices
+                  choices={choices}
+                  borderColor={borderColorValue}
+                  selectedIndex={selectedChoiceIndex ?? undefined}
+                  onSelectedIndexChange={setSelectedChoiceIndex}
+                  selectingIndex={selectingIndex}
+                  onChoiceClick={handleChoiceSelect}
+                />
+              )}
+            </DialogueText>
+          </div>
         </div>
       </div>
     </div>
