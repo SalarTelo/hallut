@@ -23,4 +23,5 @@ export type { UseTypewriterOptions, UseTypewriterReturn } from './useTypewriter.
 
 export { useDialogueInteraction } from './useDialogueInteraction.js';
 export type { UseDialogueInteractionOptions, UseDialogueInteractionReturn } from './useDialogueInteraction.js';
+export { useThemeBorderColor } from './useThemeBorderColor.js';
 

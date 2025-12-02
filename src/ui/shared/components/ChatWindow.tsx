@@ -7,7 +7,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Modal } from './Modal.js';
 import { PixelIcon } from './PixelIcon.js';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { getHeaderGradient, getSeparatorGradient } from '../utils/modalStyles.js';
 import { streamChatMessage, type OllamaMessage } from '@services/ollamaService.js';
 
 export interface ChatMessage {
@@ -82,7 +83,7 @@ export function ChatWindow({
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(messages);
   const [ollamaError, setOllamaError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
+  const borderColorValue = useThemeBorderColor(borderColor);
 
   // Synka med externa meddelanden
   useEffect(() => {
@@ -224,14 +225,14 @@ export function ChatWindow({
         <div
           className="px-5 py-3 flex items-center justify-between flex-shrink-0 relative"
           style={{
-            background: `linear-gradient(135deg, ${borderColorValue}20 0%, ${borderColorValue}08 100%)`,
+            background: getHeaderGradient(borderColorValue),
           }}
         >
           {/* Subtle separator line */}
           <div
             className="absolute bottom-0 left-0 right-0 h-px"
             style={{
-              background: `linear-gradient(90deg, transparent 0%, ${borderColorValue}50 50%, transparent 100%)`,
+              background: getSeparatorGradient(borderColorValue),
             }}
           />
           <div className="flex items-center gap-3">
@@ -425,7 +426,7 @@ export function ChatWindow({
           <div
             className="absolute top-0 left-0 right-0 h-px"
             style={{
-              background: `linear-gradient(90deg, transparent 0%, ${borderColorValue}50 50%, transparent 100%)`,
+              background: getSeparatorGradient(borderColorValue),
             }}
           />
           

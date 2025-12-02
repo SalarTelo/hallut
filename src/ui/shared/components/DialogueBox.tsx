@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { useTypewriter, useDialogueInteraction } from '../hooks/index.js';
 import {
   DialogueAvatar,
@@ -78,7 +78,7 @@ export function DialogueBox({
   const currentLine = lines[currentLineIndex] || '';
   const maxLines = lines.length;
   const isLastLine = currentLineIndex >= maxLines - 1;
-  const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
+  const borderColorValue = useThemeBorderColor(borderColor);
 
   // Skrivmaskineffekt med anpassad hook
   const { displayedText, isTyping, skip } = useTypewriter({

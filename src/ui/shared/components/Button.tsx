@@ -4,7 +4,7 @@
  */
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { DEFAULT_THEME } from '@constants/module.constants.js';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
@@ -108,7 +108,7 @@ export function Button({
   style,
   ...props
 }: ButtonProps) {
-  const borderColorValue = borderColor || getThemeValue('border-color', DEFAULT_THEME.BORDER_COLOR);
+  const borderColorValue = useThemeBorderColor(borderColor, DEFAULT_THEME.BORDER_COLOR);
   const variantStyle = variantStyles[variant];
   const sizeStyle = sizeStyles[size];
   const widthStyle = fullWidth ? 'w-full' : '';

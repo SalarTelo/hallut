@@ -5,7 +5,7 @@
 
 import { useMemo } from 'react';
 import { PixelIcon } from './PixelIcon.js';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import type { ModuleData } from '@types/module/moduleConfig.types.js';
 import { useModuleActions } from '@stores/moduleStore/index.js';
 
@@ -35,7 +35,7 @@ export function ModuleProgressIndicator({
   borderColor,
 }: ModuleProgressIndicatorProps) {
   const { isTaskCompleted, isModuleCompleted } = useModuleActions();
-  const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
+  const borderColorValue = useThemeBorderColor(borderColor);
 
   // Beräkna förlopp
   const progress = useMemo(() => {

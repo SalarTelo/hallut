@@ -7,7 +7,8 @@ import { useState, useRef } from 'react';
 import { Modal } from './Modal.js';
 import { PixelIcon } from './PixelIcon.js';
 import { Button } from './Button.js';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { getHeaderGradient } from '../utils/modalStyles.js';
 import { analyzeImage, DEFAULT_MODELS } from '@services/ollamaService.js';
 
 export interface ImageAnalysisViewProps {
@@ -46,7 +47,7 @@ export function ImageAnalysisView({
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
+  const borderColorValue = useThemeBorderColor(borderColor);
 
   // Återställ när vyn stängs
   const handleClose = () => {
@@ -137,7 +138,7 @@ export function ImageAnalysisView({
         <div
           className="px-5 py-3 flex items-center justify-between flex-shrink-0 relative"
           style={{
-            background: `linear-gradient(135deg, ${borderColorValue}20 0%, ${borderColorValue}08 100%)`,
+            background: getHeaderGradient(borderColorValue),
           }}
         >
           <div className="flex items-center gap-3">

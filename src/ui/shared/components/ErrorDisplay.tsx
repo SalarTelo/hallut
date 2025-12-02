@@ -6,7 +6,7 @@
 import { Card } from './Card.js';
 import { Button } from './Button.js';
 import { Badge } from './Badge.js';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { getBackgroundColorStyle } from '@utils/color.js';
 import { DEFAULT_THEME } from '@constants/module.constants.js';
 import { getUserFriendlyMessage } from '@services/errorService.js';
@@ -54,7 +54,7 @@ export function ErrorDisplay({
   showDetails = import.meta.env.DEV,
   className = '',
 }: ErrorDisplayProps) {
-  const borderColor = getThemeValue('border-color', DEFAULT_THEME.BORDER_COLOR);
+  const borderColor = useThemeBorderColor(undefined, DEFAULT_THEME.BORDER_COLOR);
   const errorMessage = typeof error === 'string' ? error : getUserFriendlyMessage(error);
   const errorObj = typeof error === 'string' ? null : error;
 

@@ -7,7 +7,8 @@
 import { useEffect, useState } from 'react';
 import { Modal } from './Modal.js';
 import { PixelIcon } from './PixelIcon.js';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { getHeaderGradient, getFooterGradient } from '../utils/modalStyles.js';
 import { getModule } from '@core/module/registry.js';
 import type { ModuleDefinition } from '@core/types/module.js';
 
@@ -74,7 +75,7 @@ export function ModuleInfoModal({
 }: ModuleInfoModalProps) {
   const [moduleDefinition, setModuleDefinition] = useState<ModuleDefinition | null>(null);
   const [loading, setLoading] = useState(false);
-  const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
+  const borderColorValue = useThemeBorderColor(borderColor);
 
   useEffect(() => {
     if (isOpen) {
@@ -143,7 +144,7 @@ export function ModuleInfoModal({
           className="px-6 py-4 border-b-2"
           style={{
             borderColor: borderColorValue,
-            background: `linear-gradient(135deg, ${borderColorValue}20 0%, ${borderColorValue}08 100%)`,
+            background: getHeaderGradient(borderColorValue),
             boxShadow: `inset 0 1px 0 ${borderColorValue}30`,
           }}
         >
@@ -242,7 +243,7 @@ export function ModuleInfoModal({
           className="px-6 py-3 border-t-2 flex justify-end gap-3"
           style={{
             borderColor: borderColorValue,
-            background: `linear-gradient(135deg, ${borderColorValue}08 0%, transparent 100%)`,
+            background: getFooterGradient(borderColorValue),
             boxShadow: `inset 0 1px 0 ${borderColorValue}20`,
           }}
         >

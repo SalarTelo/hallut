@@ -49,4 +49,8 @@ export { ImageViewer, type ImageViewerProps } from './ImageViewer.js';
 export { NoteViewer, type NoteViewerProps } from './NoteViewer.js';
 export { SignViewer, type SignViewerProps } from './SignViewer.js';
 export { ErrorBoundary, type ErrorBoundaryProps } from './ErrorBoundary.js';
+export { CloseButton, type CloseButtonProps } from './CloseButton.js';
+export { ModalHeader, type ModalHeaderProps } from './ModalHeader.js';
+export { ModalContent, type ModalContentProps } from './ModalContent.js';
+export { ContentViewer, type ContentViewerProps } from './ContentViewer.js';
 

@@ -10,7 +10,7 @@ import type { Task } from '@core/types/task.js';
 import { Card } from './Card.js';
 import { Badge } from './Badge.js';
 import { PixelIcon } from './PixelIcon.js';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 
 export interface TaskTrackerProps {
   /**
@@ -29,7 +29,7 @@ export interface TaskTrackerProps {
  */
 export function TaskTracker({ activeTask, borderColor }: TaskTrackerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
+  const borderColorValue = useThemeBorderColor(borderColor);
 
   if (!activeTask) {
     return null;

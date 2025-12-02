@@ -3,7 +3,7 @@
  * Reusable loading spinner with configurable size and color
  */
 
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { DEFAULT_THEME } from '@constants/module.constants.js';
 
 export interface LoadingSpinnerProps {
@@ -31,7 +31,7 @@ export function LoadingSpinner({
   borderColor,
   className = '',
 }: LoadingSpinnerProps) {
-  const borderColorValue = borderColor || getThemeValue('border-color', DEFAULT_THEME.BORDER_COLOR);
+  const borderColorValue = useThemeBorderColor(borderColor, DEFAULT_THEME.BORDER_COLOR);
 
   return (
     <div

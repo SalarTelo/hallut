@@ -3,9 +3,7 @@
  * Modal för att visa bilder (som kylskåpet)
  */
 
-import { Modal } from './Modal.js';
-import { getThemeValue } from '@utils/theme.js';
-import { addOpacityToColor } from '@utils/color.js';
+import { ContentViewer } from './ContentViewer.js';
 
 export interface ImageViewerProps {
   /**
@@ -36,6 +34,7 @@ export interface ImageViewerProps {
 
 /**
  * Bildvisarkomponent
+ * Maintains exact same props interface and default values
  */
 export function ImageViewer({
   isOpen,
@@ -44,48 +43,14 @@ export function ImageViewer({
   title = 'Bild',
   borderColor,
 }: ImageViewerProps) {
-  const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
-  const borderColorWithOpacity = addOpacityToColor(borderColorValue, 0.25);
-
   return (
-    <Modal
+    <ContentViewer
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
-      closeOnEscape
-      closeOnOverlayClick
-      showCloseButton={false}
-    >
-      <div
-        className="bg-black border-2 rounded-lg p-4"
-        style={{
-          borderColor: borderColorValue,
-        }}
-      >
-        <div 
-          className="mb-4 pb-3 flex items-center justify-between"
-          style={{ 
-            borderBottom: `1px solid ${borderColorWithOpacity}`,
-          }}
-        >
-          <h3 className="pixelated text-yellow-400 text-lg font-bold">{title}</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-orange-400 pixelated text-xl font-bold transition-colors p-1 rounded hover:bg-gray-800/50 flex items-center justify-center w-7 h-7"
-            aria-label="Stäng"
-            style={{ lineHeight: 1 }}
-          >
-            ✕
-          </button>
-        </div>
-        <div className="max-h-[80vh] overflow-auto">
-          <img
-            src={imageUrl}
-            alt={title}
-            className="max-w-full h-auto rounded"
-          />
-        </div>
-      </div>
-    </Modal>
+      contentType="image"
+      imageUrl={imageUrl}
+      title={title}
+      borderColor={borderColor}
+    />
   );
 }

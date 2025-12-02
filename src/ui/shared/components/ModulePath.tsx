@@ -10,7 +10,7 @@ import { actions } from '@core/state/actions.js';
 import { canUnlockModule } from '@core/services/unlockService.js';
 import { getModule } from '@core/module/registry.js';
 import { ModuleInfoModal } from './ModuleInfoModal.js';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { ConnectionLines, ModuleNode } from './modulePath/index.js';
 
 export interface ModulePathProps {
@@ -46,7 +46,7 @@ export function ModulePath({
 }: ModulePathProps) {
   const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
-  const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
+  const borderColorValue = useThemeBorderColor(borderColor);
   
   const getModuleProgression = useCallback((moduleId: string) => {
     return actions.getModuleProgression(moduleId);

@@ -3,9 +3,7 @@
  * Modal for displaying sign content
  */
 
-import { Modal } from './Modal.js';
-import { getThemeValue } from '@utils/theme.js';
-import { addOpacityToColor } from '@utils/color.js';
+import { ContentViewer } from './ContentViewer.js';
 
 export interface SignViewerProps {
   /**
@@ -36,6 +34,7 @@ export interface SignViewerProps {
 
 /**
  * Sign Viewer component
+ * Maintains exact same props interface and default values
  */
 export function SignViewer({
   isOpen,
@@ -44,47 +43,15 @@ export function SignViewer({
   title = 'Sign',
   borderColor,
 }: SignViewerProps) {
-  const borderColorValue = borderColor || getThemeValue('border-color', '#FFD700');
-  const borderColorWithOpacity = addOpacityToColor(borderColorValue, 0.25);
-
   return (
-    <Modal
+    <ContentViewer
       isOpen={isOpen}
       onClose={onClose}
-      size="md"
-      closeOnEscape
-      closeOnOverlayClick
-      showCloseButton={false}
-    >
-      <div
-        className="bg-black border-2 rounded-lg p-4"
-        style={{
-          borderColor: borderColorValue,
-        }}
-      >
-        <div 
-          className="mb-4 pb-3 flex items-center justify-between"
-          style={{ 
-            borderBottom: `1px solid ${borderColorWithOpacity}`,
-          }}
-        >
-          <h3 className="pixelated text-yellow-400 text-lg font-bold">{title}</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-orange-400 pixelated text-xl font-bold transition-colors p-1 rounded hover:bg-gray-800/50 flex items-center justify-center w-7 h-7"
-            aria-label="Close"
-            style={{ lineHeight: 1 }}
-          >
-            ✕
-          </button>
-        </div>
-        <div className="max-h-[70vh] overflow-auto">
-          <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap pixelated">
-            {content}
-          </div>
-        </div>
-      </div>
-    </Modal>
+      contentType="text"
+      textContent={content}
+      title={title}
+      borderColor={borderColor}
+    />
   );
 }
 

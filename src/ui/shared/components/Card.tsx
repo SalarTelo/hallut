@@ -4,7 +4,7 @@
  */
 
 import type { HTMLAttributes, ReactNode } from 'react';
-import { getThemeValue } from '@utils/theme.js';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { DEFAULT_THEME } from '@constants/module.constants.js';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -92,7 +92,7 @@ export function Card({
   style,
   ...props
 }: CardProps) {
-  const borderColorValue = borderColor || getThemeValue('border-color', DEFAULT_THEME.BORDER_COLOR);
+  const borderColorValue = useThemeBorderColor(borderColor, DEFAULT_THEME.BORDER_COLOR);
   const paddingStyle = paddingStyles[padding];
   const shadowStyle = shadowStyles[shadow];
   const pixelatedStyle = pixelated ? 'pixelated' : '';
