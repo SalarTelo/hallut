@@ -9,7 +9,6 @@ import type {
   Location,
   Position,
   UnlockRequirement,
-  GetDialogueFunction,
   ObjectInteraction,
   GetInteractionFunction,
   InteractableComponentName,
@@ -18,7 +17,7 @@ import type {
   ChatWindowProps,
   ImageViewerProps,
 } from '@core/types/interactable.js';
-import type { DialogueConfig } from '@core/types/dialogue.js';
+import type { DialogueTree, DialogueConfig } from '@core/types/dialogue.js';
 import type { Task } from '@core/types/task.js';
 
 /**
@@ -168,9 +167,8 @@ export interface NPCOptions {
   avatar?: string;
   locked?: boolean;
   unlockRequirement?: UnlockRequirement | null;
-  dialogues: Record<string, DialogueConfig>;
-  getDialogue?: GetDialogueFunction;
-  tasks?: Record<string, Task>;
+  tasks?: Task[]; // Changed from Record<string, Task>
+  dialogueTree?: DialogueTree; // New - replaces dialogues
 }
 
 /**
@@ -184,9 +182,8 @@ export function createNPC(options: NPCOptions): NPC {
     avatar,
     locked = false,
     unlockRequirement = null,
-    dialogues,
-    getDialogue,
     tasks,
+    dialogueTree,
   } = options;
 
   return {
@@ -197,9 +194,8 @@ export function createNPC(options: NPCOptions): NPC {
     avatar,
     locked,
     unlockRequirement,
-    dialogues,
-    getDialogue,
     tasks,
+    dialogueTree,
   };
 }
 

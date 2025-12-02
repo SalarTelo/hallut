@@ -3,6 +3,8 @@
  * Core task type definitions
  */
 
+import type { UnlockRequirement } from './unlock.js';
+
 /**
  * Task submission types
  */
@@ -49,6 +51,12 @@ export interface Task {
   overview?: {
     requirements?: string;
     goals?: string[];
+  };
+  unlockRequirement?: UnlockRequirement | null;
+  dialogues?: {
+    offer?: string[];
+    ready?: string[];
+    complete?: string[];
   };
 }
 

@@ -80,14 +80,15 @@ export async function isModuleFullyCompleted(moduleId: string): Promise<boolean>
     return false;
   }
 
-  const config = getModuleConfig(moduleId);
-  if (!config) {
+  const module = getModule(moduleId);
+  if (!module) {
     return false;
   }
 
   const completedTasks = progress.state.completedTasks || [];
-  const totalTasks = config.taskOrder.length;
+  const totalTasks = module.content.tasks.length;
 
+  // Module is completed if all tasks are completed and there's at least one task
   return completedTasks.length === totalTasks && totalTasks > 0;
 }
 

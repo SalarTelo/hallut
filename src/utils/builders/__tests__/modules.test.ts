@@ -165,7 +165,7 @@ describe('Module Builders', () => {
       expect(config.manifest).toBeDefined();
       expect(config.background).toBeDefined();
       expect(config.welcome).toBeDefined();
-      expect(config.taskOrder).toEqual([]);
+      // taskOrder no longer exists - removed as part of dialogue tree refactor
     });
 
     it('should include optional theme', () => {

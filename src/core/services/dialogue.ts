@@ -6,9 +6,6 @@
 import type { ChoiceAction } from '../types/dialogue.js';
 import type { ModuleContext } from '../types/module.js';
 
-// Re-export dialogue retrieval function
-export { getDialogue } from './dialogueRetrieval.js';
-
 /**
  * Process dialogue action
  */

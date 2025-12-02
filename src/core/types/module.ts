@@ -24,6 +24,9 @@ export interface ModuleContext {
   getCurrentTask: () => Task | null;
   getCurrentTaskId: () => string | null;
   openTaskSubmission?: (task: Task | string) => void;
+  setInteractableState: (interactableId: string, key: string, value: unknown) => void;
+  getInteractableState: (interactableId: string, key: string) => unknown;
+  getInteractable: (interactableId: string) => Interactable | null;
 }
 
 /**
@@ -86,7 +89,6 @@ export interface ModuleConfig {
   background: ModuleBackground;
   welcome: ModuleWelcome;
   theme?: ModuleTheme;
-  taskOrder: Task[]; // Objects, not strings!
   unlockRequirement?: import('./unlock.js').UnlockRequirement | null;
   worldmap?: ModuleWorldmapConfig; // Optional worldmap position and icon configuration
 }
@@ -128,6 +130,5 @@ export interface ModuleData {
   config: ModuleConfig;
   interactables: Interactable[];
   tasks: Task[];
-  dialogues: Record<string, DialogueConfig>;
 }
 

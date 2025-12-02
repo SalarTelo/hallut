@@ -81,7 +81,6 @@ export interface ModuleConfigOptions {
   manifest: ModuleManifest;
   background: ModuleBackground;
   welcome: ModuleWelcome;
-  taskOrder: Task[]; // Objects, not strings!
   theme?: ModuleTheme;
   unlockRequirement?: UnlockRequirement | null;
   worldmap?: {
@@ -100,13 +99,12 @@ export interface ModuleConfigOptions {
  * Create a module configuration
  */
 export function createModuleConfig(options: ModuleConfigOptions): ModuleConfig {
-  const { manifest, background, welcome, taskOrder, theme, unlockRequirement, worldmap } = options;
+  const { manifest, background, welcome, theme, unlockRequirement, worldmap } = options;
 
   const config: ModuleConfig = {
     manifest,
     background,
     welcome,
-    taskOrder,
   };
 
   if (theme) {

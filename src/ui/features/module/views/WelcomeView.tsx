@@ -4,6 +4,7 @@
  */
 
 import type { ModuleData } from '@core/types/module.js';
+import type { DialogueNode } from '@core/types/dialogue.js';
 import { DialogueView } from './DialogueView.js';
 import { CenteredLayout } from '@ui/shared/components/layouts/index.js';
 
@@ -17,18 +18,32 @@ export interface WelcomeViewProps {
  * Welcome View component
  */
 export function WelcomeView({ moduleId, moduleData, onComplete }: WelcomeViewProps) {
-  const welcomeDialogueId = `${moduleId}_welcome`;
-  const welcomeDialogue = moduleData.dialogues[welcomeDialogueId];
+  // Create welcome dialogue node from config
+  const welcomeNode: DialogueNode = {
+    id: `${moduleId}_welcome`,
+    lines: moduleData.config.welcome.lines,
+    choices: {
+      continue: { text: 'Continue' },
+    },
+  };
 
-  if (!welcomeDialogue) {
-    return null;
-  }
+  // Create dummy NPC for welcome (uses speaker from config)
+  const welcomeNPC = {
+    id: 'system',
+    name: moduleData.config.welcome.speaker,
+    type: 'npc' as const,
+    position: { x: 50, y: 50 },
+  };
 
   return (
     <CenteredLayout>
       <DialogueView
-        dialogue={welcomeDialogue}
+        node={welcomeNode}
+        npc={welcomeNPC}
         moduleId={moduleId}
+        availableChoices={[
+          { key: 'continue', text: 'Continue', actions: [] },
+        ]}
         onChoiceSelected={async () => {
           onComplete();
         }}

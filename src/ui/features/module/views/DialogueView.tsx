@@ -4,32 +4,35 @@
  */
 
 import { useState } from 'react';
-import type { DialogueConfig, DialogueChoice } from '@core/types/dialogue.js';
+import type { DialogueNode, ChoiceAction } from '@core/types/dialogue.js';
+import type { NPC } from '@core/types/interactable.js';
 import { DialogueBox, type DialogueChoice as UIDialogueChoice } from '@ui/shared/components/DialogueBox.js';
 
 export interface DialogueViewProps {
-  dialogue: DialogueConfig;
+  node: DialogueNode;
+  npc: NPC;
   moduleId: string;
-  onChoiceSelected: (choice: DialogueChoice) => void | Promise<void>;
+  availableChoices: Array<{ key: string; text: string; actions: ChoiceAction[] }>;
+  onChoiceSelected: (choiceKey: string, actions: ChoiceAction[]) => void | Promise<void>;
   onClose: () => void;
 }
 
 /**
  * Dialogue View component
  */
-export function DialogueView({ dialogue, onChoiceSelected, onClose }: DialogueViewProps) {
+export function DialogueView({ node, npc, availableChoices, onChoiceSelected, onClose }: DialogueViewProps) {
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
 
-  // Convert our dialogue choices to UI format
-  const uiChoices: UIDialogueChoice[] | undefined = dialogue.choices?.map((choice) => ({
+  // Convert available choices to UI format
+  const uiChoices: UIDialogueChoice[] | undefined = availableChoices.map((choice) => ({
     text: choice.text,
     action: async () => {
-      await onChoiceSelected(choice);
+      await onChoiceSelected(choice.key, choice.actions);
     },
   }));
 
   const handleContinue = () => {
-    if (currentLineIndex < dialogue.lines.length - 1) {
+    if (currentLineIndex < node.lines.length - 1) {
       setCurrentLineIndex(currentLineIndex + 1);
     } else if (!uiChoices || uiChoices.length === 0) {
       // No choices, close dialogue
@@ -39,8 +42,8 @@ export function DialogueView({ dialogue, onChoiceSelected, onClose }: DialogueVi
 
   return (
     <DialogueBox
-      speaker={dialogue.speaker}
-      lines={dialogue.lines}
+      speaker={npc.name}
+      lines={node.lines}
       currentLineIndex={currentLineIndex}
       onContinue={handleContinue}
       choices={uiChoices}

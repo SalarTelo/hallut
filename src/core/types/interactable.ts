@@ -3,12 +3,24 @@
  * Core interactable type definitions
  */
 
-import type { DialogueConfig } from './dialogue.js';
+import type { DialogueConfig, DialogueTree } from './dialogue.js';
 import type { Task } from './task.js';
 import type { UnlockRequirement } from './unlock.js';
 
 // Re-export for convenience
 export type { UnlockRequirement } from './unlock.js';
+
+/**
+ * State types
+ */
+export interface InteractableState {
+  [key: string]: unknown;
+}
+
+export interface ModuleState {
+  module: Record<string, unknown>;
+  interactables: Record<string, InteractableState>;
+}
 
 /**
  * Position on screen (percentage coordinates)
@@ -64,11 +76,6 @@ export type ObjectInteraction =
   | { type: 'none' };
 
 /**
- * Get dialogue function (for dynamic dialogue selection)
- */
-export type GetDialogueFunction = (context: import('./module.js').ModuleContext) => DialogueConfig;
-
-/**
  * Get interaction function (for dynamic object interactions)
  */
 export type GetInteractionFunction = (context: import('./module.js').ModuleContext) => ObjectInteraction;
@@ -89,9 +96,9 @@ export interface NPC {
   avatar?: string;
   locked?: boolean;
   unlockRequirement?: UnlockRequirement | null;
-  dialogues: Record<string, DialogueConfig>;
-  getDialogue?: GetDialogueFunction;
-  tasks?: Record<string, Task>;
+  tasks?: Task[]; // Changed from Record<string, Task>
+  dialogueTree?: DialogueTree; // New - replaces dialogues
+  state?: InteractableState; // Runtime state (not in definition)
 }
 
 /**

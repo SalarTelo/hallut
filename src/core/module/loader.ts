@@ -4,39 +4,17 @@
  */
 
 import type { ModuleDefinition, ModuleData } from '../types/module.js';
-import type { DialogueConfig } from '../types/dialogue.js';
 import { registerModule } from './registry.js';
 import { ErrorCode, ModuleError } from '../types/errors.js';
+import { actions } from '../state/actions.js';
 
 /**
- * Extract dialogues from interactables
+ * Initialize interactable state for all interactables
  */
-function extractDialogues(interactables: import('../types/interactable.js').Interactable[]): Record<string, DialogueConfig> {
-  const dialogues: Record<string, DialogueConfig> = {};
-
+function initializeInteractableStates(moduleId: string, interactables: import('../types/interactable.js').Interactable[]): void {
   for (const interactable of interactables) {
-    if (interactable.type === 'npc') {
-      // Extract dialogues from NPC
-      for (const [dialogueId, dialogue] of Object.entries(interactable.dialogues)) {
-        const fullDialogueId = `${interactable.id}-${dialogueId}`;
-        dialogues[fullDialogueId] = {
-          ...dialogue,
-          id: fullDialogueId,
-        };
-      }
-    } else if (interactable.type === 'object' || interactable.type === 'location') {
-      // Extract dialogue from object interaction if it's a dialogue type
-      if (interactable.interaction?.type === 'dialogue') {
-        const dialogueId = `${interactable.id}-dialogue`;
-        dialogues[dialogueId] = {
-          ...interactable.interaction.dialogue,
-          id: dialogueId,
-        };
-      }
-    }
+    actions.initializeInteractableState(moduleId, interactable.id);
   }
-
-  return dialogues;
 }
 
 /**
@@ -94,7 +72,7 @@ export async function loadModuleInstance(moduleId: string): Promise<ModuleDefini
 }
 
 /**
- * Load module data (config + content + dialogues)
+ * Load module data (config + content)
  */
 export async function loadModuleData(moduleId: string): Promise<ModuleData | null> {
   const moduleDefinition = await loadModuleInstance(moduleId);
@@ -103,23 +81,14 @@ export async function loadModuleData(moduleId: string): Promise<ModuleData | nul
     return null;
   }
 
-  // Extract dialogues from interactables
-  const dialogues = extractDialogues(moduleDefinition.content.interactables);
-
-  // Add welcome dialogue
-  const welcomeDialogueId = `${moduleId}_welcome`;
-  dialogues[welcomeDialogueId] = {
-    id: welcomeDialogueId,
-    speaker: moduleDefinition.config.welcome.speaker,
-    lines: moduleDefinition.config.welcome.lines,
-  };
+  // Initialize interactable state
+  initializeInteractableStates(moduleId, moduleDefinition.content.interactables);
 
   return {
     id: moduleDefinition.id,
     config: moduleDefinition.config,
     interactables: moduleDefinition.content.interactables,
     tasks: moduleDefinition.content.tasks,
-    dialogues,
   };
 }
 

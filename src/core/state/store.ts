@@ -7,25 +7,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ModuleData } from '../types/module.js';
 import type { Task } from '../types/task.js';
+import type { InteractableState } from '../types/interactable.js';
 import type { ModuleProgress, ModuleProgressionState } from './types.js';
-
-/**
- * Module progress
- */
-export interface ModuleProgress {
-  state: {
-    completedTasks: string[];
-    currentTaskId?: string;
-    seenGreetings: Record<string, boolean>;
-    [key: string]: unknown; // Custom state
-  };
-  moduleState?: Record<string, unknown>; // Module-specific state
-}
-
-/**
- * Module progression state
- */
-export type ModuleProgressionState = 'locked' | 'unlocked' | 'completed';
 
 /**
  * Module progression
@@ -77,6 +60,9 @@ export interface AppActions {
   // State
   setModuleStateField: (moduleId: string, key: string, value: unknown) => void;
   getModuleStateField: (moduleId: string, key: string) => unknown;
+  setInteractableStateField: (moduleId: string, interactableId: string, key: string, value: unknown) => void;
+  getInteractableStateField: (moduleId: string, interactableId: string, key: string) => unknown;
+  initializeInteractableState: (moduleId: string, interactableId: string) => void;
 
   // Progression
   getModuleProgression: (moduleId: string) => ModuleProgressionState;
@@ -195,7 +181,7 @@ export const useAppStore = create<AppStore>()(
         const progress = get().getProgress(moduleId) || initialProgress;
         
         // Core state keys
-        const coreKeys = ['completedTasks', 'currentTaskId', 'seenGreetings'];
+        const coreKeys = ['completedTasks', 'currentTaskId', 'seenGreetings', 'conversations'];
         
         if (coreKeys.includes(key)) {
           get().updateProgress(moduleId, {
@@ -205,11 +191,15 @@ export const useAppStore = create<AppStore>()(
             },
           });
         } else {
-          // Custom module state
+          // Module-level state
+          const moduleState = progress.moduleState || { module: {} as Record<string, unknown>, interactables: {} as Record<string, InteractableState> };
           get().updateProgress(moduleId, {
             moduleState: {
-              ...(progress.moduleState || {}),
-              [key]: value,
+              ...moduleState,
+              module: {
+                ...moduleState.module,
+                [key]: value,
+              },
             },
           });
         }
@@ -219,11 +209,57 @@ export const useAppStore = create<AppStore>()(
         const progress = get().getProgress(moduleId);
         if (!progress) return undefined;
 
-        const coreKeys = ['completedTasks', 'currentTaskId', 'seenGreetings'];
+        const coreKeys = ['completedTasks', 'currentTaskId', 'seenGreetings', 'conversations'];
         if (coreKeys.includes(key)) {
           return progress.state[key];
         }
-        return progress.moduleState?.[key];
+        return progress.moduleState?.module?.[key];
+      },
+
+      // Interactable state
+      setInteractableStateField: (moduleId, interactableId, key, value) => {
+        const progress = get().getProgress(moduleId) || initialProgress;
+        const moduleState = progress.moduleState || { module: {} as Record<string, unknown>, interactables: {} as Record<string, InteractableState> };
+        const interactables = moduleState.interactables || {};
+        const interactableState = interactables[interactableId] || ({} as InteractableState);
+        
+        get().updateProgress(moduleId, {
+          moduleState: {
+            ...moduleState,
+            interactables: {
+              ...interactables,
+              [interactableId]: {
+                ...interactableState,
+                [key]: value,
+              },
+            },
+          },
+        });
+      },
+
+      getInteractableStateField: (moduleId, interactableId, key) => {
+        const progress = get().getProgress(moduleId);
+        if (!progress) return undefined;
+        
+        return progress.moduleState?.interactables?.[interactableId]?.[key];
+      },
+
+      initializeInteractableState: (moduleId, interactableId) => {
+        const progress = get().getProgress(moduleId) || initialProgress;
+        const moduleState = progress.moduleState || { module: {} as Record<string, unknown>, interactables: {} as Record<string, InteractableState> };
+        const interactables = moduleState.interactables || {};
+        
+        if (!interactables[interactableId]) {
+          get().updateProgress(moduleId, {
+            moduleState: {
+              ...moduleState,
+              interactables: {
+                ...interactables,
+                [interactableId]: {} as InteractableState,
+              },
+            },
+          });
+        }
       },
 
       // Progression

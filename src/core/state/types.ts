@@ -3,6 +3,8 @@
  * Types for state management
  */
 
+import type { ModuleState } from '../types/interactable.js';
+
 /**
  * Module progress state
  */
@@ -11,9 +13,10 @@ export interface ModuleProgress {
     completedTasks: string[];
     currentTaskId?: string;
     seenGreetings: Record<string, boolean>;
+    conversations?: Record<string, { branch: 'tree' | string; lastNode?: string }>;
     [key: string]: unknown;
   };
-  moduleState?: Record<string, unknown>;
+  moduleState?: ModuleState;
 }
 
 /**

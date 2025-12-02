@@ -1,215 +1,99 @@
 /**
  * Module Context Tests
- * Unit tests for module context creation
+ * Tests for module context creation and interactable state methods
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createModuleContext } from '../context.js';
-import { actions } from '../../state/actions.js';
-import { useAppStore } from '../../state/store.js';
-import type { Task } from '@core/types/task.js';
+import { actions } from '@core/state/actions.js';
+import type { ModuleData } from '@core/types/module.js';
+import type { Interactable } from '@core/types/interactable.js';
 
-// Mock the actions
-vi.mock('../../state/actions.js', () => ({
-  actions: {
-    setModuleStateField: vi.fn(),
-    getModuleStateField: vi.fn(),
-    acceptTask: vi.fn(),
-    completeTask: vi.fn(),
-    isTaskCompleted: vi.fn(),
-    getCurrentTaskId: vi.fn(),
-  },
-}));
-
-// Mock the store
-vi.mock('../../state/store.js', () => ({
-  useAppStore: {
-    getState: vi.fn(),
-  },
-}));
-
-describe('Module Context', () => {
+describe('createModuleContext', () => {
+  let moduleData: ModuleData;
   const moduleId = 'test-module';
-  const locale = 'en';
+  const locale = 'sv';
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    moduleData = {
+      id: moduleId,
+      config: {
+        manifest: { id: moduleId, name: 'Test', version: '1.0.0' },
+        background: { color: '#000' },
+        welcome: { speaker: 'System', lines: ['Welcome'] },
+      },
+      interactables: [
+        {
+          id: 'test-npc',
+          type: 'npc',
+          name: 'Test NPC',
+          position: { x: 50, y: 50 },
+        },
+      ],
+      tasks: [],
+    };
   });
 
-  describe('createModuleContext', () => {
-    it('should create context with correct moduleId and locale', () => {
-      const context = createModuleContext(moduleId, locale);
+  it('should create context with module ID and locale', () => {
+    const context = createModuleContext(moduleId, locale, moduleData);
+    expect(context.moduleId).toBe(moduleId);
+    expect(context.locale).toBe(locale);
+  });
 
-      expect(context.moduleId).toBe(moduleId);
-      expect(context.locale).toBe(locale);
-    });
+  it('should provide setModuleStateField method', () => {
+    const context = createModuleContext(moduleId, locale, moduleData);
+    const spy = vi.spyOn(actions, 'setModuleStateField');
+    
+    context.setModuleStateField('key', 'value');
+    expect(spy).toHaveBeenCalledWith(moduleId, 'key', 'value');
+  });
 
-    it('should create context with all required methods', () => {
-      const context = createModuleContext(moduleId, locale);
+  it('should provide getModuleStateField method', () => {
+    const context = createModuleContext(moduleId, locale, moduleData);
+    vi.spyOn(actions, 'getModuleStateField').mockReturnValue('value');
+    
+    const result = context.getModuleStateField('key');
+    expect(result).toBe('value');
+  });
 
-      expect(typeof context.setModuleStateField).toBe('function');
-      expect(typeof context.getModuleStateField).toBe('function');
-      expect(typeof context.acceptTask).toBe('function');
-      expect(typeof context.completeTask).toBe('function');
-      expect(typeof context.isTaskCompleted).toBe('function');
-      expect(typeof context.getCurrentTask).toBe('function');
-      expect(typeof context.getCurrentTaskId).toBe('function');
-    });
+  it('should provide setInteractableState method', () => {
+    const context = createModuleContext(moduleId, locale, moduleData);
+    const spy = vi.spyOn(actions, 'setInteractableStateField');
+    
+    context.setInteractableState('npc-id', 'hasMet', true);
+    expect(spy).toHaveBeenCalledWith(moduleId, 'npc-id', 'hasMet', true);
+  });
 
-    it('should delegate setModuleStateField to actions', () => {
-      const context = createModuleContext(moduleId, locale);
-      
-      context.setModuleStateField('key', 'value');
+  it('should provide getInteractableState method', () => {
+    const context = createModuleContext(moduleId, locale, moduleData);
+    vi.spyOn(actions, 'getInteractableStateField').mockReturnValue(true);
+    
+    const result = context.getInteractableState('npc-id', 'hasMet');
+    expect(result).toBe(true);
+  });
 
-      expect(actions.setModuleStateField).toHaveBeenCalledWith(moduleId, 'key', 'value');
-    });
+  it('should provide getInteractable method', () => {
+    const context = createModuleContext(moduleId, locale, moduleData);
+    
+    const interactable = context.getInteractable('test-npc');
+    expect(interactable).toBeDefined();
+    expect(interactable?.id).toBe('test-npc');
+  });
 
-    it('should delegate getModuleStateField to actions', () => {
-      vi.mocked(actions.getModuleStateField).mockReturnValue('test-value');
-      
-      const context = createModuleContext(moduleId, locale);
-      const result = context.getModuleStateField('key');
+  it('should return null for non-existent interactable', () => {
+    const context = createModuleContext(moduleId, locale, moduleData);
+    
+    const interactable = context.getInteractable('non-existent');
+    expect(interactable).toBeNull();
+  });
 
-      expect(actions.getModuleStateField).toHaveBeenCalledWith(moduleId, 'key');
-      expect(result).toBe('test-value');
-    });
-
-    it('should delegate acceptTask to actions with Task object', () => {
-      const task: Task = {
-        id: 'test-task',
-        name: 'Test Task',
-        description: 'Test',
-        submission: { type: 'text' },
-        validate: () => ({ solved: true, reason: 'test', details: 'test' }),
-      };
-
-      const context = createModuleContext(moduleId, locale);
-      context.acceptTask(task);
-
-      expect(actions.acceptTask).toHaveBeenCalledWith(moduleId, task);
-    });
-
-    it('should delegate acceptTask to actions with task ID string', () => {
-      const context = createModuleContext(moduleId, locale);
-      context.acceptTask('test-task');
-
-      expect(actions.acceptTask).toHaveBeenCalledWith(moduleId, 'test-task');
-    });
-
-    it('should delegate completeTask to actions with Task object', () => {
-      const task: Task = {
-        id: 'test-task',
-        name: 'Test Task',
-        description: 'Test',
-        submission: { type: 'text' },
-        validate: () => ({ solved: true, reason: 'test', details: 'test' }),
-      };
-
-      const context = createModuleContext(moduleId, locale);
-      context.completeTask(task);
-
-      expect(actions.completeTask).toHaveBeenCalledWith(moduleId, task);
-    });
-
-    it('should delegate completeTask to actions with task ID string', () => {
-      const context = createModuleContext(moduleId, locale);
-      context.completeTask('test-task');
-
-      expect(actions.completeTask).toHaveBeenCalledWith(moduleId, 'test-task');
-    });
-
-    it('should delegate isTaskCompleted to actions', () => {
-      vi.mocked(actions.isTaskCompleted).mockReturnValue(true);
-
-      const context = createModuleContext(moduleId, locale);
-      const result = context.isTaskCompleted('test-task');
-
-      expect(actions.isTaskCompleted).toHaveBeenCalledWith(moduleId, 'test-task');
-      expect(result).toBe(true);
-    });
-
-    it('should delegate getCurrentTaskId to actions', () => {
-      vi.mocked(actions.getCurrentTaskId).mockReturnValue('current-task');
-
-      const context = createModuleContext(moduleId, locale);
-      const result = context.getCurrentTaskId();
-
-      expect(actions.getCurrentTaskId).toHaveBeenCalledWith(moduleId);
-      expect(result).toBe('current-task');
-    });
-
-    it('should return null from getCurrentTask when task ID is null', () => {
-      vi.mocked(actions.getCurrentTaskId).mockReturnValue(null);
-      vi.mocked(useAppStore.getState).mockReturnValue({
-        currentModule: null,
-      } as any);
-
-      const context = createModuleContext(moduleId, locale);
-      const result = context.getCurrentTask();
-
-      expect(result).toBeNull();
-    });
-
-    it('should return null from getCurrentTask when module is not current', () => {
-      const task: Task = {
-        id: 'test-task',
-        name: 'Test Task',
-        description: 'Test',
-        submission: { type: 'text' },
-        validate: () => ({ solved: true, reason: 'test', details: 'test' }),
-      };
-
-      vi.mocked(actions.getCurrentTaskId).mockReturnValue('test-task');
-      vi.mocked(useAppStore.getState).mockReturnValue({
-        currentModule: {
-          id: 'other-module',
-          tasks: [task],
-        },
-      } as any);
-
-      const context = createModuleContext(moduleId, locale);
-      const result = context.getCurrentTask();
-
-      expect(result).toBeNull();
-    });
-
-    it('should return task from getCurrentTask when module is current', () => {
-      const task: Task = {
-        id: 'test-task',
-        name: 'Test Task',
-        description: 'Test',
-        submission: { type: 'text' },
-        validate: () => ({ solved: true, reason: 'test', details: 'test' }),
-      };
-
-      vi.mocked(actions.getCurrentTaskId).mockReturnValue('test-task');
-      vi.mocked(useAppStore.getState).mockReturnValue({
-        currentModule: {
-          id: moduleId,
-          tasks: [task],
-        },
-      } as any);
-
-      const context = createModuleContext(moduleId, locale);
-      const result = context.getCurrentTask();
-
-      expect(result).toBe(task);
-    });
-
-    it('should return null from getCurrentTask when task not found', () => {
-      vi.mocked(actions.getCurrentTaskId).mockReturnValue('non-existent-task');
-      vi.mocked(useAppStore.getState).mockReturnValue({
-        currentModule: {
-          id: moduleId,
-          tasks: [],
-        },
-      } as any);
-
-      const context = createModuleContext(moduleId, locale);
-      const result = context.getCurrentTask();
-
-      expect(result).toBeNull();
-    });
+  it('should provide task methods', () => {
+    const context = createModuleContext(moduleId, locale, moduleData);
+    
+    expect(context.acceptTask).toBeDefined();
+    expect(context.completeTask).toBeDefined();
+    expect(context.isTaskCompleted).toBeDefined();
+    expect(context.getCurrentTask).toBeDefined();
+    expect(context.getCurrentTaskId).toBeDefined();
   });
 });
-

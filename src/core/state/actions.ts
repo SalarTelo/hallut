@@ -138,5 +138,26 @@ export const actions = {
   completeModule: (moduleId: string): void => {
     useAppStore.getState().completeModule(moduleId);
   },
+
+  /**
+   * Set interactable state field
+   */
+  setInteractableStateField: (moduleId: string, interactableId: string, key: string, value: unknown): void => {
+    useAppStore.getState().setInteractableStateField(moduleId, interactableId, key, value);
+  },
+
+  /**
+   * Get interactable state field
+   */
+  getInteractableStateField: (moduleId: string, interactableId: string, key: string): unknown => {
+    return useAppStore.getState().getInteractableStateField(moduleId, interactableId, key);
+  },
+
+  /**
+   * Initialize interactable state
+   */
+  initializeInteractableState: (moduleId: string, interactableId: string): void => {
+    useAppStore.getState().initializeInteractableState(moduleId, interactableId);
+  },
 };
 

@@ -5,110 +5,27 @@
 
 import { useCallback } from 'react';
 import { createModuleContext } from '@core/module/context.js';
-import { actions } from '@core/state/actions.js';
+import { getInitialDialogueNode } from '@core/services/dialogueExecution.js';
 import type { Interactable, ObjectInteraction, NPC } from '@core/types/interactable.js';
-import type { Task } from '@core/types/task.js';
+import type { ModuleData } from '@core/types/module.js';
+import type { DialogueNode } from '@core/types/dialogue.js';
 import { ModuleError, ErrorCode } from '@core/types/errors.js';
 
 export interface InteractableActionResult {
   type: 'dialogue' | 'component' | 'none';
-  dialogueId?: string;
+  dialogueNode?: DialogueNode;
+  npc?: NPC;
   component?: string;
   componentProps?: Record<string, unknown>;
 }
 
 export interface UseInteractableActionsOptions {
   moduleId: string;
+  moduleData: ModuleData;
   locale?: string;
-  onDialogueSelected?: (dialogueId: string) => void;
+  onDialogueSelected?: (node: DialogueNode, npc: NPC) => void;
   onComponentOpen?: (component: string, props?: Record<string, unknown>) => void;
   onError?: (error: Error) => void;
-}
-
-/**
- * Extract tasks from NPC dialogues (from accept-task actions in choices)
- */
-function getTasksFromDialogues(npc: NPC, moduleData?: { tasks: Task[] }): Task[] {
-  const tasks: Task[] = [];
-
-  // Check all dialogues for accept-task actions
-  Object.values(npc.dialogues || {}).forEach(dialogue => {
-    dialogue.choices?.forEach(choice => {
-      const actions = Array.isArray(choice.action) ? choice.action : [choice.action];
-      actions.forEach(action => {
-        if (action && action.type === 'accept-task') {
-          // If we have module data, find the full task object
-          if (moduleData) {
-            const task = moduleData.tasks.find(t => t.id === action.task.id);
-            if (task) {
-              tasks.push(task);
-            }
-          } else {
-            // Otherwise, use the task from the action
-            tasks.push(action.task);
-          }
-        }
-      });
-    });
-  });
-
-  return tasks;
-}
-
-/**
- * Select appropriate dialogue for NPC based on task state
- */
-function selectNPCDialogue(npc: NPC, moduleId: string): string | null {
-  // Get tasks from NPC
-  let npcTasks: Task[] = [];
-  
-  // Get tasks from NPC's tasks property
-  if (npc.tasks) {
-    npcTasks = Object.values(npc.tasks);
-  }
-  
-  // Also get tasks from dialogue choices (we can't access moduleData here, so we'll use the task from the action)
-  const dialogueTasks = getTasksFromDialogues(npc);
-  dialogueTasks.forEach(dialogueTask => {
-    if (!npcTasks.find(t => t.id === dialogueTask.id)) {
-      npcTasks.push(dialogueTask);
-    }
-  });
-  
-  if (npcTasks.length === 0) {
-    return null; // No tasks, use default dialogue
-  }
-  
-  const currentTaskId = actions.getCurrentTaskId(moduleId);
-  
-  // Check if any task is active
-  const activeTask = npcTasks.find(task => task.id === currentTaskId);
-  if (activeTask) {
-    // Task is active - try to find task-ready dialogue
-    const taskReadyId = `${npc.id}-task-ready`;
-    if (npc.dialogues['task-ready']) {
-      return taskReadyId;
-    }
-    // If not found, will fall back to default (getDialogue will generate default)
-    return taskReadyId;
-  }
-  
-  // Check if all tasks are completed
-  const allCompleted = npcTasks.every(task => actions.isTaskCompleted(moduleId, task.id));
-  if (allCompleted) {
-    // All tasks completed - try to find task-complete dialogue
-    if (npc.dialogues['task-complete']) {
-      return `${npc.id}-task-complete`;
-    }
-    if (npc.dialogues['complete']) {
-      return `${npc.id}-complete`;
-    }
-    // If not found, will fall back to default (getDialogue will generate default)
-    return `${npc.id}-task-complete`;
-  }
-  
-  // No active task and not all completed - use default dialogue
-  return null;
 }
 
 /**
@@ -116,6 +33,7 @@ function selectNPCDialogue(npc: NPC, moduleId: string): string | null {
  */
 export function useInteractableActions({
   moduleId,
+  moduleData,
   locale = 'sv',
   onDialogueSelected,
   onComponentOpen,
@@ -133,27 +51,21 @@ export function useInteractableActions({
 
         // Handle NPC
         if (interactable.type === 'npc') {
-          if (interactable.getDialogue) {
-            const context = createModuleContext(moduleId, locale);
-            const dialogue = interactable.getDialogue(context);
-            onDialogueSelected?.(dialogue.id);
-            return { type: 'dialogue', dialogueId: dialogue.id };
+          const npc = interactable as NPC;
+          
+          // Check if NPC has dialogue tree
+          if (npc.dialogueTree) {
+            const context = createModuleContext(moduleId, locale, moduleData);
+            const initialNode = getInitialDialogueNode(npc, moduleData, context);
+            
+            if (initialNode) {
+              onDialogueSelected?.(initialNode, npc);
+              return { type: 'dialogue', dialogueNode: initialNode, npc };
+            }
           }
-
-          // Automatically select dialogue based on task state
-          const selectedDialogueId = selectNPCDialogue(interactable, moduleId);
-          if (selectedDialogueId) {
-            onDialogueSelected?.(selectedDialogueId);
-            return { type: 'dialogue', dialogueId: selectedDialogueId };
-          }
-
-          // Fallback: Use first dialogue
-          const dialogueIds = Object.keys(interactable.dialogues);
-          if (dialogueIds.length > 0) {
-            const dialogueId = `${interactable.id}-${dialogueIds[0]}`;
-            onDialogueSelected?.(dialogueId);
-            return { type: 'dialogue', dialogueId };
-          }
+          
+          // No dialogue tree, return none
+          return { type: 'none' };
         }
 
         // Handle object/location
@@ -161,7 +73,7 @@ export function useInteractableActions({
           let interaction: ObjectInteraction | undefined;
 
           if (interactable.getInteraction) {
-            const context = createModuleContext(moduleId, locale);
+            const context = createModuleContext(moduleId, locale, moduleData);
             interaction = interactable.getInteraction(context);
           } else {
             interaction = interactable.interaction;
@@ -173,12 +85,21 @@ export function useInteractableActions({
 
           switch (interaction.type) {
             case 'dialogue':
-              // Dialogue IDs are prefixed with interactable ID in the loader
-              // For objects/locations: `${interactable.id}-dialogue`
-              // The loader always creates IDs like this, so we match that pattern
-              const dialogueId = `${interactable.id}-dialogue`;
-              onDialogueSelected?.(dialogueId);
-              return { type: 'dialogue', dialogueId };
+              // For objects/locations with dialogue, convert DialogueConfig to DialogueNode
+              // This is for backward compatibility
+              const dialogueConfig = interaction.dialogue;
+              const dialogueNode: DialogueNode = {
+                id: dialogueConfig.id,
+                lines: dialogueConfig.lines,
+                choices: dialogueConfig.choices ? Object.fromEntries(
+                  dialogueConfig.choices.map((choice, index) => [`choice_${index}`, { text: choice.text }])
+                ) : undefined,
+              };
+              // For object dialogues, we don't have an NPC, so pass a dummy NPC-like object
+              // This is a workaround - ideally objects shouldn't use dialogue type
+              const dummyNPC = { id: interactable.id, name: interactable.name, type: 'npc' as const, position: interactable.position };
+              onDialogueSelected?.(dialogueNode, dummyNPC as NPC);
+              return { type: 'dialogue', dialogueNode, npc: dummyNPC as NPC };
 
             case 'component':
               // Handle all components through the same callback
@@ -211,7 +132,7 @@ export function useInteractableActions({
         return { type: 'none' };
       }
     },
-    [moduleId, locale, onDialogueSelected, onComponentOpen, onError]
+    [moduleId, moduleData, locale, onDialogueSelected, onComponentOpen, onError]
   );
 
   return {

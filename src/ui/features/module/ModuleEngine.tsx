@@ -6,8 +6,9 @@
 import { useEffect, useState } from 'react';
 import { loadModuleData } from '@core/module/loader.js';
 import { actions } from '@core/state/actions.js';
-import { getDialogue } from '@core/services/dialogue.js';
-import { useDialogueActions, useInteractableActions } from '@ui/hooks/index.js';
+import { createModuleContext } from '@core/module/context.js';
+import { useInteractableActions } from '@ui/hooks/index.js';
+import { getNextDialogueNode, getAvailableChoices, executeActions } from '@core/services/dialogueExecution.js';
 import { LoadingState } from '@ui/shared/components/LoadingState.js';
 import { ErrorDisplay } from '@ui/shared/components/ErrorDisplay.js';
 import { Overlay } from '@ui/shared/components/Overlay.js';
@@ -20,9 +21,10 @@ import { DialogueView } from './views/DialogueView.js';
 import { TaskView } from './views/TaskView.js';
 import { WelcomeView } from './views/WelcomeView.js';
 import type { ModuleData } from '@core/types/module.js';
-import type { NPC } from '@core/types/interactable.js';
 import { ErrorCode, ModuleError } from '@core/types/errors.js';
 import { getThemeValue } from '@utils/theme.js';
+import type { NPC } from '@core/types/interactable.js';
+import type { DialogueNode } from '@core/types/dialogue.js';
 
 export interface ModuleEngineProps {
   moduleId: string;
@@ -33,39 +35,6 @@ export interface ModuleEngineProps {
 type View = 'welcome' | 'interactable' | 'dialogue' | 'task';
 
 /**
- * Find NPC that gave a task by checking dialogues and tasks property
- */
-function findTaskGiver(taskId: string, moduleData: ModuleData): NPC | null {
-  for (const interactable of moduleData.interactables) {
-    if (interactable.type !== 'npc') continue;
-    
-    const npc = interactable as NPC;
-    
-    // Check if NPC has this task in their tasks property
-    if (npc.tasks && npc.tasks[taskId]) {
-      return npc;
-    }
-    
-    // Check if NPC has this task in their dialogues (accept-task actions)
-    for (const dialogue of Object.values(npc.dialogues)) {
-      for (const choice of dialogue.choices || []) {
-        const actions = Array.isArray(choice.action) ? choice.action : [choice.action];
-        for (const action of actions) {
-          if (action && action.type === 'accept-task') {
-            const actionTaskId = typeof action.task === 'string' ? action.task : action.task.id;
-            if (actionTaskId === taskId) {
-              return npc;
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  return null;
-}
-
-/**
  * Module Engine component
  */
 export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEngineProps) {
@@ -73,7 +42,8 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [currentView, setCurrentView] = useState<View>('welcome');
-  const [selectedDialogueId, setSelectedDialogueId] = useState<string | null>(null);
+  const [selectedDialogueNode, setSelectedDialogueNode] = useState<DialogueNode | null>(null);
+  const [selectedNPC, setSelectedNPC] = useState<NPC | null>(null);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   
   // Modal states
@@ -113,24 +83,14 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
     }
   }, [moduleData, currentView, moduleId]);
 
-  // Dialogue actions
-  const { handleDialogueActions } = useDialogueActions({
-    moduleId,
-    dialogueId: selectedDialogueId || '',
-    locale,
-    onTaskSubmissionOpen: (taskId) => {
-      setSelectedTaskId(taskId);
-      setCurrentView('task');
-    },
-    onError: setError,
-  });
-
   // Interactable actions
   const { handleInteractableAction } = useInteractableActions({
     moduleId,
+    moduleData: moduleData!,
     locale,
-    onDialogueSelected: (dialogueId) => {
-      setSelectedDialogueId(dialogueId);
+    onDialogueSelected: (node, npc) => {
+      setSelectedDialogueNode(node);
+      setSelectedNPC(npc);
       setCurrentView('dialogue');
     },
     onComponentOpen: (component, props) => {
@@ -186,11 +146,8 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
     return null;
   }
 
-  const welcomeDialogueId = `${moduleId}_welcome`;
-  const welcomeDialogue = moduleData.dialogues[welcomeDialogueId];
-
   // Welcome view
-  if (currentView === 'welcome' && welcomeDialogue) {
+  if (currentView === 'welcome') {
     return (
       <WelcomeView
         moduleId={moduleId}
@@ -200,9 +157,20 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
     );
   }
 
+  // Create context for dialogue execution with task submission handler
+  const baseContext = moduleData ? createModuleContext(moduleId, locale, moduleData) : null;
+  const context = baseContext ? {
+    ...baseContext,
+    openTaskSubmission: (task: import('@core/types/task.js').Task | string) => {
+      const taskId = typeof task === 'string' ? task : task.id;
+      setSelectedTaskId(taskId);
+      setCurrentView('task');
+    },
+  } : null;
+
   // Task overlay
   let taskOverlay = null;
-  if (currentView === 'task' && selectedTaskId) {
+  if (currentView === 'task' && selectedTaskId && moduleData) {
     const task = moduleData.tasks.find(t => t.id === selectedTaskId);
     if (task) {
       taskOverlay = (
@@ -218,33 +186,33 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
           <TaskView
             task={task}
             moduleId={moduleId}
-            onComplete={() => {
+            onComplete={async () => {
               actions.completeTask(moduleId, task);
-              setSelectedTaskId(null);
               
-              // Find the NPC that gave this task and show task-complete dialogue
-              const taskGiver = findTaskGiver(task.id, moduleData);
-              if (taskGiver) {
-                // Try to find task-complete dialogue
-                let completeDialogueId: string | null = null;
-                if (taskGiver.dialogues['task-complete']) {
-                  completeDialogueId = `${taskGiver.id}-task-complete`;
-                } else if (taskGiver.dialogues['complete']) {
-                  completeDialogueId = `${taskGiver.id}-complete`;
-                } else {
-                  // Use default task-complete dialogue (getDialogue will generate it)
-                  completeDialogueId = `${taskGiver.id}-task-complete`;
-                }
+              // Find NPC that gave this task and show task-complete dialogue
+              if (moduleData && context) {
+                const npc = moduleData.interactables.find(
+                  (i): i is NPC => i.type === 'npc' && (i.tasks?.some(t => t.id === task.id) ?? false)
+                );
                 
-                if (completeDialogueId) {
-                  setSelectedDialogueId(completeDialogueId);
-                  setCurrentView('dialogue');
-                } else {
-                  setCurrentView('interactable');
+                if (npc && npc.dialogueTree) {
+                  // Generate task-complete dialogue node from task dialogues
+                  if (task.dialogues?.complete) {
+                    const taskCompleteNode: DialogueNode = {
+                      id: `${npc.id}_task_complete`,
+                      lines: task.dialogues.complete,
+                      choices: {
+                        thanks: { text: 'Thank you!' },
+                      },
+                    };
+                    setSelectedDialogueNode(taskCompleteNode);
+                    setSelectedNPC(npc);
+                    setCurrentView('dialogue');
+                  }
                 }
-              } else {
-                setCurrentView('interactable');
               }
+              
+              setSelectedTaskId(null);
             }}
             onClose={() => {
               setSelectedTaskId(null);
@@ -258,68 +226,80 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
 
   // Dialogue overlay
   let dialogueOverlay = null;
-  if (currentView === 'dialogue' && selectedDialogueId) {
-    // Get dialogue with fallback to defaults
-    const dialogue = getDialogue(selectedDialogueId, moduleData, moduleId);
-    
-    if (dialogue) {
-      // Filter out "accept-task" choices if the task is already active or completed
-      const currentTaskId = actions.getCurrentTaskId(moduleId);
-      const filteredDialogue = {
-        ...dialogue,
-        choices: dialogue.choices?.filter(choice => {
-          if (!choice.action) return true;
-          
-          const actionsArray = Array.isArray(choice.action) ? choice.action : [choice.action];
-          // Filter out choices with accept-task actions for tasks that are already active or completed
-          return !actionsArray.some(action => {
-            if (action && action.type === 'accept-task') {
-              const taskId = typeof action.task === 'string' ? action.task : action.task.id;
-              // Check if this task is currently active
-              if (currentTaskId === taskId) {
-                return true;
-              }
-              // Check if this task is already completed
-              if (actions.isTaskCompleted(moduleId, taskId)) {
-                return true;
-              }
-            }
-            return false;
-          });
-        }),
-      };
+  if (currentView === 'dialogue' && selectedDialogueNode && selectedNPC && moduleData && context) {
+    const tree = selectedNPC.dialogueTree;
+    if (tree) {
+      const availableChoices = getAvailableChoices(selectedDialogueNode, tree, context, moduleData);
       
       dialogueOverlay = (
         <Overlay
           isOpen={true}
           onClose={() => {
-            setSelectedDialogueId(null);
+            setSelectedDialogueNode(null);
+            setSelectedNPC(null);
             setCurrentView('interactable');
           }}
           closeOnEscape={true}
           closeOnOverlayClick={true}
         >
           <DialogueView
-            dialogue={filteredDialogue}
+            node={selectedDialogueNode}
+            npc={selectedNPC}
             moduleId={moduleId}
-            onChoiceSelected={async (choice) => {
-              if (choice.action) {
-                const viewChanged = await handleDialogueActions(choice.action);
-                // Only close dialogue if view didn't change (e.g., task view opened)
-                if (!viewChanged) {
-                  setSelectedDialogueId(null);
-                  setCurrentView('interactable');
-                } else {
-                  // View changed (e.g., task view opened), just close dialogue
-                  setSelectedDialogueId(null);
-                }
+            availableChoices={availableChoices}
+            onChoiceSelected={async (choiceKey, choiceActions) => {
+              // Track if task view was opened
+              let taskOpened = false;
+              
+              // Check if any action explicitly closes the dialogue (for backward compatibility)
+              const shouldCloseDialogue = choiceActions.some(
+                action => action.type === 'close-dialogue' || (action.type === 'go-to' && action.node === null)
+              );
+              
+              // Create a wrapper context that tracks task opening
+              const trackingContext = {
+                ...context,
+                openTaskSubmission: (task: import('@core/types/task.js').Task | string) => {
+                  taskOpened = true;
+                  context.openTaskSubmission?.(task);
+                },
+              };
+              
+              // Execute actions (this may open task view via context.openTaskSubmission)
+              if (choiceActions.length > 0) {
+                await executeActions(choiceActions, trackingContext);
+              }
+              
+              // If task view was opened, close dialogue and let task view handle it
+              if (taskOpened) {
+                setSelectedDialogueNode(null);
+                setSelectedNPC(null);
+                return;
+              }
+              
+              // If action explicitly closes dialogue (backward compatibility), do so
+              if (shouldCloseDialogue) {
+                setSelectedDialogueNode(null);
+                setSelectedNPC(null);
+                setCurrentView('interactable');
+                return;
+              }
+              
+              // Navigate to next node (can be null to close dialogue)
+              const nextNode = getNextDialogueNode(selectedDialogueNode, choiceKey, tree, context, moduleData);
+              
+              if (nextNode) {
+                setSelectedDialogueNode(nextNode);
               } else {
-                setSelectedDialogueId(null);
+                // No next node or to: null, close dialogue
+                setSelectedDialogueNode(null);
+                setSelectedNPC(null);
                 setCurrentView('interactable');
               }
             }}
             onClose={() => {
-              setSelectedDialogueId(null);
+              setSelectedDialogueNode(null);
+              setSelectedNPC(null);
               setCurrentView('interactable');
             }}
           />
@@ -337,8 +317,9 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
         moduleId={moduleId}
         onInteractableClick={async (interactable) => {
           const result = await handleInteractableAction(interactable);
-          if (result.type === 'dialogue' && result.dialogueId) {
-            setSelectedDialogueId(result.dialogueId);
+          if (result.type === 'dialogue' && result.dialogueNode && result.npc) {
+            setSelectedDialogueNode(result.dialogueNode);
+            setSelectedNPC(result.npc);
             setCurrentView('dialogue');
           }
           // Note: task selection is handled through dialogue actions

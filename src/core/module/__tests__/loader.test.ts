@@ -12,7 +12,7 @@ import { registerModule } from '../registry.js';
 import { defineModule } from '../define.js';
 import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@utils/builders/modules.js';
 import { createNPC, createObject, showDialogue, pos } from '@utils/builders/interactables.js';
-import { createDialogue } from '@utils/builders/dialogues.js';
+import { dialogueTree, dialogueNode } from '@utils/builders/dialogues.js';
 import { createTask, textSubmission } from '@utils/builders/tasks.js';
 import type { ModuleDefinition } from '@core/types/module.js';
 import { ErrorCode, ModuleError } from '@core/types/errors.js';
@@ -30,7 +30,7 @@ describe('Module Loader', () => {
         manifest: createManifest('test-module', 'Test Module', '1.0.0'),
         background: colorBackground('#000'),
         welcome: createWelcome('System', ['Welcome to test module']),
-        taskOrder: [],
+        // taskOrder removed
       }),
       content: {
         interactables: [],
@@ -121,13 +121,12 @@ describe('Module Loader', () => {
         name: 'Test NPC',
         position: pos(10, 10),
         avatar: '🧑',
-        dialogues: {
-          greeting: createDialogue({
+        dialogueTree: dialogueTree()
+          .node(dialogueNode({
             id: 'greeting',
-            speaker: 'Test NPC',
             lines: ['Hello!'],
-          }),
-        },
+          }))
+          .build(),
       });
 
       const object = createObject({
@@ -135,11 +134,10 @@ describe('Module Loader', () => {
         name: 'Test Object',
         position: pos(20, 20),
         avatar: '📦',
-        interaction: showDialogue(createDialogue({
+        interaction: showDialogue({
           id: 'object-dialogue',
-          speaker: 'Object',
           lines: ['This is an object.'],
-        })),
+        }),
       });
 
       const task = createTask({
@@ -156,7 +154,7 @@ describe('Module Loader', () => {
           manifest: createManifest('test-module-content', 'Test Module', '1.0.0'),
           background: colorBackground('#000'),
           welcome: createWelcome('System', ['Welcome']),
-          taskOrder: [task],
+          // taskOrder removed
         }),
         content: {
           interactables: [npc, object],
@@ -172,11 +170,11 @@ describe('Module Loader', () => {
       expect(moduleWithContent.content.interactables).toHaveLength(2);
       expect(moduleWithContent.content.tasks).toHaveLength(1);
       
-      // Verify NPC has dialogue
+      // Verify NPC has dialogue tree
       const npcDialogue = moduleWithContent.content.interactables[0];
       expect(npcDialogue.type).toBe('npc');
       if (npcDialogue.type === 'npc') {
-        expect(npcDialogue.dialogues.greeting).toBeDefined();
+        expect(npcDialogue.dialogueTree).toBeDefined();
       }
     });
 
@@ -201,18 +199,16 @@ describe('Module Loader', () => {
         name: 'Multi NPC',
         position: pos(10, 10),
         avatar: '🧑',
-        dialogues: {
-          greeting: createDialogue({
+        dialogueTree: dialogueTree()
+          .node(dialogueNode({
             id: 'greeting',
-            speaker: 'NPC',
             lines: ['Hello!'],
-          }),
-          farewell: createDialogue({
+          }))
+          .node(dialogueNode({
             id: 'farewell',
-            speaker: 'NPC',
             lines: ['Goodbye!'],
-          }),
-        },
+          }))
+          .build(),
       });
 
       const moduleWithMultipleDialogues = defineModule({
@@ -221,7 +217,7 @@ describe('Module Loader', () => {
           manifest: createManifest('multi-dialogue-module', 'Test', '1.0.0'),
           background: colorBackground('#000'),
           welcome: createWelcome('System', ['Welcome']),
-          taskOrder: [],
+          // taskOrder removed
         }),
         content: {
           interactables: [npc],
@@ -235,8 +231,8 @@ describe('Module Loader', () => {
       const npcInteractable = moduleWithMultipleDialogues.content.interactables[0];
       expect(npcInteractable.type).toBe('npc');
       if (npcInteractable.type === 'npc') {
-        expect(npcInteractable.dialogues.greeting).toBeDefined();
-        expect(npcInteractable.dialogues.farewell).toBeDefined();
+        expect(npcInteractable.dialogueTree).toBeDefined();
+        expect(npcInteractable.dialogueTree?.nodes.length).toBeGreaterThanOrEqual(2);
       }
     });
 

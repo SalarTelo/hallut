@@ -4,6 +4,7 @@
  */
 
 import type { Task, TaskSubmission, TaskSubmissionConfig, TaskSolveFunction, TaskSolveResult } from '@core/types/task.js';
+import type { UnlockRequirement } from '@core/types/unlock.js';
 
 // ============================================================================
 // Submission Config Builders
@@ -216,13 +217,19 @@ export interface TaskOptions {
     requirements?: string;
     goals?: string[];
   };
+  unlockRequirement?: UnlockRequirement | null;
+  dialogues?: {
+    offer?: string[];
+    ready?: string[];
+    complete?: string[];
+  };
 }
 
 /**
  * Create a task definition
  */
 export function createTask(options: TaskOptions): Task {
-  const { id, name, description, submission, validate, overview } = options;
+  const { id, name, description, submission, validate, overview, unlockRequirement, dialogues } = options;
 
   const task: Task = {
     id,
@@ -234,6 +241,14 @@ export function createTask(options: TaskOptions): Task {
 
   if (overview) {
     task.overview = overview;
+  }
+
+  if (unlockRequirement !== undefined) {
+    task.unlockRequirement = unlockRequirement;
+  }
+
+  if (dialogues) {
+    task.dialogues = dialogues;
   }
 
   return task;
