@@ -75,9 +75,6 @@ async function showMainMenu(): Promise<void> {
       case 'create-npc':
         await createNPC();
         break;
-      case 'create-object':
-        await createObject();
-        break;
       case 'validate':
         await validateModulesFlow();
         break;
