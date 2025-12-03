@@ -137,7 +137,7 @@ export function DialogueChoices({
                 ? 1 
                 : isFocused 
                 ? 1 
-                : 0.6,
+                : 0.95,
               transition: selectingIndex === index
                 ? 'opacity 0s, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-width 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
                 : focusedIndex !== null
@@ -161,7 +161,18 @@ export function DialogueChoices({
               </span>
               <span className={`leading-tight transition-colors duration-150 ${
                 selectingIndex === index ? 'text-white' : ''
-              }`}>{choice.text}</span>
+              }`}>
+                {/* TODO: Remove this hacky string-based formatting and introduce a proper solution 
+                    for custom formatting in dialogue choices (e.g., rich text, styled spans, etc.) */}
+                {choice.text.startsWith('[Task]') ? (
+                  <>
+                    <span className="text-blue-400 font-semibold">[Task]</span>
+                    <span>{choice.text.substring(6)}</span>
+                  </>
+                ) : (
+                  choice.text
+                )}
+              </span>
             </span>
           </button>
         );

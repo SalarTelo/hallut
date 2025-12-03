@@ -79,8 +79,8 @@ export function formatTaskChoice(
   task: Task,
   status: string
 ): string {
-  const maxLength = 40;
-  let text = `${task.name} - ${status}`;
+  const maxLength = 50; // Increased to accommodate [Task] prefix
+  let text = `[Task] - ${task.name} (${status})`;
   
   if (text.length > maxLength) {
     text = text.substring(0, maxLength - 3) + '...';

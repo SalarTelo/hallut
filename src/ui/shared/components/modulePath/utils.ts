@@ -103,17 +103,30 @@ export function getGradientId(connection: WorldmapConnection): string {
 }
 
 /**
- * Get stroke color for a connection
+ * Get gradient colors for a connection state
+ * Always returns gradient colors based on module states
+ * Uses the same logic for all line styles (solid, dashed, dotted)
  */
-export function getStrokeColor(
-  connection: WorldmapConnection,
+export function getGradientColors(
   state: ConnectionState,
-  isConnectionUnlocked: boolean,
   borderColor: string
-): string {
-  if (state.isPartiallyUnlocked) {
-    return `url(#${getGradientId(connection)})`;
-  }
-  return isConnectionUnlocked ? borderColor : '#666666';
+): { fromColor: string; toColor: string; fromOpacity: number; toOpacity: number } {
+  // Determine colors based on module states
+  const fromColor = state.fromState === 'completed' 
+    ? '#10b981' // Green for completed
+    : state.fromUnlocked 
+      ? borderColor // Yellow for unlocked
+      : '#666666'; // Gray for locked
+  
+  const toColor = state.toState === 'completed'
+    ? '#10b981' // Green for completed
+    : state.toUnlocked
+      ? borderColor // Yellow for unlocked
+      : '#666666'; // Gray for locked
+
+  const fromOpacity = state.fromUnlocked || state.fromState === 'completed' ? 0.9 : 0.4;
+  const toOpacity = state.toUnlocked || state.toState === 'completed' ? 0.9 : 0.4;
+
+  return { fromColor, toColor, fromOpacity, toOpacity };
 }
 

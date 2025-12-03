@@ -282,6 +282,7 @@ class DialogueTreeBuilder {
   private edges: DialogueEdge[] = [];
   private entryConfig?: DialogueEntryConfig;
   private definitions: Map<string, DialogueNodeDefinition> = new Map();
+  private pendingStringRefs: Array<{ edge: DialogueEdge; nodeId: string }> = [];
 
   /**
    * Add a single node to the tree
@@ -377,6 +378,17 @@ class DialogueTreeBuilder {
             targetNode = null; // Will be resolved at runtime
           } else if (choiceDef.next === null) {
             targetNode = null;
+          } else if (typeof choiceDef.next === 'string') {
+            // String ID reference - will be resolved at build time
+            // Try to find the node in the current node list
+            const foundNode = this.nodeList.find(n => n.id === choiceDef.next as string);
+            if (foundNode) {
+              targetNode = foundNode;
+            } else {
+              // Node not yet added - will be resolved when all nodes are added
+              // Store the string ID for later resolution
+              targetNode = null; // Will be resolved when build() is called
+            }
           } else {
             // Static node reference
             targetNode = choiceDef.next;
@@ -391,7 +403,7 @@ class DialogueTreeBuilder {
           // Create edge
           const edge: DialogueEdge = {
             from: node,
-            next: targetNode, // Will be resolved at runtime if dynamic
+            next: targetNode, // Will be resolved at runtime if dynamic or string ID
             choiceKey,
             // condition and actions are resolved at runtime
             condition: typeof choiceDef.condition === 'function' 
@@ -402,6 +414,11 @@ class DialogueTreeBuilder {
               : choiceDef.actions,
           };
           this.edges.push(edge);
+          
+          // If next was a string ID and not yet resolved, store it for later resolution
+          if (typeof choiceDef.next === 'string' && targetNode === null) {
+            this.pendingStringRefs.push({ edge, nodeId: choiceDef.next });
+          }
         }
       }
     }
@@ -425,6 +442,17 @@ class DialogueTreeBuilder {
    * Build the dialogue tree
    */
   build(): DialogueTree {
+    // Resolve pending string ID references
+    for (const { edge, nodeId } of this.pendingStringRefs) {
+      const foundNode = this.nodeList.find(n => n.id === nodeId);
+      if (foundNode) {
+        edge.next = foundNode;
+      } else {
+        throw new Error(`Dialogue tree build error: Node with id "${nodeId}" not found. Referenced from node "${edge.from.id}" choice "${edge.choiceKey}".`);
+      }
+    }
+    this.pendingStringRefs = []; // Clear after resolution
+
     // Validate tree
     this.validateTree();
 
@@ -463,34 +491,6 @@ class DialogueTreeBuilder {
         if (!this.nodeList.find(n => n.id === node.id)) {
           throw new Error(`Entry condition node not found: ${node.id}`);
         }
-      }
-    }
-
-    // Check for circular references (basic check)
-    // More sophisticated cycle detection could be added
-    const visited = new Set<string>();
-    const checkCycle = (nodeId: string, path: Set<string>): void => {
-      if (path.has(nodeId)) {
-        throw new Error(`Circular reference detected in dialogue tree: ${Array.from(path).join(' -> ')} -> ${nodeId}`);
-      }
-      if (visited.has(nodeId)) {
-        return;
-      }
-      visited.add(nodeId);
-      const newPath = new Set(path);
-      newPath.add(nodeId);
-      
-      const nodeEdges = this.edges.filter(e => e.from.id === nodeId);
-      for (const edge of nodeEdges) {
-        if (edge.next) {
-          checkCycle(edge.next.id, newPath);
-        }
-      }
-    };
-
-    for (const node of this.nodeList) {
-      if (!visited.has(node.id)) {
-        checkCycle(node.id, new Set());
       }
     }
   }

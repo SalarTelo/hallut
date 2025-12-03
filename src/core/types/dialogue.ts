@@ -11,7 +11,7 @@ import type { ModuleContext } from './module.js';
  */
 export type DynamicString = string | ((context: ModuleContext) => string);
 export type DynamicStringArray = string[] | ((context: ModuleContext) => string[]);
-export type DynamicNode = DialogueNode | null | ((context: ModuleContext) => DialogueNode | null);
+export type DynamicNode = DialogueNode | string | null | ((context: ModuleContext) => DialogueNode | string | null);
 export type DynamicCondition = DialogueCondition | ((context: ModuleContext) => boolean);
 export type DynamicActions = ChoiceAction[] | ((context: ModuleContext) => ChoiceAction[]);
 export type DynamicChoices = Record<string, DialogueChoiceDefinition> | ((context: ModuleContext) => Record<string, DialogueChoiceDefinition>);

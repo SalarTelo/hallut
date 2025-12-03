@@ -44,27 +44,33 @@ export function useInteractableActions({
       try {
         // Check if interactable is locked
         if (interactable.locked && interactable.unlockRequirement) {
-          // TODO: Check unlock requirement
-          // For now, return none if locked
-          return { type: 'none' };
+          const { checkUnlockRequirement } = await import('@core/services/unlockRequirement.js');
+          const isUnlocked = await checkUnlockRequirement(
+            interactable.unlockRequirement,
+            { moduleId }
+          );
+          if (!isUnlocked) {
+            return { type: 'none' };
+          }
         }
 
         // Handle NPC
         if (interactable.type === 'npc') {
           const npc = interactable as NPC;
           
-          // Check if NPC has dialogue tree
-          if (npc.dialogueTree) {
-            const context = createModuleContext(moduleId, locale, moduleData);
-            const initialNode = getInitialDialogueNode(npc, moduleData, context);
-            
-            if (initialNode) {
-              onDialogueSelected?.(initialNode, npc);
-              return { type: 'dialogue', dialogueNode: initialNode, npc };
-            }
+          // NPCs MUST have a dialogue tree to interact
+          if (!npc.dialogueTree) {
+            return { type: 'none' };
           }
           
-          // No dialogue tree, return none
+          const context = createModuleContext(moduleId, locale, moduleData);
+          const initialNode = getInitialDialogueNode(npc, moduleData, context);
+          
+          if (initialNode) {
+            onDialogueSelected?.(initialNode, npc);
+            return { type: 'dialogue', dialogueNode: initialNode, npc };
+          }
+          
           return { type: 'none' };
         }
 

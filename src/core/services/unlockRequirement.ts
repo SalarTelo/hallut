@@ -5,6 +5,21 @@
 
 import type { UnlockRequirement, UnlockContext } from '../types/unlock.js';
 import { actions } from '../state/actions.js';
+import { getRegisteredModuleIds, getModule } from '../module/registry.js';
+
+/**
+ * Find which module contains a specific task
+ */
+function findTaskModule(taskId: string): string | null {
+  const moduleIds = getRegisteredModuleIds();
+  for (const moduleId of moduleIds) {
+    const module = getModule(moduleId);
+    if (module?.content.tasks.some(t => t.id === taskId)) {
+      return moduleId;
+    }
+  }
+  return null;
+}
 
 /**
  * Check if an unlock requirement is met
@@ -15,8 +30,15 @@ export async function checkUnlockRequirement(
 ): Promise<boolean> {
   switch (requirement.type) {
     case 'task-complete':
-      if (!context.moduleId) return false;
-      return actions.isTaskCompleted(context.moduleId, requirement.task);
+      // Find which module the task belongs to
+      const taskId = typeof requirement.task === 'string' ? requirement.task : requirement.task.id;
+      const taskModuleId = findTaskModule(taskId);
+      
+      // If we can't find the module, try using context moduleId as fallback
+      const moduleIdToCheck = taskModuleId || context.moduleId;
+      if (!moduleIdToCheck) return false;
+      
+      return actions.isTaskCompleted(moduleIdToCheck, requirement.task);
 
     case 'module-complete':
       return actions.isModuleCompleted(requirement.moduleId);
@@ -82,6 +104,15 @@ export function extractModuleDependencies(
   switch (requirement.type) {
     case 'module-complete':
       dependencies.push(requirement.moduleId);
+      break;
+
+    case 'task-complete':
+      // Find which module contains this task
+      const taskId = typeof requirement.task === 'string' ? requirement.task : requirement.task.id;
+      const taskModuleId = findTaskModule(taskId);
+      if (taskModuleId) {
+        dependencies.push(taskModuleId);
+      }
       break;
 
     case 'and':

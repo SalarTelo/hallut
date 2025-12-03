@@ -212,8 +212,16 @@ export function ModuleNode({
         className="mt-2 px-2.5 py-1 rounded text-xs font-semibold text-center whitespace-nowrap transition-all duration-300 border"
         style={{
           backgroundColor: COLORS.label.bg,
-          color: isLocked ? '#666666' : COLORS.label.text,
-          borderColor: isLocked ? COLORS.locked.border : borderColor,
+          color: isLocked 
+            ? '#666666' 
+            : isCompleted 
+              ? COLORS.completed.border // Green text for completed
+              : COLORS.label.text, // Gold text for unlocked
+          borderColor: isLocked 
+            ? COLORS.locked.border 
+            : isCompleted 
+              ? COLORS.completed.border // Green border for completed
+              : borderColor, // Gold border for unlocked
           borderWidth: '1px',
           boxShadow: isHovered
             ? `0 3px 8px rgba(0, 0, 0, 0.5)`

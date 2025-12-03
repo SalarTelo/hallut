@@ -108,6 +108,23 @@ function generateFromModulePositions(moduleIds: string[]): WorldmapConfig {
     });
   });
 
+  // If no connections from unlock requirements, create sequential connections
+  // based on module order (left to right by x position)
+  if (connections.length === 0 && nodes.length > 1) {
+    // Sort nodes by x position
+    const sortedNodes = [...nodes].sort((a, b) => a.position.x - b.position.x);
+    
+    // Create connections between adjacent modules
+    for (let i = 0; i < sortedNodes.length - 1; i++) {
+      connections.push({
+        from: sortedNodes[i].moduleId,
+        to: sortedNodes[i + 1].moduleId,
+        locked: false, // No unlock requirements, so paths are always unlocked
+        style: 'solid',
+      });
+    }
+  }
+
   return {
     layout: 'branching', // Default to branching when using custom positions
     nodes,

@@ -41,7 +41,16 @@ function resolveNode(
   tree: DialogueTree
 ): DialogueNode | null {
   if (typeof next === 'function') {
-    return next(context);
+    const result = next(context);
+    // Result might be a string ID, resolve it
+    if (typeof result === 'string') {
+      return tree.nodes.find(n => n.id === result) || null;
+    }
+    return result;
+  }
+  if (typeof next === 'string') {
+    // String ID - look up node in tree
+    return tree.nodes.find(n => n.id === next) || null;
   }
   return next;
 }

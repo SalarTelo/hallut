@@ -5,7 +5,6 @@
 
 import type { ModuleData } from '@core/types/module.js';
 import type { Interactable } from '@core/types/interactable.js';
-import type { Task } from '@core/types/task.js';
 import { actions } from '@core/state/actions.js';
 import { getAvailableTasks, getActiveTasks } from '@core/services/taskAvailability.js';
 import { createModuleContext } from '@core/module/context.js';
@@ -33,8 +32,8 @@ export function InteractableView({
   const currentTaskId = actions.getCurrentTaskId(moduleId);
   const currentTask = currentTaskId ? moduleData.tasks.find(t => t.id === currentTaskId) : null;
 
-  // Filter interactables based on unlock requirements
-  const visibleInteractables = moduleData.interactables.filter((interactable) => {
+  // Check if interactable is unlocked (but still show locked ones - they'll be grayed out)
+  const isInteractableUnlocked = (interactable: Interactable): boolean => {
     if (!interactable.locked) return true;
     if (!interactable.unlockRequirement) return true;
 
@@ -45,18 +44,30 @@ export function InteractableView({
     if (interactable.unlockRequirement.type === 'module-complete') {
       return actions.isModuleCompleted(interactable.unlockRequirement.moduleId);
     }
-    // TODO: Handle state-check
+    if (interactable.unlockRequirement.type === 'state-check') {
+      const stateValue = actions.getModuleStateField(
+        moduleId,
+        interactable.unlockRequirement.key
+      );
+      return stateValue === interactable.unlockRequirement.value;
+    }
 
     return false;
-  });
+  };
+
+  // Show all interactables (locked ones will be grayed out)
+  const visibleInteractables = moduleData.interactables;
 
   // Create context for task availability checking
   const context = createModuleContext(moduleId, 'sv', moduleData);
 
   // Determine badge type for an interactable
   const getBadgeType = (interactable: Interactable): 'task' | 'task-active' | 'completed' | 'new' | 'locked' | null => {
-    // Show locked badge if interactable is locked
-    if (interactable.locked) {
+    // Check if interactable is actually unlocked
+    const isUnlocked = isInteractableUnlocked(interactable);
+    
+    // Show locked badge only if interactable is locked AND not unlocked
+    if (interactable.locked && !isUnlocked) {
       return 'locked';
     }
 
@@ -77,8 +88,6 @@ export function InteractableView({
       return 'task';
     }
 
-    // TODO: Add logic for 'completed' and 'new' badges in the future
-
     return null;
   };
 
@@ -90,19 +99,22 @@ export function InteractableView({
       >
 
       {/* Interactables */}
-      {visibleInteractables.map((interactable) => (
-        <InteractableIcon
-          key={interactable.id}
-          icon={interactable.avatar || (interactable.type === 'npc' ? 'avatar' : 'box')}
-          shape={interactable.type === 'npc' ? 'circle' : 'square'}
-          interactableType={interactable.type}
-          position={interactable.position}
-          label={interactable.name}
-          locked={interactable.locked}
-          badge={getBadgeType(interactable)}
-          onClick={() => onInteractableClick(interactable)}
-        />
-      ))}
+      {visibleInteractables.map((interactable) => {
+        const isUnlocked = isInteractableUnlocked(interactable);
+        return (
+          <InteractableIcon
+            key={interactable.id}
+            icon={interactable.avatar || (interactable.type === 'npc' ? 'avatar' : 'box')}
+            shape={interactable.type === 'npc' ? 'circle' : 'square'}
+            interactableType={interactable.type}
+            position={interactable.position}
+            label={interactable.name}
+            locked={interactable.locked && !isUnlocked}
+            badge={getBadgeType(interactable)}
+            onClick={() => onInteractableClick(interactable)}
+          />
+        );
+      })}
 
       {/* Task Tracker */}
       {currentTask && (

@@ -6,13 +6,12 @@
 import type { WorldmapConnection, WorldmapNode } from '@core/types/worldmap.js';
 import type { ModuleProgressionState } from '@core/state/types.js';
 import {
-  hexToRgba,
   getConnectionNodes,
   getConnectionState,
   getStrokeDasharray,
   getConnectionKey,
   getGradientId,
-  getStrokeColor,
+  getGradientColors,
 } from './utils.js';
 
 export interface ConnectionLinesProps {
@@ -63,9 +62,11 @@ export function ConnectionLines({
           if (!connectionNodes) return null;
 
           const state = getConnectionState(connection, getModuleProgression);
-          if (!state.isPartiallyUnlocked) return null;
-
           const { fromNode, toNode } = connectionNodes;
+          
+          // Always create gradient for all connections using unified logic
+          const { fromColor, toColor, fromOpacity, toOpacity } = getGradientColors(state, borderColor);
+
           return (
             <linearGradient
               key={getGradientId(connection)}
@@ -78,13 +79,13 @@ export function ConnectionLines({
             >
               <stop
                 offset="0%"
-                stopColor={state.fromUnlocked ? borderColor : '#666666'}
-                stopOpacity={state.fromUnlocked ? 0.9 : 0.4}
+                stopColor={fromColor}
+                stopOpacity={fromOpacity}
               />
               <stop
                 offset="100%"
-                stopColor={state.toUnlocked ? borderColor : '#666666'}
-                stopOpacity={state.toUnlocked ? 0.9 : 0.4}
+                stopColor={toColor}
+                stopOpacity={toOpacity}
               />
             </linearGradient>
           );
@@ -95,37 +96,36 @@ export function ConnectionLines({
         if (!connectionNodes) return null;
 
         const { fromNode, toNode } = connectionNodes;
-        const state = getConnectionState(connection, getModuleProgression);
         const isUnlocked = isConnectionUnlocked(connection);
         const connectionStyle = connection.style || (isUnlocked ? 'solid' : 'dashed');
         const strokeDasharray = getStrokeDasharray(connectionStyle);
-        const strokeColor = getStrokeColor(connection, state, isUnlocked, borderColor);
-
+        
+        // Always use gradient for all connections
+        const gradientId = getGradientId(connection);
+        
         return (
           <g key={getConnectionKey(connection)}>
-            {/* Glow effect for unlocked connections */}
-            {isUnlocked && !state.isPartiallyUnlocked && (
-              <line
-                x1={`${fromNode.position.x}%`}
-                y1={`${fromNode.position.y}%`}
-                x2={`${toNode.position.x}%`}
-                y2={`${toNode.position.y}%`}
-                stroke={hexToRgba(borderColor, 0.3)}
-                strokeWidth="4"
-                strokeDasharray={strokeDasharray}
-                style={{ filter: 'blur(4px)' }}
-              />
-            )}
-            {/* Main connection line */}
+            {/* Glow effect - always uses gradient for all line styles */}
             <line
               x1={`${fromNode.position.x}%`}
               y1={`${fromNode.position.y}%`}
               x2={`${toNode.position.x}%`}
               y2={`${toNode.position.y}%`}
-              stroke={strokeColor}
-              strokeWidth={isUnlocked || state.isPartiallyUnlocked ? '3' : '2'}
+              stroke={`url(#${gradientId})`}
+              strokeWidth="4"
               strokeDasharray={strokeDasharray}
-              opacity={state.isPartiallyUnlocked ? undefined : isUnlocked ? 0.9 : 0.4}
+              strokeOpacity="0.3"
+              style={{ filter: 'blur(4px)' }}
+            />
+            {/* Main connection line - always uses gradient for all styles (solid, dashed, dotted) */}
+            <line
+              x1={`${fromNode.position.x}%`}
+              y1={`${fromNode.position.y}%`}
+              x2={`${toNode.position.x}%`}
+              y2={`${toNode.position.y}%`}
+              stroke={`url(#${gradientId})`}
+              strokeWidth={isUnlocked ? '3' : '2'}
+              strokeDasharray={strokeDasharray}
               style={{ transition: 'all 0.3s ease' }}
             />
           </g>

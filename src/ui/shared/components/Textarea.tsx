@@ -66,7 +66,7 @@ export function Textarea({
   ...props
 }: TextareaProps) {
   const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
-  const baseStyles = 'block border rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1';
+  const baseStyles = 'block border rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 bg-white text-gray-900 placeholder-gray-400';
   const sizeStyle = sizeStyles[size];
   const widthStyle = fullWidth ? 'w-full' : '';
   const errorStyle = error

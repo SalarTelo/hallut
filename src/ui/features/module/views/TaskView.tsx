@@ -23,17 +23,26 @@ export interface TaskViewProps {
  * Task View component
  */
 export function TaskView({ task, moduleId, onComplete, onClose }: TaskViewProps) {
-  const [submission, setSubmission] = useState<string>('');
+  const [textSubmission, setTextSubmission] = useState<string>('');
+  const [selectedChoice, setSelectedChoice] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ solved: boolean; details: string } | null>(null);
+
+  const isMultipleChoice = task.submission.type === 'multiple_choice';
+  const choices = isMultipleChoice ? (task.submission.config?.options as string[] || []) : [];
 
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      const taskSubmission: TaskSubmission = {
-        type: 'text',
-        text: submission,
-      };
+      const taskSubmission: TaskSubmission = isMultipleChoice
+        ? {
+            type: 'multiple_choice',
+            choice: selectedChoice,
+          }
+        : {
+            type: 'text',
+            text: textSubmission,
+          };
 
       const validationResult = validateTask(task, taskSubmission);
       setResult({
@@ -42,10 +51,14 @@ export function TaskView({ task, moduleId, onComplete, onClose }: TaskViewProps)
       });
 
       if (validationResult.solved) {
+        // Mark task as complete
         actions.completeTask(moduleId, task);
+        
         // Check if module is complete and unlock dependents
         const { evaluateModuleCompletion } = await import('../../../../core/services/unlockService.js');
         await evaluateModuleCompletion(moduleId);
+        
+        // Wait a bit for state to update, then call onComplete
         setTimeout(() => {
           onComplete();
         }, 2000);
@@ -83,13 +96,38 @@ export function TaskView({ task, moduleId, onComplete, onClose }: TaskViewProps)
       )}
 
       <div className="mb-4">
-        <Textarea
-          value={submission}
-          onChange={(e) => setSubmission(e.target.value)}
-          placeholder="Enter your answer here..."
-          rows={10}
-          className="w-full"
-        />
+        {isMultipleChoice ? (
+          <div className="space-y-2">
+            {choices.map((choice, index) => (
+              <label
+                key={index}
+                className={`flex items-center p-3 rounded border cursor-pointer transition-all ${
+                  selectedChoice === choice
+                    ? 'bg-gray-700 border-yellow-400'
+                    : 'bg-gray-800/60 border-gray-600 hover:bg-gray-700/80 hover:border-gray-500'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="task-choice"
+                  value={choice}
+                  checked={selectedChoice === choice}
+                  onChange={(e) => setSelectedChoice(e.target.value)}
+                  className="mr-3 w-4 h-4 text-yellow-400 focus:ring-yellow-400 focus:ring-2"
+                />
+                <span className="text-gray-200">{choice}</span>
+              </label>
+            ))}
+          </div>
+        ) : (
+          <Textarea
+            value={textSubmission}
+            onChange={(e) => setTextSubmission(e.target.value)}
+            placeholder="Enter your answer here..."
+            rows={10}
+            className="w-full"
+          />
+        )}
       </div>
 
       {result && (
@@ -106,7 +144,7 @@ export function TaskView({ task, moduleId, onComplete, onClose }: TaskViewProps)
           variant="primary"
           pixelated
           onClick={handleSubmit}
-          disabled={submitting || !submission.trim()}
+          disabled={submitting || (isMultipleChoice ? !selectedChoice : !textSubmission.trim())}
         >
           {submitting ? 'Submitting...' : 'Submit'}
         </Button>

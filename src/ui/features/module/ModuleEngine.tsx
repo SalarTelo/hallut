@@ -187,8 +187,7 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
             task={task}
             moduleId={moduleId}
             onComplete={async () => {
-              actions.completeTask(moduleId, task);
-              
+              // Task is already marked as complete in TaskView, but ensure it's persisted
               // Find NPC that gave this task and show task-complete dialogue
               if (moduleData && context) {
                 const npc = moduleData.interactables.find(

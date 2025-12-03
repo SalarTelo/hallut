@@ -3,7 +3,7 @@
  * Verktygstips som visas vid hovring över en modulnod
  */
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { ModuleProgressionState } from '@core/state/types.js';
 import { PixelIcon } from '../PixelIcon.js';
@@ -90,6 +90,9 @@ export function ModuleTooltip({
   anchorElement,
 }: ModuleTooltipProps) {
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [transform, setTransform] = useState('translate(-50%, calc(-100% - 10px))');
+  const [arrowPosition, setArrowPosition] = useState({ side: 'bottom' as 'top' | 'bottom' | 'left' | 'right', offset: 0 });
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
 
   const isLocked = progression === 'locked';
   const isCompleted = progression === 'completed';
@@ -100,17 +103,239 @@ export function ModuleTooltip({
 
     const updatePosition = () => {
       const rect = anchorElement.getBoundingClientRect();
+      const tooltipElement = tooltipRef.current?.querySelector('div') as HTMLElement;
+      
+      // Get actual dimensions or use safe estimates
+      const tooltipWidth = Math.min(tooltipElement?.offsetWidth || 320, window.innerWidth - 32);
+      const tooltipHeight = Math.min(tooltipElement?.offsetHeight || 150, window.innerHeight - 32);
+      
+      const spacing = 10;
+      const padding = 16;
+      
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      const anchorX = rect.left + rect.width / 2;
+      const anchorY = rect.top;
+      const anchorBottom = rect.bottom;
+      
+      // Calculate available space
+      const spaceAbove = anchorY - padding;
+      const spaceBelow = viewportHeight - anchorBottom - padding;
+      
+      // Determine vertical position
+      let tooltipTop: number;
+      let verticalTransform: string;
+      
+      if (spaceAbove >= tooltipHeight + spacing) {
+        // Show above
+        tooltipTop = anchorY;
+        verticalTransform = `calc(-100% - ${spacing}px)`;
+      } else if (spaceBelow >= tooltipHeight + spacing) {
+        // Show below
+        tooltipTop = anchorBottom;
+        verticalTransform = `${spacing}px`;
+      } else {
+        // Not enough space - use best fit and clamp to viewport
+        if (spaceAbove > spaceBelow) {
+          tooltipTop = Math.max(padding, anchorY - tooltipHeight - spacing);
+          verticalTransform = `calc(-100% - ${spacing}px)`;
+        } else {
+          tooltipTop = Math.min(viewportHeight - padding - tooltipHeight, anchorBottom + spacing);
+          verticalTransform = `${spacing}px`;
+        }
+      }
+      
+      // Start with centered horizontal position
+      let tooltipLeft = anchorX;
+      let horizontalTransform = '-50%';
+      
+      // Calculate where tooltip edges would be with current transform
+      const halfWidth = tooltipWidth / 2;
+      const leftEdge = tooltipLeft - halfWidth;
+      const rightEdge = tooltipLeft + halfWidth;
+      
+      // Adjust only if it would go outside bounds - shift just enough to fit
+      if (leftEdge < padding) {
+        // Too close to left edge - shift right just enough
+        const shift = padding - leftEdge;
+        tooltipLeft = tooltipLeft + shift;
+        horizontalTransform = `calc(-50% + ${shift}px)`;
+      } else if (rightEdge > viewportWidth - padding) {
+        // Too close to right edge - shift left just enough
+        const shift = (viewportWidth - padding) - rightEdge;
+        tooltipLeft = tooltipLeft + shift;
+        horizontalTransform = `calc(-50% + ${shift}px)`;
+      }
+      
       setPosition({
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX,
+        top: tooltipTop + window.scrollY,
+        left: tooltipLeft + window.scrollX,
       });
+      setTransform(`translate(${horizontalTransform}, ${verticalTransform})`);
+      
+      // Determine arrow position from vertical transform (will be refined after render)
+      if (verticalTransform.includes('calc(-100%')) {
+        // Tooltip is above anchor - arrow points down
+        setArrowPosition({ side: 'bottom', offset: 0 });
+      } else {
+        // Tooltip is below anchor - arrow points up
+        setArrowPosition({ side: 'top', offset: 0 });
+      }
+    };
+    
+    // Function to calculate arrow position based on actual tooltip and anchor positions
+    const updateArrowPosition = () => {
+      const tooltipContainer = tooltipRef.current;
+      if (!tooltipContainer) return;
+      
+      const tooltipRect = tooltipContainer.getBoundingClientRect();
+      const anchorRect = anchorElement.getBoundingClientRect();
+      
+      const anchorX = anchorRect.left + anchorRect.width / 2;
+      const anchorY = anchorRect.top + anchorRect.height / 2;
+      
+      const tooltipCenterX = tooltipRect.left + tooltipRect.width / 2;
+      const tooltipCenterY = tooltipRect.top + tooltipRect.height / 2;
+      
+      // Calculate direction from tooltip to anchor
+      const dx = anchorX - tooltipCenterX;
+      const dy = anchorY - tooltipCenterY;
+      
+      let side: 'top' | 'bottom' | 'left' | 'right';
+      let offset: number;
+      
+      // Determine which side of tooltip is closest to anchor
+      if (Math.abs(dy) > Math.abs(dx)) {
+        // Vertical alignment - arrow on top or bottom
+        if (dy < 0) {
+          // Anchor is above tooltip - arrow on top pointing up
+          side = 'top';
+          offset = dx; // Horizontal offset from center
+        } else {
+          // Anchor is below tooltip - arrow on bottom pointing down
+          side = 'bottom';
+          offset = dx; // Horizontal offset from center
+        }
+      } else {
+        // Horizontal alignment - arrow on left or right
+        if (dx < 0) {
+          // Anchor is to the left of tooltip - arrow on left pointing left
+          side = 'left';
+          offset = dy; // Vertical offset from center
+        } else {
+          // Anchor is to the right of tooltip - arrow on right pointing right
+          side = 'right';
+          offset = dy; // Vertical offset from center
+        }
+      }
+      
+      // Clamp offset to stay within tooltip bounds (with some margin)
+      const maxOffset = side === 'top' || side === 'bottom' 
+        ? tooltipRect.width / 2 - 20  // Leave 20px margin from edges
+        : tooltipRect.height / 2 - 20;
+      offset = Math.max(-maxOffset, Math.min(maxOffset, offset));
+      
+      setArrowPosition({ side, offset });
     };
 
+    // Initial position with estimates
     updatePosition();
+    
+    // Verification function to check and fix position after render
+    const verifyAndFixPosition = () => {
+      const tooltipContainer = tooltipRef.current;
+      if (!tooltipContainer) return;
+      
+      const tooltipRect = tooltipContainer.getBoundingClientRect();
+      const padding = 16;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      let needsFix = false;
+      let currentLeft = position.left - window.scrollX;
+      let currentTop = position.top - window.scrollY;
+      let currentTransform = transform;
+      
+      // Check horizontal bounds and shift only if needed
+      if (tooltipRect.left < padding) {
+        // Shift right just enough to fit
+        const shift = padding - tooltipRect.left;
+        currentLeft = currentLeft + shift;
+        const currentOffset = currentTransform.match(/calc\(-50% \+ ([\d.-]+)px\)/) ? parseFloat(currentTransform.match(/calc\(-50% \+ ([\d.-]+)px\)/)![1]) : 0;
+        currentTransform = currentTransform.replace(/translate\([^,]+/, `translate(calc(-50% + ${currentOffset + shift}px)`);
+        needsFix = true;
+      } else if (tooltipRect.right > viewportWidth - padding) {
+        // Shift left just enough to fit
+        const shift = (viewportWidth - padding) - tooltipRect.right;
+        currentLeft = currentLeft + shift;
+        const currentOffset = currentTransform.match(/calc\(-50% \+ ([\d.-]+)px\)/) ? parseFloat(currentTransform.match(/calc\(-50% \+ ([\d.-]+)px\)/)![1]) : 0;
+        currentTransform = currentTransform.replace(/translate\([^,]+/, `translate(calc(-50% + ${currentOffset + shift}px)`);
+        needsFix = true;
+      }
+      
+      // Check vertical bounds and shift only if needed
+      if (tooltipRect.top < padding) {
+        // Shift down just enough to fit
+        const shift = padding - tooltipRect.top;
+        currentTop = currentTop + shift;
+        if (currentTransform.includes('calc(-100%')) {
+          // Was showing above, adjust
+          currentTransform = currentTransform.replace(/calc\(-100% - \d+px\)/, `calc(-100% - ${10 + shift}px)`);
+        } else {
+          // Was showing below, adjust
+          currentTransform = currentTransform.replace(/\d+px\)/, `${10 + shift}px)`);
+        }
+        needsFix = true;
+      } else if (tooltipRect.bottom > viewportHeight - padding) {
+        // Shift up just enough to fit
+        const shift = tooltipRect.bottom - (viewportHeight - padding);
+        currentTop = currentTop - shift;
+        if (currentTransform.includes('calc(-100%')) {
+          // Was showing above, adjust
+          currentTransform = currentTransform.replace(/calc\(-100% - \d+px\)/, `calc(-100% - ${Math.max(10, 10 - shift)}px)`);
+        } else {
+          // Was showing below, adjust
+          currentTransform = currentTransform.replace(/\d+px\)/, `${Math.max(10, 10 - shift)}px)`);
+        }
+        needsFix = true;
+      }
+      
+      if (needsFix) {
+        setPosition({
+          top: currentTop + window.scrollY,
+          left: currentLeft + window.scrollX,
+        });
+        setTransform(currentTransform);
+      }
+      
+      // Update arrow position after any fixes
+      updateArrowPosition();
+    };
+    
+    // Recalculate after render with actual dimensions
+    let rafId1: number;
+    let rafId2: number;
+    let rafId3: number;
+    
+    rafId1 = requestAnimationFrame(() => {
+      updatePosition();
+      rafId2 = requestAnimationFrame(() => {
+        updatePosition(); // Final position with accurate measurements
+        rafId3 = requestAnimationFrame(() => {
+          verifyAndFixPosition(); // Verify and fix if needed
+          updateArrowPosition(); // Update arrow to point at anchor
+        });
+      });
+    });
+    
     window.addEventListener('scroll', updatePosition, true);
     window.addEventListener('resize', updatePosition);
 
     return () => {
+      if (rafId1) cancelAnimationFrame(rafId1);
+      if (rafId2) cancelAnimationFrame(rafId2);
+      if (rafId3) cancelAnimationFrame(rafId3);
       window.removeEventListener('scroll', updatePosition, true);
       window.removeEventListener('resize', updatePosition);
     };
@@ -142,13 +367,16 @@ export function ModuleTooltip({
 
   const tooltipContent = (
     <div
+      ref={tooltipRef}
       className="fixed"
       style={{ 
         pointerEvents: 'none',
         zIndex: 10,
         top: `${position.top}px`,
         left: `${position.left}px`,
-        transform: 'translate(-50%, calc(-100% - 10px))',
+        transform: transform,
+        maxWidth: 'calc(100vw - 32px)',
+        maxHeight: 'calc(100vh - 32px)',
       }}
     >
       <div
@@ -157,6 +385,9 @@ export function ModuleTooltip({
           borderColor,
           backgroundColor: 'rgba(0, 0, 0, 0.98)',
           boxShadow: `0 4px 12px rgba(0, 0, 0, 0.9), 0 0 8px ${borderColor}40, inset 0 1px 0 rgba(255, 255, 255, 0.08)`,
+          // Ensure tooltip content doesn't exceed viewport
+          maxWidth: 'min(400px, calc(100vw - 32px))',
+          maxHeight: 'min(80vh, calc(100vh - 32px))',
         }}
       >
         {/* Header */}
@@ -230,15 +461,44 @@ export function ModuleTooltip({
         </div>
       </div>
 
-      {/* Arrow */}
+      {/* Arrow - dynamically positioned to point towards anchor */}
       <div
-        className="absolute top-full left-1/2 -translate-x-1/2 -mt-px"
+        className="absolute"
         style={{
           width: 0,
           height: 0,
-          borderLeft: '4px solid transparent',
-          borderRight: '4px solid transparent',
-          borderTop: `4px solid ${borderColor}`,
+          ...(arrowPosition.side === 'top' && {
+            top: '-4px',
+            left: `calc(50% + ${arrowPosition.offset}px)`,
+            transform: 'translateX(-50%)',
+            borderLeft: '4px solid transparent',
+            borderRight: '4px solid transparent',
+            borderBottom: `4px solid ${borderColor}`,
+          }),
+          ...(arrowPosition.side === 'bottom' && {
+            bottom: '-4px',
+            left: `calc(50% + ${arrowPosition.offset}px)`,
+            transform: 'translateX(-50%)',
+            borderLeft: '4px solid transparent',
+            borderRight: '4px solid transparent',
+            borderTop: `4px solid ${borderColor}`,
+          }),
+          ...(arrowPosition.side === 'left' && {
+            left: '-4px',
+            top: `calc(50% + ${arrowPosition.offset}px)`,
+            transform: 'translateY(-50%)',
+            borderTop: '4px solid transparent',
+            borderBottom: '4px solid transparent',
+            borderRight: `4px solid ${borderColor}`,
+          }),
+          ...(arrowPosition.side === 'right' && {
+            right: '-4px',
+            top: `calc(50% + ${arrowPosition.offset}px)`,
+            transform: 'translateY(-50%)',
+            borderTop: '4px solid transparent',
+            borderBottom: '4px solid transparent',
+            borderLeft: `4px solid ${borderColor}`,
+          }),
           filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))',
         }}
       />
