@@ -3,7 +3,7 @@
  * Extracts repeated borderColor logic with theme fallback
  */
 
-import { getThemeValue } from '@lib/theme.js';
+import { getThemeValue } from '../../../shared/theme.js';
 
 /**
  * Get border color from prop or theme

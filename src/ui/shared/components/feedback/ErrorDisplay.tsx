@@ -7,7 +7,7 @@ import { Card } from '../primitives/Card.js';
 import { Button } from '../primitives/Button.js';
 import { Badge } from '../primitives/Badge.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
-import { getBackgroundColorStyle } from '@lib/color.js';
+import { getBackgroundColorStyle } from '../../../../shared/color.js';
 import { DEFAULT_THEME } from '@config/constants.js';
 import { getUserFriendlyMessage } from '@services/errorService.js';
 

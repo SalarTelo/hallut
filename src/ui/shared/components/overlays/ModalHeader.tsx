@@ -5,7 +5,7 @@
 
 import type { ReactNode } from 'react';
 import { CloseButton } from './CloseButton.js';
-import { addOpacityToColor } from '@lib/color.js';
+import { addOpacityToColor } from '../../../../shared/color.js';
 
 export interface ModalHeaderProps {
   /**

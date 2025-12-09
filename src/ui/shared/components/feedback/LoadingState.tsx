@@ -4,7 +4,7 @@
  */
 
 import { LoadingSpinner } from './LoadingSpinner.js';
-import { getBackgroundColorStyle } from '@lib/color.js';
+import { getBackgroundColorStyle } from '../../../../shared/color.js';
 
 export interface LoadingStateProps {
   /**

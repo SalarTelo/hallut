@@ -2,19 +2,18 @@
  * Module Selection
  * Component for selecting a module to play
  * Shows a worldmap-style view of available modules
+ * 
+ * This component has been refactored to use extracted hooks and components
+ * for better maintainability and separation of concerns.
  */
 
-import { useEffect, useState } from 'react';
-import { discoverModules, getModule } from '@core/module/registry.js';
-import { loadModuleInstance } from '@core/module/loader.js';
-import { generateWorldmap } from '@core/worldmap/generator.js';
-import type { WorldmapConfig } from '@core/worldmap/types.js';
-import { initializeModuleProgression, unlockModule } from '@core/unlock/service.js';
-import { handleError } from '@services/errorService.js';
-import { ModulePath } from '@ui/shared/components/game/index.js';
 import { LoadingState } from '@ui/shared/components/feedback/index.js';
 import { FullScreenLayout } from '@ui/shared/components/layouts/index.js';
 import { PasswordUnlockModal } from '@ui/shared/components/game/index.js';
+import { useWorldmapLoader } from './ModuleSelection/hooks/useWorldmapLoader.js';
+import { usePasswordUnlock } from './ModuleSelection/hooks/usePasswordUnlock.js';
+import { WorldmapHeader } from './ModuleSelection/components/WorldmapHeader.js';
+import { WorldmapContent } from './ModuleSelection/components/WorldmapContent.js';
 
 export interface ModuleSelectionProps {
   onSelectModule: (moduleId: string) => void;
@@ -24,74 +23,24 @@ export interface ModuleSelectionProps {
  * Module Selection component
  */
 export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
-  const [worldmap, setWorldmap] = useState<WorldmapConfig | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [passwordModal, setPasswordModal] = useState<{
-    moduleId: string;
-    hint?: string;
-    moduleName: string;
-  } | null>(null);
+  // Load worldmap
+  const { worldmap, loading, error } = useWorldmapLoader();
 
-  useEffect(() => {
-    const loadWorldmap = async () => {
-      try {
-        // Discover modules
-        const moduleIds = await discoverModules();
-        
-        // Load all modules to register them (needed for worldmap generation)
-        for (const moduleId of moduleIds) {
-          await loadModuleInstance(moduleId);
-        }
-        
-        // Initialize module progression using unlock service
-        await initializeModuleProgression(moduleIds);
-        
-        // Generate worldmap configuration
-        const config = await generateWorldmap(moduleIds);
-        setWorldmap(config);
-      } catch (error) {
-        handleError(error instanceof Error ? error : new Error(String(error)), {
-          context: 'loadWorldmap',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Handle password unlock
+  const { passwordModal, openPasswordModal, closePasswordModal, handlePasswordUnlock } =
+    usePasswordUnlock(onSelectModule);
 
-    loadWorldmap();
-  }, []);
-
-  const handlePasswordRequired = (moduleId: string) => {
-    const module = getModule(moduleId);
-    const unlockReq = module?.config.unlockRequirement;
-    
-    if (unlockReq?.type === 'password') {
-      setPasswordModal({
-        moduleId,
-        hint: unlockReq.hint,
-        moduleName: module?.config.manifest.name || moduleId,
-      });
-    }
-  };
-
-  const handlePasswordUnlock = async (password: string): Promise<boolean> => {
-    if (!passwordModal) return false;
-    
-    const { success } = await unlockModule(passwordModal.moduleId, password);
-    
-    if (success) {
-      setPasswordModal(null);
-      onSelectModule(passwordModal.moduleId);
-      return true;
-    }
-    
-    return false;
-  };
-
+  // Loading state
   if (loading) {
     return <LoadingState message="Loading worldmap..." />;
   }
 
+  // Error state
+  if (error) {
+    return <LoadingState message="Failed to load worldmap" />;
+  }
+
+  // No worldmap
   if (!worldmap) {
     return <LoadingState message="No modules found" />;
   }
@@ -99,44 +48,20 @@ export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
   return (
     <FullScreenLayout>
       <div className="w-full h-screen flex flex-col" style={{ minHeight: '100vh' }}>
-        {/* Titlebar */}
-        <div 
-          className="w-full px-6 py-4 border-b-2 flex items-center justify-between flex-shrink-0"
-          style={{
-            borderColor: '#FFD700',
-            background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%)',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          <h1 
-            className="text-2xl font-bold pixelated"
-            style={{ 
-              color: '#FFD700',
-              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(255, 215, 0, 0.5)',
-            }}
-          >
-            Världskarta
-          </h1>
-          <div className="text-sm text-gray-400 pixelated">
-            Välj en modul att utforska
-          </div>
-        </div>
+        {/* Header */}
+        <WorldmapHeader />
 
-        {/* Worldmap - takes up remaining space */}
-        <div className="flex-1 w-full p-4 overflow-hidden">
-          <div className="w-full h-full" style={{ position: 'relative' }}>
-            <ModulePath 
-              worldmap={worldmap} 
-              onSelectModule={onSelectModule}
-              onPasswordRequired={handlePasswordRequired}
-            />
-          </div>
-        </div>
+        {/* Worldmap Content */}
+        <WorldmapContent
+          worldmap={worldmap}
+          onSelectModule={onSelectModule}
+          onPasswordRequired={openPasswordModal}
+        />
 
         {/* Password Unlock Modal */}
         <PasswordUnlockModal
           isOpen={passwordModal !== null}
-          onClose={() => setPasswordModal(null)}
+          onClose={closePasswordModal}
           onUnlock={handlePasswordUnlock}
           hint={passwordModal?.hint}
           moduleName={passwordModal?.moduleName}

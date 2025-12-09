@@ -4,7 +4,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { getBackgroundColorStyle } from '@lib/color.js';
+import { getBackgroundColorStyle } from '../../../../shared/color.js';
 
 export interface FullScreenLayoutProps {
   /**
