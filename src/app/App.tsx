@@ -5,8 +5,8 @@
 
 import { useState } from 'react';
 import { ErrorBoundary } from '../ui/shared/components/ErrorBoundary.js';
-import { ModuleSelection } from '../ui/features/module/ModuleSelection.js';
-import { ModuleEngine } from '../ui/features/module/ModuleEngine.js';
+import { ModuleSelection } from './components/ModuleSelection.js';
+import { ModuleEngine } from './components/ModuleEngine.js';
 import { FullScreenLayout } from '../ui/shared/components/layouts/index.js';
 
 /**
