@@ -9,7 +9,7 @@ import { getModule, getRegisteredModuleIds } from './registry.js';
 import { actions } from '../state/actions.js';
 import type { ModuleProgressionState } from '../state/types.js';
 import type { ModuleConfig } from './types/index.js';
-import { checkUnlockRequirement } from '../unlock/requirements.js';
+import { checkUnlockRequirement, requiresUserInteraction } from '../unlock/requirements.js';
 import { handleError } from '@services/errorService.js';
 
 // Configuration constants (can be moved to a config file if needed)
@@ -178,15 +178,31 @@ export async function getModuleProgressionInitActions(moduleIds: string[]): Prom
         toLock.push(moduleId);
       }
     } else {
-      // Default behavior: unlock first two modules, lock the rest
-      if (i < 2) {
-        const { shouldUnlock, currentState: state } = await checkModuleUnlockStatus(moduleId);
-        if (shouldUnlock || state !== 'unlocked') {
-          toUnlock.push(moduleId);
+      // Default behavior: check unlock requirements for all modules
+      // Only auto-unlock if requirements are met and don't need user interaction (like passwords)
+      const config = getModuleConfig(moduleId);
+      const needsInteraction = config?.unlockRequirement 
+        ? requiresUserInteraction(config.unlockRequirement)
+        : false;
+      
+      const { shouldUnlock, currentState: state } = await checkModuleUnlockStatus(moduleId);
+      
+      // Password-protected modules: only lock if currently locked
+      // If already unlocked, preserve that state (user entered password already)
+      if (needsInteraction) {
+        // Only lock if currently locked - preserve unlocked state if user already entered password
+        if (state === 'locked') {
+          toLock.push(moduleId);
         }
-      } else {
+        // If already unlocked/completed, preserve that state
+      } else if (shouldUnlock && state === 'locked') {
+        // Only unlock if requirements are met and module is currently locked
+        toUnlock.push(moduleId);
+      } else if (state === 'locked') {
+        // Keep locked if requirements not met
         toLock.push(moduleId);
       }
+      // If already unlocked/completed, preserve state
     }
   }
 

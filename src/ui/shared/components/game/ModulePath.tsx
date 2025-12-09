@@ -7,6 +7,7 @@
 import { useState, useCallback } from 'react';
 import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '@core/worldmap/types.js';
 import { actions } from '@core/state/actions.js';
+import { useAppStore } from '@core/state/store.js';
 import { canUnlockModule } from '@core/unlock/service.js';
 import { getModule } from '@core/module/registry.js';
 import { ModuleInfoModal } from './ModuleInfoModal.js';
@@ -48,15 +49,22 @@ export function ModulePath({
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const borderColorValue = useThemeBorderColor(borderColor);
   
+  // Subscribe to module progression state changes
+  const moduleProgression = useAppStore((state) => state.moduleProgression);
+  
   const getModuleProgression = useCallback((moduleId: string) => {
-    return actions.getModuleProgression(moduleId);
-  }, []);
+    // moduleProgression is Record<string, ModuleProgression> where ModuleProgression has a 'state' property
+    const progression = moduleProgression[moduleId];
+    return progression?.state || 'locked';
+  }, [moduleProgression]);
 
   const handleModuleClick = useCallback(
     async (moduleId: string) => {
       const progression = getModuleProgression(moduleId);
+      const module = getModule(moduleId);
+      const unlockReq = module?.config.unlockRequirement;
       
-      // If already unlocked or completed, allow entry
+      // If already unlocked or completed, allow entry (password was already entered)
       if (progression === 'unlocked' || progression === 'completed') {
         setSelectedModuleId(moduleId);
         return;
@@ -67,8 +75,6 @@ export function ModulePath({
 
       // If requires user interaction (password), trigger password modal
       if (requiresInteraction && onPasswordRequired) {
-        const module = getModule(moduleId);
-        const unlockReq = module?.config.unlockRequirement;
         if (unlockReq?.type === 'password') {
           onPasswordRequired(
             moduleId,

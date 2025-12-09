@@ -128,10 +128,13 @@ export function ModuleNode({
   }, [isLocked, isCompleted, isHovered, borderColor]);
 
   // Icon type based on state
+  // When unlocked, use default icon (pin) instead of lock icon from worldmap config
   const iconType = useMemo((): 'lock' | 'star' | 'pin' | 'shield' | 'box' | 'check' => {
     if (isCompleted) return 'star';
     if (isLocked) return 'lock';
-    return node.icon?.iconType || 'pin';
+    // When unlocked, ignore 'lock' icon from config and use default
+    const configIcon = node.icon?.iconType;
+    return configIcon && configIcon !== 'lock' ? configIcon : 'pin';
   }, [isCompleted, isLocked, node.icon?.iconType]);
 
 

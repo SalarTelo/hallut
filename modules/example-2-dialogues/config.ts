@@ -3,10 +3,10 @@
  */
 
 import {
-  createModuleConfig,
-  createManifest,
-  colorBackground,
-  createWelcome,
+    createModuleConfig,
+    createManifest,
+    colorBackground,
+    createWelcome, passwordUnlock,
 } from '@builders/module/index.js';
 
 export function createConfig() {
@@ -23,12 +23,14 @@ export function createConfig() {
       'This module demonstrates dialogue trees and state management.',
       'Talk to the teacher - they will remember you!',
     ]),
+      unlockRequirement: passwordUnlock("password", "temp"),
     worldmap: {
       position: { x: 35, y: 65 },
       icon: {
         shape: 'circle',
         size: 56,
       },
+
     },
   });
 }
