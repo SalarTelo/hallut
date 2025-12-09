@@ -15,7 +15,7 @@ import {
   getGradientId,
   getStrokeColor,
 } from '../utils.js';
-import type { WorldmapConnection, WorldmapNode } from '@core/types/worldmap.js';
+import type { WorldmapConnection, WorldmapNode } from '@core/worldmap/types.js';
 import type { ModuleProgressionState } from '@core/state/types.js';
 
 describe('ModulePath Utilities', () => {

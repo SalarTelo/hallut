@@ -10,7 +10,7 @@ import { PixelIcon } from './PixelIcon.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { getHeaderGradient, getFooterGradient } from '../utils/modalStyles.js';
 import { getModule } from '@core/module/registry.js';
-import type { ModuleDefinition } from '@core/types/module.js';
+import type { ModuleDefinition } from '@core/module/types.js';
 
 export interface ModuleInfoModalProps {
   /**

@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import type { Task } from '@core/types/task.js';
+import type { Task } from '@core/task/types.js';
 import { PixelIcon } from './PixelIcon.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 

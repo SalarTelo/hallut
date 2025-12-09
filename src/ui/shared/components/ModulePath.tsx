@@ -5,9 +5,9 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '@core/types/worldmap.js';
+import type { WorldmapConfig, WorldmapNode, WorldmapConnection } from '@core/worldmap/types.js';
 import { actions } from '@core/state/actions.js';
-import { canUnlockModule } from '@core/services/unlockService.js';
+import { canUnlockModule } from '@core/unlock/service.js';
 import { getModule } from '@core/module/registry.js';
 import { ModuleInfoModal } from './ModuleInfoModal.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
