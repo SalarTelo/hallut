@@ -16,11 +16,10 @@ import { ImageViewer } from '@ui/shared/components/ImageViewer.js';
 import { NoteViewer } from '@ui/shared/components/NoteViewer.js';
 import { SignViewer } from '@ui/shared/components/SignViewer.js';
 import { ChatWindow } from '@ui/shared/components/ChatWindow.js';
-// Views will be moved in Phase 8 - using current paths for now
-import { InteractableView } from '@ui/features/module/views/InteractableView.js';
-import { DialogueView } from '@ui/features/module/views/DialogueView.js';
-import { TaskView } from '@ui/features/module/views/TaskView.js';
-import { WelcomeView } from '@ui/features/module/views/WelcomeView.js';
+import { InteractableView } from '@ui/views/InteractableView.js';
+import { DialogueView } from '@ui/views/DialogueView.js';
+import { TaskView } from '@ui/views/TaskView.js';
+import { WelcomeView } from '@ui/views/WelcomeView.js';
 import type { ModuleData } from '@core/module/types.js';
 import { ErrorCode, ModuleError } from '@core/errors.js';
 import { getThemeValue } from '@utils/theme.js';
