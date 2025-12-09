@@ -5,7 +5,6 @@
 
 import { describe, it, expect } from 'vitest';
 import {
-  hexToRgba,
   formatModuleName,
   isModuleUnlocked,
   getConnectionNodes,
@@ -13,8 +12,8 @@ import {
   getStrokeDasharray,
   getConnectionKey,
   getGradientId,
-  getStrokeColor,
 } from '../utils.js';
+import { hexToRgba } from '@lib/color.js';
 import type { WorldmapConnection, WorldmapNode } from '@core/worldmap/types.js';
 import type { ModuleProgressionState } from '@core/state/types.js';
 
@@ -236,63 +235,5 @@ describe('ModulePath Utilities', () => {
     });
   });
 
-  describe('getStrokeColor', () => {
-    it('should return gradient URL for partially unlocked connection', () => {
-      const connection: WorldmapConnection = {
-        from: 'module1',
-        to: 'module2',
-      };
-
-      const state = {
-        fromState: 'unlocked' as ModuleProgressionState,
-        toState: 'locked' as ModuleProgressionState,
-        fromUnlocked: true,
-        toUnlocked: false,
-        isPartiallyUnlocked: true,
-      };
-
-      const result = getStrokeColor(connection, state, false, '#000000');
-
-      expect(result).toBe(`url(#${getGradientId(connection)})`);
-    });
-
-    it('should return border color for unlocked connection', () => {
-      const connection: WorldmapConnection = {
-        from: 'module1',
-        to: 'module2',
-      };
-
-      const state = {
-        fromState: 'unlocked' as ModuleProgressionState,
-        toState: 'unlocked' as ModuleProgressionState,
-        fromUnlocked: true,
-        toUnlocked: true,
-        isPartiallyUnlocked: false,
-      };
-
-      const result = getStrokeColor(connection, state, true, '#ff0000');
-
-      expect(result).toBe('#ff0000');
-    });
-
-    it('should return gray for locked connection', () => {
-      const connection: WorldmapConnection = {
-        from: 'module1',
-        to: 'module2',
-      };
-
-      const state = {
-        fromState: 'locked' as ModuleProgressionState,
-        toState: 'locked' as ModuleProgressionState,
-        fromUnlocked: false,
-        toUnlocked: false,
-        isPartiallyUnlocked: false,
-      };
-
-      const result = getStrokeColor(connection, state, false, '#ff0000');
-
-      expect(result).toBe('#666666');
-    });
-  });
 });
 

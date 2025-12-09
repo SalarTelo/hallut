@@ -65,7 +65,7 @@ export const task1 = createTask({
   // ...
 });
 
-import { taskComplete } from '@utils/builders/interactables.js';
+import { taskComplete } from '@builders/interactables.js';
 
 // Task 2: Requires Task 1
 export const task2 = createTask({

@@ -10,6 +10,7 @@ import { actions } from '../state/actions.js';
 import type { ModuleProgressionState } from '../state/types.js';
 import type { ModuleConfig } from './types.js';
 import { checkUnlockRequirement } from '../unlock/requirements.js';
+import { handleError } from '@services/errorService.js';
 
 // Configuration constants (can be moved to a config file if needed)
 const INITIALLY_UNLOCKED_MODULES: string[] = [];
@@ -124,7 +125,10 @@ export async function checkModuleCompletionStatus(moduleId: string): Promise<{
     return { isCompleted: true, modulesToUnlock };
   } catch (error) {
     // Log error but don't throw - return safe default
-    console.error('Error checking module completion:', error);
+    handleError(error instanceof Error ? error : new Error(String(error)), {
+      moduleId,
+      context: 'checkModuleCompletion',
+    });
     return { isCompleted: false, modulesToUnlock: [] };
   }
 }

@@ -5,7 +5,7 @@
 
 import type { ModuleDefinition, ModuleData } from './types.js';
 import { registerModule } from './registry.js';
-import { ErrorCode, ModuleError } from '../errors.js';
+import { ErrorCode, ModuleError, getErrorMessage } from '../errors.js';
 import { actions } from '../state/actions.js';
 
 /**
@@ -65,7 +65,7 @@ export async function loadModuleInstance(moduleId: string): Promise<ModuleDefini
     throw new ModuleError(
       ErrorCode.MODULE_LOAD_FAILED,
       moduleId,
-      `Failed to load module: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      `Failed to load module: ${getErrorMessage(error)}`,
       { originalError: error }
     );
   }

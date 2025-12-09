@@ -59,7 +59,7 @@ import {
   createManifest,
   colorBackground,
   createWelcome,
-} from '@utils/builders/modules.js';
+} from '@builders/modules.js';
 
 export function createConfig() {
   return createModuleConfig({
@@ -105,7 +105,7 @@ import {
   textLengthValidator,
   success,
   failure,
-} from '@utils/builders/tasks.js';
+} from '@builders/tasks.js';
 
 export const greetingTask = createTask({
   id: 'greeting-task',
@@ -148,7 +148,7 @@ NPCs give tasks to users in a natural way. We'll create a simple NPC without dia
 Create `modules/hello-world/content/NPC/guide/index.ts`:
 
 ```typescript
-import { createNPC, pos } from '@utils/builders/index.js';
+import { createNPC, pos } from '@builders/index.js';
 import { greetingTask } from '../../tasks.js';
 
 export const guideNPC = createNPC({
@@ -188,7 +188,7 @@ import {
   createObject,
   showSignViewer,
   pos,
-} from '@utils/builders/index.js';
+} from '@builders/index.js';
 
 export const welcomeSign = createObject({
   id: 'welcome-sign',

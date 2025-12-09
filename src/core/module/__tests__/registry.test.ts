@@ -13,9 +13,9 @@ import {
   discoverModules,
 } from '../registry.js';
 import { defineModule } from '../define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@utils/builders/modules.js';
-import type { ModuleDefinition } from '@core/types/module.js';
-import { ErrorCode, ModuleError } from '@core/types/errors.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/modules.js';
+import type { ModuleDefinition } from '@core/module/types.js';
+import { ErrorCode, ModuleError } from '@core/errors.js';
 
 describe('Module Registry', () => {
   let mockModule: ModuleDefinition;

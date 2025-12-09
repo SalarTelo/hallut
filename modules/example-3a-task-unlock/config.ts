@@ -10,8 +10,8 @@ import {
   createManifest,
   colorBackground,
   createWelcome,
-} from '@utils/builders/modules.js';
-import { taskComplete } from '@utils/builders/interactables.js';
+} from '@builders/modules.js';
+import { taskComplete } from '@builders/interactables.js';
 import { module3UnlockTask } from '../example-3-progression/content/tasks.js';
 
 export function createConfig() {

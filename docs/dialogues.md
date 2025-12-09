@@ -27,7 +27,7 @@ Something happens (task accepted, state updated, etc.)
 ### Basic dialogue
 
 ```typescript
-import { dialogueNode } from '@utils/builders/dialogues.js';
+import { dialogueNode } from '@builders/dialogues.js';
 
 const greeting = dialogueNode({
   lines: [
@@ -55,7 +55,7 @@ import {
   dialogueNode,
   acceptTask,
   callFunction,
-} from '@utils/builders/dialogues.js';
+} from '@builders/dialogues.js';
 import { teacherState } from './state.js';
 import { myTask } from '../../tasks.js';
 
@@ -92,7 +92,7 @@ NPCs can "remember" things using state.
 
 ```typescript
 // state.ts
-import { stateRef } from '@utils/builders/dialogues.js';
+import { stateRef } from '@builders/dialogues.js';
 
 export const teacherState = stateRef({ id: 'teacher' });
 ```
@@ -152,7 +152,7 @@ Actions are things that happen when a choice is selected.
 ### Accept Task
 
 ```typescript
-import { acceptTask } from '@utils/builders/dialogues.js';
+import { acceptTask } from '@builders/dialogues.js';
 
 choices: {
   accept: {
@@ -168,7 +168,7 @@ choices: {
 ### Call Function
 
 ```typescript
-import { callFunction } from '@utils/builders/dialogues.js';
+import { callFunction } from '@builders/dialogues.js';
 
 choices: {
   update: {

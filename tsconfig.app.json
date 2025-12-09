@@ -28,9 +28,11 @@
     "baseUrl": ".",
     "paths": {
       "@core/*": ["src/core/*"],
+      "@app/*": ["src/app/*"],
       "@ui/*": ["src/ui/*"],
+      "@builders/*": ["src/builders/*"],
+      "@lib/*": ["src/lib/*"],
       "@services/*": ["src/services/*"],
-      "@utils/*": ["src/utils/*"],
       "@config/*": ["src/config/*"],
       "@modules/*": ["modules/*"]
     }

@@ -3,7 +3,7 @@
  * State management for the expert NPC
  */
 
-import { stateRef } from '@utils/builders/dialogues.js';
+import { stateRef } from '@builders/dialogues.js';
 
 /**
  * Expert state reference

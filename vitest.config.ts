@@ -24,12 +24,12 @@ export default defineConfig({
   resolve: {
     alias: {
       '@core': path.resolve(__dirname, 'src/core'),
+      '@app': path.resolve(__dirname, 'src/app'),
       '@ui': path.resolve(__dirname, 'src/ui'),
+      '@builders': path.resolve(__dirname, 'src/builders'),
+      '@lib': path.resolve(__dirname, 'src/lib'),
       '@services': path.resolve(__dirname, 'src/services'),
-      '@stores': path.resolve(__dirname, 'src/stores'),
-      '@types': path.resolve(__dirname, 'src/types'),
-      '@utils': path.resolve(__dirname, 'src/utils'),
-      '@constants': path.resolve(__dirname, 'src/constants'),
+      '@config': path.resolve(__dirname, 'src/config'),
       '@modules': path.resolve(__dirname, 'modules'),
     },
   },

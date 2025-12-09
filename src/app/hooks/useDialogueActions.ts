@@ -8,6 +8,7 @@ import { createModuleContext } from '@core/module/context.js';
 import { processDialogueActions } from '@core/dialogue/processing.js';
 import type { ChoiceAction } from '@core/dialogue/types.js';
 import { DialogueError, ErrorCode } from '@core/errors.js';
+import { getTaskId } from '@core/task/utils.js';
 
 export interface UseDialogueActionsOptions {
   moduleId: string;
@@ -34,7 +35,7 @@ export function useDialogueActions({
 
       // Add UI callback for opening task submission
       context.openTaskSubmission = (task) => {
-        const taskId = typeof task === 'string' ? task : task.id;
+        const taskId = getTaskId(task);
         onTaskSubmissionOpen?.(taskId);
         viewChanged = true;
       };

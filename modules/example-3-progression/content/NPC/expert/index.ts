@@ -5,8 +5,8 @@
  * Demonstrates locked NPCs with unlock requirements.
  */
 
-import { createNPC, pos } from '@utils/builders/index.js';
-import { taskComplete } from '@utils/builders/interactables.js';
+import { createNPC, pos } from '@builders/index.js';
+import { taskComplete } from '@builders/interactables.js';
 import { quizTask, reflectionTask, module3UnlockTask } from '../../tasks.js';
 import { introTask } from '../../tasks.js';
 import { expertDialogueTree } from './dialogues.js';

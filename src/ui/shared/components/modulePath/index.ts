@@ -6,5 +6,6 @@
 export { ConnectionLines, type ConnectionLinesProps } from './ConnectionLines.js';
 export { ModuleNode, type ModuleNodeProps } from './ModuleNode.js';
 export { ModuleTooltip, type ModuleTooltipProps } from './ModuleTooltip.js';
-export { hexToRgba, formatModuleName } from './utils.js';
+export { formatModuleName } from './utils.js';
+export { hexToRgba } from '@lib/color.js';
 

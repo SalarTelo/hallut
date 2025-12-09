@@ -10,8 +10,8 @@ import {
   textLengthValidator,
   success,
   failure,
-} from '@utils/builders/tasks.js';
-import { taskComplete } from '@utils/builders/interactables.js';
+} from '@builders/tasks.js';
+import { taskComplete } from '@builders/interactables.js';
 
 /**
  * Task 1: Welcome Task

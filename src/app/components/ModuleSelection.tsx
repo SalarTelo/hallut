@@ -10,6 +10,7 @@ import { loadModuleInstance } from '@core/module/loader.js';
 import { generateWorldmap } from '@core/worldmap/generator.js';
 import type { WorldmapConfig } from '@core/worldmap/types.js';
 import { initializeModuleProgression, unlockModule } from '@core/unlock/service.js';
+import { handleError } from '@services/errorService.js';
 import { ModulePath } from '@ui/shared/components/ModulePath.js';
 import { LoadingState } from '@ui/shared/components/LoadingState.js';
 import { FullScreenLayout } from '@ui/shared/components/layouts/index.js';
@@ -49,7 +50,9 @@ export function ModuleSelection({ onSelectModule }: ModuleSelectionProps) {
         const config = await generateWorldmap(moduleIds);
         setWorldmap(config);
       } catch (error) {
-        console.error('Error loading worldmap:', error);
+        handleError(error instanceof Error ? error : new Error(String(error)), {
+          context: 'loadWorldmap',
+        });
       } finally {
         setLoading(false);
       }

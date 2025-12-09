@@ -4,7 +4,7 @@
  */
 
 import type { ModuleDefinition, ModuleConfig } from './types.js';
-import { ErrorCode, ModuleError } from '../errors.js';
+import { ErrorCode, ModuleError, getErrorMessage } from '../errors.js';
 
 /**
  * Module registry
@@ -31,7 +31,7 @@ export async function discoverModules(): Promise<string[]> {
     throw new ModuleError(
       ErrorCode.MODULE_LOAD_FAILED,
       'unknown',
-      `Error discovering modules: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      `Error discovering modules: ${getErrorMessage(error)}`,
       { originalError: error }
     );
   }

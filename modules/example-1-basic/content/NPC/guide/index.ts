@@ -5,7 +5,7 @@
  * This demonstrates the minimal NPC setup with proper dialogue structure.
  */
 
-import { createNPC, pos } from '@utils/builders/index.js';
+import { createNPC, pos } from '@builders/index.js';
 import { greetingTask } from '../../tasks.js';
 import { guideDialogueTree } from './dialogues.js';
 

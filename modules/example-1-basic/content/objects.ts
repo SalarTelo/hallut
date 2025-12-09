@@ -9,7 +9,7 @@ import {
   createObject,
   showSignViewer,
   pos,
-} from '@utils/builders/index.js';
+} from '@builders/index.js';
 
 /**
  * Welcome Sign

@@ -5,17 +5,7 @@
 
 import type { WorldmapConnection, WorldmapNode } from '@core/worldmap/types.js';
 import type { ModuleProgressionState } from '@core/state/types.js';
-
-/**
- * Convert hex color to rgba
- */
-export function hexToRgba(hex: string, alpha: number): string {
-  const hexWithoutHash = hex.replace('#', '');
-  const r = parseInt(hexWithoutHash.substring(0, 2), 16);
-  const g = parseInt(hexWithoutHash.substring(2, 4), 16);
-  const b = parseInt(hexWithoutHash.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
+import { hexToRgba } from '@lib/color.js';
 
 /**
  * Format module ID to display name (capitalize words)

@@ -3,7 +3,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { addOpacityToColor } from '@utils/color.js';
+import { addOpacityToColor } from '@lib/color.js';
 
 export interface ModuleBackgroundProps {
   imageUrl?: string;

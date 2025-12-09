@@ -4,7 +4,7 @@
  * Always available - gives the first task.
  */
 
-import { createNPC, pos } from '@utils/builders/index.js';
+import { createNPC, pos } from '@builders/index.js';
 import { introTask } from '../../tasks.js';
 import { teacherDialogueTree } from './dialogues.js';
 

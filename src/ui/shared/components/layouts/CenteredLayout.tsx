@@ -4,7 +4,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { getBackgroundColorStyle } from '@utils/color.js';
+import { getBackgroundColorStyle } from '@lib/color.js';
 
 export interface CenteredLayoutProps {
   /**

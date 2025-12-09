@@ -7,7 +7,7 @@ import { Card } from './Card.js';
 import { Button } from './Button.js';
 import { Badge } from './Badge.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
-import { getBackgroundColorStyle } from '@utils/color.js';
+import { getBackgroundColorStyle } from '@lib/color.js';
 import { DEFAULT_THEME } from '@config/constants.js';
 import { getUserFriendlyMessage } from '@services/errorService.js';
 

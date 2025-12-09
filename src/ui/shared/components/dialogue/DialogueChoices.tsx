@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { formatChoiceText } from './choiceFormatter.js';
 
 /**
  * Dialogval-komponent
@@ -162,16 +163,17 @@ export function DialogueChoices({
               <span className={`leading-tight transition-colors duration-150 ${
                 selectingIndex === index ? 'text-white' : ''
               }`}>
-                {/* TODO: Remove this hacky string-based formatting and introduce a proper solution 
-                    for custom formatting in dialogue choices (e.g., rich text, styled spans, etc.) */}
-                {choice.text.startsWith('[Task]') ? (
-                  <>
-                    <span className="text-blue-400 font-semibold">[Task]</span>
-                    <span>{choice.text.substring(6)}</span>
-                  </>
-                ) : (
-                  choice.text
-                )}
+                {(() => {
+                  const formatted = formatChoiceText(choice.text);
+                  return formatted.isTask ? (
+                    <>
+                      <span className="text-blue-400 font-semibold">{formatted.prefix}</span>
+                      <span>{formatted.content}</span>
+                    </>
+                  ) : (
+                    formatted.content
+                  );
+                })()}
               </span>
             </span>
           </button>

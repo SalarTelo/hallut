@@ -188,7 +188,7 @@ npm run cli
 **Solution:** Check imports:
 
 ```typescript
-import { createNPC } from '@utils/builders/index.js'; // ✅ .js extension
+import { createNPC } from '@builders/index.js'; // ✅ .js extension
 ```
 
 ### "Property does not exist"

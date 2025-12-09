@@ -5,10 +5,11 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { ModuleData } from '../types/module.js';
-import type { Task } from '../types/task.js';
-import type { InteractableState } from '../types/interactable.js';
+import type { ModuleData } from '../module/types.js';
+import type { Task } from '../task/types.js';
+import type { InteractableState } from '../module/types.js';
 import type { ModuleProgress, ModuleProgressionState } from './types.js';
+import { getTaskId } from '@core/task/utils.js';
 
 /**
  * Module progression
@@ -119,7 +120,7 @@ export const useAppStore = create<AppStore>()(
 
       // Tasks
       acceptTask: (moduleId, task) => {
-        const taskId = typeof task === 'string' ? task : task.id;
+        const taskId = getTaskId(task);
         const progress = get().getProgress(moduleId) || initialProgress;
         get().updateProgress(moduleId, {
           state: {
@@ -130,7 +131,7 @@ export const useAppStore = create<AppStore>()(
       },
 
       completeTask: (moduleId, task) => {
-        const taskId = typeof task === 'string' ? task : task.id;
+        const taskId = getTaskId(task);
         const progress = get().getProgress(moduleId) || initialProgress;
         const completedTasks = progress.state.completedTasks || [];
         
@@ -146,7 +147,7 @@ export const useAppStore = create<AppStore>()(
       },
 
       isTaskCompleted: (moduleId, task) => {
-        const taskId = typeof task === 'string' ? task : task.id;
+        const taskId = getTaskId(task);
         const progress = get().getProgress(moduleId);
         return progress?.state?.completedTasks?.includes(taskId) || false;
       },

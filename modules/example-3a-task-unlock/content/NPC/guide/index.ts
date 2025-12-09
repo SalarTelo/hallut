@@ -4,7 +4,7 @@
  * Simple NPC explaining this module was unlocked via task completion.
  */
 
-import { createNPC, pos } from '@utils/builders/index.js';
+import { createNPC, pos } from '@builders/index.js';
 import { welcomeTask, reflectionTask } from '../../tasks.js';
 import { guideDialogueTree } from './dialogues.js';
 

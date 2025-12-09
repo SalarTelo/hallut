@@ -4,7 +4,7 @@
  */
 
 import { Card } from './Card.js';
-import { getBackgroundColorStyle } from '@utils/color.js';
+import { getBackgroundColorStyle } from '@lib/color.js';
 
 export interface EmptyStateProps {
   /**

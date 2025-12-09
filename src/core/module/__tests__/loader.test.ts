@@ -10,12 +10,12 @@ import {
 } from '../loader.js';
 import { registerModule } from '../registry.js';
 import { defineModule } from '../define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@utils/builders/modules.js';
-import { createNPC, createObject, showDialogue, pos } from '@utils/builders/interactables.js';
-import { dialogueTree, dialogueNode } from '@utils/builders/dialogues.js';
-import { createTask, textSubmission } from '@utils/builders/tasks.js';
-import type { ModuleDefinition } from '@core/types/module.js';
-import { ErrorCode, ModuleError } from '@core/types/errors.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/modules.js';
+import { createNPC, createObject, showDialogue, pos } from '@builders/interactables.js';
+import { dialogueTree, dialogueNode } from '@builders/dialogues.js';
+import { createTask, textSubmission } from '@builders/tasks.js';
+import type { ModuleDefinition } from '@core/module/types.js';
+import { ErrorCode, ModuleError } from '@core/errors.js';
 
 describe('Module Loader', () => {
   let mockModuleDefinition: ModuleDefinition;

@@ -8,8 +8,8 @@ import {
   createObject,
   showNoteViewer,
   pos,
-} from '@utils/builders/index.js';
-import { taskComplete } from '@utils/builders/interactables.js';
+} from '@builders/index.js';
+import { taskComplete } from '@builders/interactables.js';
 import { introTask, quizTask } from './tasks.js';
 
 /**

@@ -27,7 +27,7 @@ Unlock requirements lock content (modules, NPCs, objects) until users meet the r
 Unlock when a task is complete:
 
 ```typescript
-import { taskComplete } from '@utils/builders/interactables.js';
+import { taskComplete } from '@builders/interactables.js';
 import { prerequisiteTask } from './tasks.js';
 
 // Lock an NPC
@@ -55,7 +55,7 @@ export const lockedChest = createObject({
 Unlock when a module is complete:
 
 ```typescript
-import { moduleComplete } from '@utils/builders/modules.js';
+import { moduleComplete } from '@builders/modules.js';
 
 export function createConfig() {
   return createModuleConfig({
@@ -72,7 +72,7 @@ export function createConfig() {
 Use AND/OR to combine requirements:
 
 ```typescript
-import { andRequirements, orRequirements, taskComplete } from '@utils/builders/index.js';
+import { andRequirements, orRequirements, taskComplete } from '@builders/index.js';
 
 // Requires BOTH tasks
 unlockRequirement: andRequirements([
@@ -101,7 +101,7 @@ export const task1 = createTask({
   unlockRequirement: null,
 });
 
-import { taskComplete } from '@utils/builders/interactables.js';
+import { taskComplete } from '@builders/interactables.js';
 
 // Task 2: Requires Task 1
 export const task2 = createTask({

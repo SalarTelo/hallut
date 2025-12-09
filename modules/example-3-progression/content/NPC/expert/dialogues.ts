@@ -11,7 +11,7 @@ import {
   dialogueNode,
   acceptTask,
   callFunction,
-} from '@utils/builders/dialogues.js';
+} from '@builders/dialogues.js';
 import { expertState } from './state.js';
 import { quizTask, reflectionTask, module3UnlockTask } from '../../tasks.js';
 

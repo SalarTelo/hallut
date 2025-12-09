@@ -8,7 +8,7 @@ import {
   createObject,
   showNoteViewer,
   pos,
-} from '@utils/builders/index.js';
+} from '@builders/index.js';
 
 /**
  * Information sign

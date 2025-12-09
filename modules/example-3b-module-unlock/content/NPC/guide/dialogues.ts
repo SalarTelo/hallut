@@ -9,7 +9,7 @@ import {
   dialogueNode,
   acceptTask,
   callFunction,
-} from '@utils/builders/dialogues.js';
+} from '@builders/dialogues.js';
 import { guideState } from './state.js';
 import { welcomeTask } from '../../tasks.js';
 

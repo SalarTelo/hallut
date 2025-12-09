@@ -9,6 +9,7 @@ import { actions } from '@core/state/actions.js';
 import { createModuleContext } from '@core/module/context.js';
 import { useInteractableActions } from '@app/hooks/index.js';
 import { getNextDialogueNode, getAvailableChoices, executeActions } from '@core/dialogue/execution.js';
+import { getTaskId } from '@core/task/utils.js';
 import { LoadingState } from '@ui/shared/components/LoadingState.js';
 import { ErrorDisplay } from '@ui/shared/components/ErrorDisplay.js';
 import { Overlay } from '@ui/shared/components/Overlay.js';
@@ -22,7 +23,7 @@ import { TaskView } from '@ui/views/TaskView.js';
 import { WelcomeView } from '@ui/views/WelcomeView.js';
 import type { ModuleData } from '@core/module/types.js';
 import { ErrorCode, ModuleError } from '@core/errors.js';
-import { getThemeValue } from '@utils/theme.js';
+import { getThemeValue } from '@lib/theme.js';
 import type { NPC } from '@core/module/types.js';
 import type { DialogueNode } from '@core/dialogue/types.js';
 
@@ -162,7 +163,7 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
   const context = baseContext ? {
     ...baseContext,
     openTaskSubmission: (task: import('@core/task/types.js').Task | string) => {
-      const taskId = typeof task === 'string' ? task : task.id;
+      const taskId = getTaskId(task);
       setSelectedTaskId(taskId);
       setCurrentView('task');
     },

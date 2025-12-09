@@ -6,8 +6,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createModuleContext } from '../context.js';
 import { actions } from '@core/state/actions.js';
-import type { ModuleData } from '@core/types/module.js';
-import type { Interactable } from '@core/types/interactable.js';
+import type { ModuleData } from '@core/module/types.js';
+import type { Interactable } from '@core/module/types.js';
 
 describe('createModuleContext', () => {
   let moduleData: ModuleData;

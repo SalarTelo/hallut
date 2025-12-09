@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useThemeBorderColor } from '../useThemeBorderColor.js';
-import * as themeUtils from '@utils/theme.js';
+import * as themeUtils from '@lib/theme.js';
 
 describe('useThemeBorderColor', () => {
   beforeEach(() => {

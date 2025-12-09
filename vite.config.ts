@@ -17,9 +17,11 @@ export default defineConfig({
     alias: {
       // Core application aliases
       '@core': path.resolve(__dirname, 'src/core'),
+      '@app': path.resolve(__dirname, 'src/app'),
       '@ui': path.resolve(__dirname, 'src/ui'),
+      '@builders': path.resolve(__dirname, 'src/builders'),
+      '@lib': path.resolve(__dirname, 'src/lib'),
       '@services': path.resolve(__dirname, 'src/services'),
-      '@utils': path.resolve(__dirname, 'src/utils'),
       '@config': path.resolve(__dirname, 'src/config'),
       // Game content modules (outside src/)
       '@modules': path.resolve(__dirname, 'modules'),

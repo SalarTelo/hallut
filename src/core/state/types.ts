@@ -3,7 +3,7 @@
  * Types for state management
  */
 
-import type { ModuleState } from '../types/interactable.js';
+import type { ModuleState } from '../module/types.js';
 
 /**
  * Module progress state

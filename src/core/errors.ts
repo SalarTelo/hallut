@@ -1,83 +1,93 @@
 /**
- * Error Types
- * Core error type definitions
+ * Core Errors
+ * Error types and utilities for the core system
  */
 
 /**
  * Error codes
  */
-export const ErrorCode = {
-  MODULE_NOT_FOUND: 'MODULE_NOT_FOUND',
-  MODULE_LOAD_FAILED: 'MODULE_LOAD_FAILED',
-  MODULE_INVALID: 'MODULE_INVALID',
-  MODULE_ALREADY_ACTIVE: 'MODULE_ALREADY_ACTIVE',
-  TASK_NOT_FOUND: 'TASK_NOT_FOUND',
-  TASK_INVALID: 'TASK_INVALID',
-  DIALOGUE_NOT_FOUND: 'DIALOGUE_NOT_FOUND',
-  DIALOGUE_INVALID: 'DIALOGUE_INVALID',
-  INTERACTABLE_NOT_FOUND: 'INTERACTABLE_NOT_FOUND',
-  UNKNOWN_ERROR: 'UNKNOWN_ERROR',
-} as const;
-
-export type ErrorCode = typeof ErrorCode[keyof typeof ErrorCode];
+export enum ErrorCode {
+  MODULE_NOT_FOUND = 'MODULE_NOT_FOUND',
+  MODULE_INVALID = 'MODULE_INVALID',
+  MODULE_LOAD_ERROR = 'MODULE_LOAD_ERROR',
+  TASK_NOT_FOUND = 'TASK_NOT_FOUND',
+  TASK_INVALID = 'TASK_INVALID',
+  DIALOGUE_INVALID = 'DIALOGUE_INVALID',
+  DIALOGUE_NODE_NOT_FOUND = 'DIALOGUE_NODE_NOT_FOUND',
+  UNLOCK_REQUIREMENT_NOT_MET = 'UNLOCK_REQUIREMENT_NOT_MET',
+}
 
 /**
- * Application error
+ * Base application error
  */
 export class AppError extends Error {
-  code: ErrorCode;
-  context?: Record<string, unknown>;
-
-  constructor(code: ErrorCode, context?: Record<string, unknown>) {
-    super();
+  constructor(
+    public code: ErrorCode,
+    public message: string,
+    public context?: Record<string, unknown>
+  ) {
+    super(message);
     this.name = 'AppError';
-    this.code = code;
-    this.context = context;
   }
 }
 
 /**
- * Module error
+ * Module-related error
  */
 export class ModuleError extends AppError {
-  moduleId: string;
-
-  constructor(code: ErrorCode, moduleId: string, message: string, context?: Record<string, unknown>) {
-    super(code, { ...context, moduleId, message });
+  constructor(
+    code: ErrorCode,
+    public moduleId: string,
+    message: string,
+    context?: Record<string, unknown>
+  ) {
+    super(code, message, context);
     this.name = 'ModuleError';
-    this.message = message;
-    this.moduleId = moduleId;
   }
 }
 
 /**
- * Task error
+ * Task-related error
  */
 export class TaskError extends AppError {
-  taskId: string;
-  moduleId?: string;
-
-  constructor(code: ErrorCode, taskId: string, message: string, moduleId?: string, context?: Record<string, unknown>) {
-    super(code, { ...context, taskId, moduleId, message });
+  constructor(
+    code: ErrorCode,
+    public taskId: string,
+    message: string,
+    public moduleId?: string,
+    context?: Record<string, unknown>
+  ) {
+    super(code, message, context);
     this.name = 'TaskError';
-    this.message = message;
-    this.taskId = taskId;
-    this.moduleId = moduleId;
   }
 }
 
 /**
- * Dialogue error
+ * Dialogue-related error
  */
 export class DialogueError extends AppError {
-  dialogueId: string;
-  moduleId?: string;
-
-  constructor(code: ErrorCode, dialogueId: string, message: string, moduleId?: string, context?: Record<string, unknown>) {
-    super(code, { ...context, dialogueId, moduleId, message });
+  constructor(
+    code: ErrorCode,
+    public dialogueId: string,
+    message: string,
+    public moduleId?: string,
+    context?: Record<string, unknown>
+  ) {
+    super(code, message, context);
     this.name = 'DialogueError';
-    this.message = message;
-    this.dialogueId = dialogueId;
-    this.moduleId = moduleId;
   }
+}
+
+/**
+ * Extract error message from error (string or Error object)
+ * Utility to handle both string errors and Error objects consistently
+ */
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === 'string') {
+    return error;
+  }
+  return 'Unknown error';
 }

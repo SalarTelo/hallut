@@ -22,7 +22,7 @@ NPCs are characters that users can interact with. They can give tasks, have dial
 ### Basic NPC
 
 ```typescript
-import { createNPC, pos } from '@utils/builders/index.js';
+import { createNPC, pos } from '@builders/index.js';
 
 export const myNPC = createNPC({
   id: 'my-npc',              // Unique ID
@@ -37,7 +37,7 @@ export const myNPC = createNPC({
 ### NPC with Tasks
 
 ```typescript
-import { createNPC, pos } from '@utils/builders/index.js';
+import { createNPC, pos } from '@builders/index.js';
 import { myTask } from './tasks.js';
 
 export const teacherNPC = createNPC({
@@ -52,7 +52,7 @@ export const teacherNPC = createNPC({
 ### NPC with Dialogues
 
 ```typescript
-import { createNPC, pos } from '@utils/builders/index.js';
+import { createNPC, pos } from '@builders/index.js';
 import { myTask } from './tasks.js';
 import { myDialogueTree } from './dialogues.js';
 
@@ -96,7 +96,7 @@ import {
   textLengthValidator,
   success,
   failure,
-} from '@utils/builders/tasks.js';
+} from '@builders/tasks.js';
 
 export const myTask = createTask({
   id: 'my-task',
@@ -132,7 +132,7 @@ import {
   multipleChoiceSubmission,
   success,
   failure,
-} from '@utils/builders/tasks.js';
+} from '@builders/tasks.js';
 
 export const quizTask = createTask({
   id: 'quiz',
@@ -159,7 +159,7 @@ export const quizTask = createTask({
 ### Task with Unlock Requirement
 
 ```typescript
-import { taskComplete } from '@utils/builders/interactables.js';
+import { taskComplete } from '@builders/interactables.js';
 
 export const lockedTask = createTask({
   id: 'locked-task',
@@ -182,7 +182,7 @@ import {
   createObject,
   showSignViewer,
   pos,
-} from '@utils/builders/index.js';
+} from '@builders/index.js';
 
 export const welcomeSign = createObject({
   id: 'welcome-sign',
@@ -204,7 +204,7 @@ export const welcomeSign = createObject({
 import {
   createNoteObject,
   pos,
-} from '@utils/builders/index.js';
+} from '@builders/index.js';
 
 export const infoNote = createNoteObject({
   id: 'info-note',
@@ -224,7 +224,7 @@ import {
   showNoteViewer,
   pos,
   taskComplete,
-} from '@utils/builders/index.js';
+} from '@builders/index.js';
 import { prerequisiteTask } from './tasks.js';
 
 export const lockedChest = createObject({
