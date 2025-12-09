@@ -40,15 +40,6 @@ vi.mock('../unlockRequirement.js', () => ({
   extractModuleDependencies: vi.fn(),
 }));
 
-// Mock moduleService's getModuleConfig
-vi.mock('../../../services/moduleService.js', async () => {
-  const actual = await vi.importActual('../../../services/moduleService.js');
-  return {
-    ...actual,
-    getModuleConfig: vi.fn(),
-  };
-});
-
 describe('Module Service', () => {
   const mockTask: Task = {
     id: 'test-task',

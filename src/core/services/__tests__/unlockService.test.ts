@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { canUnlockModule, unlockModule, evaluateModuleCompletion, initializeModuleProgression } from '../unlockService.js';
 import { actions } from '../../state/actions.js';
 import { getModule, getRegisteredModuleIds } from '../../module/registry.js';
-import { isModuleFullyCompleted } from '../../../services/moduleService.js';
+import { isModuleFullyCompleted } from '../module.js';
 import type { ModuleDefinition } from '../../types/module.js';
 
 // Mock dependencies
@@ -28,7 +28,7 @@ vi.mock('../../module/registry.js', () => ({
   getRegisteredModuleIds: vi.fn(),
 }));
 
-vi.mock('../../../services/moduleService.js', () => ({
+vi.mock('../module.js', () => ({
   isModuleFullyCompleted: vi.fn(),
 }));
 

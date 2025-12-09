@@ -4,7 +4,7 @@
  */
 
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
-import { DEFAULT_THEME } from '@constants/module.constants.js';
+import { DEFAULT_THEME } from '@config/constants.js';
 
 export interface LoadingSpinnerProps {
   /**

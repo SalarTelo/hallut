@@ -6,7 +6,7 @@
 import { getModule, getRegisteredModuleIds } from '../module/registry.js';
 import { actions } from '../state/actions.js';
 import { checkUnlockRequirement, requiresUserInteraction } from './unlockRequirement.js';
-import { isModuleFullyCompleted } from '../../services/moduleService.js';
+import { isModuleFullyCompleted } from './module.js';
 import type { UnlockContext } from '../types/unlock.js';
 
 /**

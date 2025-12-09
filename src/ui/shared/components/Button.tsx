@@ -5,7 +5,7 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
-import { DEFAULT_THEME } from '@constants/module.constants.js';
+import { DEFAULT_THEME } from '@config/constants.js';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg';

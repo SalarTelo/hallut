@@ -8,7 +8,7 @@ import { Button } from './Button.js';
 import { Badge } from './Badge.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { getBackgroundColorStyle } from '@utils/color.js';
-import { DEFAULT_THEME } from '@constants/module.constants.js';
+import { DEFAULT_THEME } from '@config/constants.js';
 import { getUserFriendlyMessage } from '@services/errorService.js';
 
 export interface ErrorDisplayProps {
