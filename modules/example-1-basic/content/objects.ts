@@ -8,7 +8,7 @@
 import {
   createObject,
   showSignViewer,
-  pos,
+  position,
 } from '@builders/index.js';
 
 /**
@@ -20,10 +20,10 @@ import {
 export const welcomeSign = createObject({
   id: 'welcome-sign',
   name: 'Welcome Sign',
-  position: pos(70, 30),
+  position: position(70, 30),
   avatar: 'note',
-  interaction: showSignViewer({
-    content: 'Welcome to the Basic Example Module! This is the simplest possible module. Click on the Guide NPC to get a task.',
+  onInteract: showSignViewer({
+    content: 'Welcome to the Basic Example Module! This is the simplest positionsible module. Click on the Guide NPC to get a task.',
     title: 'Welcome Sign',
   }),
 });
@@ -32,4 +32,3 @@ export const welcomeSign = createObject({
  * All objects for this module
  */
 export const objects = [welcomeSign];
-

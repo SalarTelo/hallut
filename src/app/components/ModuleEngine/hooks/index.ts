@@ -8,9 +8,6 @@ export { useModuleViews, type UseModuleViewsReturn, type View } from './useModul
 export {
   useModuleModals,
   type UseModuleModalsReturn,
-  type ImageModalState,
-  type NoteModalState,
-  type SignModalState,
-  type ChatModalState,
+  type ModalState,
 } from './useModuleModals.js';
 

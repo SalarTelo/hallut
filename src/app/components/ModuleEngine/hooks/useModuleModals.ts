@@ -1,125 +1,82 @@
 /**
  * useModuleModals Hook
  * Manages modal states for content viewers
+ * 
+ * Uses a generic modal state that works for all component types (predefined and custom)
  */
 
 import { useState } from 'react';
 
-export interface ImageModalState {
-  url: string;
-  title?: string;
-}
-
-export interface NoteModalState {
-  content: string;
-  title?: string;
-}
-
-export interface SignModalState {
-  content: string;
-  title?: string;
-}
-
-export interface ChatModalState {
-  title?: string;
-  placeholder?: string;
+/**
+ * Generic modal state - stores component name and props
+ */
+export interface ModalState {
+  component: string;
+  props: Record<string, unknown>;
 }
 
 export interface UseModuleModalsReturn {
-  imageModal: ImageModalState | null;
-  noteModal: NoteModalState | null;
-  signModal: SignModalState | null;
-  chatModal: ChatModalState | null;
-  openImageModal: (url: string, title?: string) => void;
-  openNoteModal: (content: string, title?: string) => void;
-  openSignModal: (content: string, title?: string) => void;
-  openChatModal: (title?: string, placeholder?: string) => void;
-  closeImageModal: () => void;
-  closeNoteModal: () => void;
-  closeSignModal: () => void;
-  closeChatModal: () => void;
+  /**
+   * Current modal state (null if no modal open)
+   */
+  modal: ModalState | null;
+  
+  /**
+   * Open a modal by component name with props
+   */
+  openModal: (component: string, props?: Record<string, unknown>) => void;
+  
+  /**
+   * Close the current modal
+   */
+  closeModal: () => void;
+  
+  /**
+   * Handle component open (used by interactable actions)
+   * Converts component props to the right format for predefined components
+   */
   handleComponentOpen: (component: string, props?: Record<string, unknown>) => void;
 }
 
 /**
  * Hook for managing module modal states
+ * Uses a single generic modal state for all component types
  */
 export function useModuleModals(): UseModuleModalsReturn {
-  const [imageModal, setImageModal] = useState<ImageModalState | null>(null);
-  const [noteModal, setNoteModal] = useState<NoteModalState | null>(null);
-  const [signModal, setSignModal] = useState<SignModalState | null>(null);
-  const [chatModal, setChatModal] = useState<ChatModalState | null>(null);
+  const [modal, setModal] = useState<ModalState | null>(null);
 
-  const openImageModal = (url: string, title?: string) => {
-    setImageModal({ url, title });
+  const openModal = (component: string, props?: Record<string, unknown>) => {
+    setModal({ component, props: props || {} });
   };
 
-  const openNoteModal = (content: string, title?: string) => {
-    setNoteModal({ content, title });
+  const closeModal = () => {
+    setModal(null);
   };
-
-  const openSignModal = (content: string, title?: string) => {
-    setSignModal({ content, title });
-  };
-
-  const openChatModal = (title?: string, placeholder?: string) => {
-    setChatModal({ title, placeholder });
-  };
-
-  const closeImageModal = () => setImageModal(null);
-  const closeNoteModal = () => setNoteModal(null);
-  const closeSignModal = () => setSignModal(null);
-  const closeChatModal = () => setChatModal(null);
 
   const handleComponentOpen = (component: string, props?: Record<string, unknown>) => {
+    // For predefined components, normalize props to match what the component expects
+    const normalizedProps: Record<string, unknown> = { ...props };
+
+    // Apply defaults for predefined components if props are missing
     switch (component) {
       case 'ChatWindow':
-        openChatModal(
-          (props?.title as string) || 'AI Companion',
-          (props?.placeholder as string) || 'Ask me anything...'
-        );
+        if (!normalizedProps.title) {
+          normalizedProps.title = 'AI Companion';
+        }
+        if (!normalizedProps.placeholder) {
+          normalizedProps.placeholder = 'Ask me anything...';
+        }
         break;
-      case 'SignViewer':
-        openSignModal(
-          (props?.content as string) || '',
-          props?.title as string | undefined
-        );
-        break;
-      case 'NoteViewer':
-        openNoteModal(
-          (props?.content as string) || '',
-          props?.title as string | undefined
-        );
-        break;
-      case 'ImageViewer':
-        openImageModal(
-          (props?.imageUrl as string) || '',
-          props?.title as string | undefined
-        );
-        break;
-      default:
-        console.warn(
-          `[ModuleEngine] Unknown component "${component}" requested. ` +
-          `Predefined components: ChatWindow, SignViewer, NoteViewer, ImageViewer. ` +
-          `Custom components need to be handled by module-specific code.`,
-          { component, props }
-        );
+      // Other predefined components use props as-is
     }
+
+    openModal(component, normalizedProps);
   };
 
   return {
-    imageModal,
-    noteModal,
-    signModal,
-    chatModal,
-    openImageModal,
-    openNoteModal,
-    openSignModal,
-    openChatModal,
-    closeImageModal,
-    closeNoteModal,
-    closeSignModal,
-    closeChatModal,
+    modal,
+    openModal,
+    closeModal,
     handleComponentOpen,
   };
 }

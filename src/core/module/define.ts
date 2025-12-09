@@ -13,12 +13,14 @@ export function defineModule(options: {
   config: ModuleConfig;
   content: ModuleContent;
   handlers?: ModuleHandlers;
+  components?: Record<string, import('./types/index.js').ComponentRenderer>;
 }): ModuleDefinition {
   return {
     id: options.id,
     config: options.config,
     content: options.content,
     handlers: options.handlers,
+    components: options.components,
   };
 }
 

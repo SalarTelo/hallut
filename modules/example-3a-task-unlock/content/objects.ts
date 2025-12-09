@@ -7,7 +7,7 @@
 import {
   createObject,
   showNoteViewer,
-  pos,
+  position,
 } from '@builders/index.js';
 
 /**
@@ -16,9 +16,9 @@ import {
 export const infoSign = createObject({
   id: 'info-sign',
   name: 'Information Sign',
-  position: pos(20, 80),
+  position: position(20, 80),
   avatar: 'note',
-  interaction: showNoteViewer({
+  onInteract: showNoteViewer({
     content: 'This module was unlocked by completing the "Unlock New Module" task in the Progression Example. This demonstrates how modules can be unlocked through task completion!',
     title: 'Task Unlock Example',
   }),

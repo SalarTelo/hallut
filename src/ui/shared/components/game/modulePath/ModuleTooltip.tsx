@@ -1,6 +1,6 @@
 /**
- * Modulverktygstips-komponent
- * Verktygstips som visas vid hovring över en modulnod
+ * Module tooltip component
+ * Tooltip shown when hovering over a module node
  */
 
 import { useEffect, useState, useMemo, useRef } from 'react';
@@ -35,7 +35,7 @@ export interface ModuleTooltipProps {
 }
 
 /**
- * Modulverktygstips-komponent
+ * Module tooltip component
  */
 const STATUS_COLORS = {
   locked: 'text-red-400',
@@ -58,23 +58,23 @@ const STATUS_BORDER_COLORS = {
 function getRequirementDisplay(detail: RequirementDetail): RequirementDisplay {
   switch (detail.type) {
     case 'password':
-      return { prefix: 'Lösenord krävs' };
+      return { prefix: 'Password required' };
     case 'module-complete':
       if (detail.moduleId) {
         const module = getModule(detail.moduleId);
         const moduleDisplayName = module?.config.manifest.name || formatModuleName(detail.moduleId);
-        return { prefix: 'Klarar', subject: moduleDisplayName };
+        return { prefix: 'Complete', subject: moduleDisplayName };
       }
-      return { prefix: 'Klarar modul' };
+      return { prefix: 'Complete module' };
     case 'task-complete':
       if (detail.taskName) {
-        return { prefix: 'Klarar', subject: detail.taskName };
+        return { prefix: 'Complete', subject: detail.taskName };
       }
-      return { prefix: 'Klarar uppgift' };
+      return { prefix: 'Complete task' };
     case 'state-check':
-      return { prefix: 'Tillståndskrav' };
+      return { prefix: 'State requirement' };
     case 'custom':
-      return { prefix: 'Anpassat krav' };
+      return { prefix: 'Custom requirement' };
     default:
       return { prefix: '' };
   }
@@ -351,11 +351,11 @@ export function ModuleTooltip({
     // Fallback to iconType
     switch (iconType) {
       case 'lock':
-        return [{ prefix: 'Lösenord krävs' }];
+        return [{ prefix: 'Password required' }];
       case 'shield':
-        return [{ prefix: 'Modulberoende' }];
+        return [{ prefix: 'Module dependency' }];
       case 'box':
-        return [{ prefix: 'Komplext krav' }];
+        return [{ prefix: 'Complex requirement' }];
       default:
         return [];
     }
@@ -428,7 +428,7 @@ export function ModuleTooltip({
                 className={STATUS_COLORS[statusKey]}
               />
               <span className={`text-[10px] ${STATUS_COLORS[statusKey]} font-bold leading-none`}>
-                {isLocked ? 'Låst' : isCompleted ? 'Slutförd' : 'Tillgänglig'}
+                {isLocked ? 'Locked' : isCompleted ? 'Completed' : 'Available'}
               </span>
             </div>
             
@@ -436,7 +436,7 @@ export function ModuleTooltip({
             {isLocked && lockRequirements.length > 0 && (
               <div className="space-y-1.5 pt-0.5">
                 <div className="text-[9px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5">
-                  Krav:
+                  Requirements:
                 </div>
                 {lockRequirements.map((req, index) => (
                   <div key={index} className="flex items-baseline gap-2 pl-1">

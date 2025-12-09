@@ -5,7 +5,7 @@
 
 import { useId } from 'react';
 import type { TextareaHTMLAttributes } from 'react';
-import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { useThemeBorderColor } from '../../hooks/useThemeBorderColor.js';
 import { DEFAULT_THEME } from '@config/constants.js';
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {

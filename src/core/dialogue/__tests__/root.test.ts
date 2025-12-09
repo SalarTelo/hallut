@@ -10,7 +10,7 @@ import {
   formatTaskChoice,
 } from '../root.js';
 import { createTask, textSubmission, textLengthValidator, success } from '@builders/task/index.js';
-import { dialogueNode, dialogueTree, taskActive } from '@builders/dialogue/index.js';
+import { createDialogueNode, createDialogueTree, taskActive } from '@builders/index.js';
 import { createModuleContext } from '@core/module/context.js';
 import type { NPC } from '@core/module/types/index.js';
 import type { ModuleData } from '@core/module/types/index.js';
@@ -69,11 +69,11 @@ describe('generateRootDialogue', () => {
 
   it('should generate root dialogue with active tasks', () => {
     // Add dialogue tree so "Talk to..." option appears
-    const greeting = dialogueNode({
+    const greeting = createDialogueNode({
       id: 'greeting',
       lines: ['Hello!'],
     });
-    npc.dialogueTree = dialogueTree()
+    npc.dialogueTree = createDialogueTree()
       .node(greeting)
       .build();
 
@@ -115,11 +115,11 @@ describe('generateRootDialogue', () => {
   });
 
   it('should include "Talk to..." if NPC has dialogue tree with nodes', () => {
-    const greeting = dialogueNode({
+    const greeting = createDialogueNode({
       id: 'greeting',
       lines: ['Hello!'],
     });
-    npc.dialogueTree = dialogueTree()
+    npc.dialogueTree = createDialogueTree()
       .node(greeting)
       .build();
 
@@ -208,15 +208,15 @@ describe('generateRootDialogue', () => {
   });
 
   it('should show "Talk to..." when NPC has dialogue tree with entry config', () => {
-    const greeting = dialogueNode({
+    const greeting = createDialogueNode({
       id: 'greeting',
       lines: ['Hello!'],
     });
-    const taskReady = dialogueNode({
+    const taskReady = createDialogueNode({
       id: 'task-ready',
       lines: ['Ready?'],
     });
-    npc.dialogueTree = dialogueTree()
+    npc.dialogueTree = createDialogueTree()
       .node(greeting)
       .node(taskReady)
       .configureEntry()
@@ -232,11 +232,11 @@ describe('generateRootDialogue', () => {
 
   it('should not show "Talk to..." if dialogue tree has nodes but no lines', () => {
     // Edge case: nodes exist but have no dialogue content
-    const emptyNode = dialogueNode({
+    const emptyNode = createDialogueNode({
       id: 'empty',
       lines: [], // No lines
     });
-    npc.dialogueTree = dialogueTree()
+    npc.dialogueTree = createDialogueTree()
       .node(emptyNode)
       .build();
 

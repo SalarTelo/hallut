@@ -22,7 +22,7 @@ export type StateRef<T extends Record<string, unknown> = Record<string, unknown>
  * 
  * @example
  * ```typescript
- * const guardState = stateRef<GuardState>(guardNPC);
+ * const guardState = createStateRef<GuardState>(guardNPC);
  * // Later, in an action:
  * (ctx) => { guardState(ctx).hasMet = true; }
  * ```
@@ -34,7 +34,7 @@ function isStringKey(prop: string | symbol): prop is string {
   return typeof prop === 'string';
 }
 
-export function stateRef<T extends Record<string, unknown> = Record<string, unknown>>(
+export function createStateRef<T extends Record<string, unknown> = Record<string, unknown>>(
   interactable: { id: string }
 ): StateRef<T> {
   return (context: ModuleContext) => {

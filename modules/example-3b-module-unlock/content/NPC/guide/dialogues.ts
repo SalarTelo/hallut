@@ -5,18 +5,18 @@
  */
 
 import {
-  dialogueTree,
-  dialogueNode,
+  createDialogueTree,
+  createDialogueNode,
   acceptTask,
   callFunction,
-} from '@builders/dialogue/index.js';
+} from '@builders/index.js';
 import { guideState } from './state.js';
 import { welcomeTask } from '../../tasks.js';
 
 /**
  * Dialogue node: First meeting
  */
-const firstGreeting = dialogueNode({
+const firstGreeting = createDialogueNode({
   lines: [
     'Hello!',
     'Welcome to the Module Unlock Example!',
@@ -51,7 +51,7 @@ const firstGreeting = dialogueNode({
 /**
  * Dialogue node: General greeting
  */
-const generalGreeting = dialogueNode({
+const generalGreeting = createDialogueNode({
   lines: [
     'Hello again!',
     'What can I help you with?',
@@ -75,7 +75,7 @@ const generalGreeting = dialogueNode({
 /**
  * Dialogue node: Task ready for submission
  */
-const taskReady = dialogueNode({
+const taskReady = createDialogueNode({
   task: welcomeTask,
   lines: [
     'Are you ready to submit your message?',
@@ -102,7 +102,7 @@ const taskReady = dialogueNode({
 /**
  * Dialogue node: Task complete
  */
-const taskComplete = dialogueNode({
+const taskComplete = createDialogueNode({
   lines: [
     'Excellent work!',
     'You completed the task in an unlocked module!',
@@ -119,7 +119,7 @@ const taskComplete = dialogueNode({
 /**
  * Guide dialogue tree
  */
-export const guideDialogueTree = dialogueTree()
+export const guideDialogueTree = createDialogueTree()
   .nodes(firstGreeting, generalGreeting, taskReady, taskComplete)
   .configureEntry()
     .when((ctx) => guideState(ctx).hasMet === true).use(generalGreeting)

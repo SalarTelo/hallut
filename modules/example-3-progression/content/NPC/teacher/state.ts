@@ -3,12 +3,12 @@
  * State management for the teacher NPC
  */
 
-import { stateRef } from '@builders/dialogue/index.js';
+import { createStateRef } from '@builders/index.js';
 
 /**
  * Teacher state reference
  */
-export const teacherState = stateRef({ id: 'teacher' });
+export const teacherState = createStateRef({ id: 'teacher' });
 
 /**
  * Teacher state type definition

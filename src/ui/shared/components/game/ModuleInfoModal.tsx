@@ -7,60 +7,60 @@
 import { useEffect, useState } from 'react';
 import { Modal } from '../overlays/Modal.js';
 import { PixelIcon } from '../icons/PixelIcon.js';
-import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
-import { getHeaderGradient, getFooterGradient } from '../utils/modalStyles.js';
+import { useThemeBorderColor } from '../../hooks/useThemeBorderColor.js';
+import { getHeaderGradient, getFooterGradient } from '../../utils/modalStyles.js';
 import { getModule } from '@core/module/registry.js';
 import type { ModuleDefinition } from '@core/module/types/index.js';
 
 export interface ModuleInfoModalProps {
   /**
-   * Om modalen är öppen
+   * Whether the modal is open
    */
   isOpen: boolean;
 
   /**
-   * Callback för att stänga modalen
+   * Callback to close the modal
    */
   onClose: () => void;
 
   /**
-   * Modul-ID
+   * Module ID
    */
   moduleId: string;
 
   /**
-   * Modulnamn (fallback om config inte laddas)
+   * Module name (fallback if config doesn't load)
    */
   moduleName: string;
 
   /**
-   * Modulbeskrivning/sammanfattning (fallback)
+   * Module description/summary (fallback)
    */
   description?: string;
 
   /**
-   * Om modulen är upplåst
+   * Whether the module is unlocked
    */
   isUnlocked: boolean;
 
   /**
-   * Om modulen är slutförd
+   * Whether the module is completed
    */
   isCompleted?: boolean;
 
   /**
-   * Callback när "Gå in i modul" klickas
+   * Callback when "Enter module" is clicked
    */
   onEnterModule: () => void;
 
   /**
-   * Kantfärg (standard från tema)
+   * Border color (default from theme)
    */
   borderColor?: string;
 }
 
 /**
- * Modulinformationsmodal-komponent
+ * Module info modal component
  */
 export function ModuleInfoModal({
   isOpen,
@@ -94,7 +94,7 @@ export function ModuleInfoModal({
   const getStatusInfo = () => {
     if (isCompleted) {
       return {
-        text: 'Slutförd',
+        text: 'Completed',
         iconType: 'check' as const,
         color: 'text-green-400',
         bgColor: 'bg-green-400/20',
@@ -103,7 +103,7 @@ export function ModuleInfoModal({
     }
     if (isUnlocked) {
       return {
-        text: 'Tillgänglig',
+        text: 'Available',
         iconType: 'play' as const,
         color: 'text-yellow-400',
         bgColor: 'bg-yellow-400/20',
@@ -111,7 +111,7 @@ export function ModuleInfoModal({
       };
     }
     return {
-      text: 'Låst',
+      text: 'Locked',
       iconType: 'lock' as const,
       color: 'text-red-400',
       bgColor: 'bg-red-400/20',
@@ -184,7 +184,7 @@ export function ModuleInfoModal({
             <div>
               <h3 className="text-xs font-bold text-yellow-400 mb-2 pixelated uppercase tracking-wider flex items-center gap-2" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.8)' }}>
                 <span className="w-1 h-4 bg-yellow-400 rounded-full" style={{ boxShadow: `0 0 6px ${borderColorValue}60` }}></span>
-                Om modulen
+                About the module
               </h3>
               <p className="pixelated text-gray-100 text-xs leading-relaxed" style={{ textShadow: '0 1px 1px rgba(0, 0, 0, 0.7)' }}>
                 {displayDescription}
@@ -204,7 +204,7 @@ export function ModuleInfoModal({
                 }}
               >
                 <div className="text-[10px] text-gray-300 mb-1 pixelated uppercase tracking-wide" style={{ textShadow: '0 1px 1px rgba(0, 0, 0, 0.6)' }}>
-                  Uppgifter
+                  Tasks
                 </div>
                 <div className="text-xl font-bold text-yellow-300 pixelated" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.8)' }}>
                   {taskCount}
@@ -219,7 +219,7 @@ export function ModuleInfoModal({
                 }}
               >
                 <div className="text-[10px] text-gray-300 mb-1 pixelated uppercase tracking-wide" style={{ textShadow: '0 1px 1px rgba(0, 0, 0, 0.6)' }}>
-                  Interaktiva objekt
+                  Interactable objects
                 </div>
                 <div className="text-xl font-bold text-yellow-300 pixelated" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.8)' }}>
                   {interactableCount}
@@ -232,7 +232,7 @@ export function ModuleInfoModal({
           {loading && (
             <div className="pt-3 border-t" style={{ borderColor: `${borderColorValue}30` }}>
               <p className="text-xs text-gray-300 pixelated text-center py-2" style={{ textShadow: '0 1px 1px rgba(0, 0, 0, 0.6)' }}>
-                Laddar modulinformation...
+                Loading module information...
               </p>
             </div>
           )}
@@ -267,7 +267,7 @@ export function ModuleInfoModal({
               e.currentTarget.style.color = '#d1d5db';
             }}
           >
-            Stäng
+            Close
           </button>
           {isUnlocked && (
             <button
@@ -288,7 +288,7 @@ export function ModuleInfoModal({
                 e.currentTarget.style.boxShadow = `0 2px 8px rgba(0, 0, 0, 0.4), 0 0 12px ${borderColorValue}40, inset 0 1px 0 rgba(255, 255, 255, 0.15)`;
               }}
             >
-              {isCompleted ? 'Gå tillbaka' : 'Gå in i modul'}
+              {isCompleted ? 'Go back' : 'Enter module'}
             </button>
           )}
         </div>

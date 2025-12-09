@@ -4,7 +4,7 @@
  */
 
 import type { HTMLAttributes, ReactNode } from 'react';
-import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { useThemeBorderColor } from '../../hooks/useThemeBorderColor.js';
 import { DEFAULT_THEME } from '@config/constants.js';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {

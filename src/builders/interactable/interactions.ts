@@ -92,3 +92,26 @@ export function showNote(content: string, title?: string): ObjectInteraction {
   };
 }
 
+/**
+ * Create Viewer Helper
+ * 
+ * Makes it easy to create custom viewer functions that work just like showNoteViewer()
+ * 
+ * @example
+ * ```typescript
+ * // Create a helper function for your custom viewer
+ * export const showMyCustomViewer = createViewer('MyCustomViewer');
+ * 
+ * // Use it just like showNoteViewer()
+ * onInteract: showMyCustomViewer({
+ *   title: 'Hello',
+ *   message: 'World',
+ * })
+ * ```
+ */
+export function createViewer<T extends Record<string, unknown> = Record<string, unknown>>(
+  componentName: string
+): (props: T) => ObjectInteraction {
+  return (props: T) => showComponent(componentName, props);
+}
+

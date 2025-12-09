@@ -4,13 +4,13 @@
  */
 
 // State reference
-export { stateRef, type StateRef } from './stateRef.js';
+export { createStateRef, type StateRef } from './stateRef.js';
 
 // Node creation
-export { dialogueNode, getNodeDefinition } from './nodes.js';
+export { createDialogueNode, getNodeDefinition } from './nodes.js';
 
 // Tree builder
-export { dialogueTree } from './tree.js';
+export { createDialogueTree } from './tree.js';
 
 // Conditions
 export {
@@ -35,5 +35,5 @@ export {
   closeDialogue,
 } from './actions.js';
 
-// Legacy builders removed - use dialogueTree() and dialogueNode() instead
+// Legacy builders removed - use createDialogueTree() and createDialogueNode() instead
 

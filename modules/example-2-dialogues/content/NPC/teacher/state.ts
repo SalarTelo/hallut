@@ -5,7 +5,7 @@
  * This demonstrates how NPCs can "remember" things about the player.
  */
 
-import { stateRef } from '@builders/dialogue/index.js';
+import { createStateRef } from '@builders/index.js';
 
 /**
  * Teacher state reference
@@ -13,7 +13,7 @@ import { stateRef } from '@builders/dialogue/index.js';
  * Use this to access and modify teacher-specific state in dialogues.
  * Example: teacherState(context).hasMet = true;
  */
-export const teacherState = stateRef({ id: 'teacher' });
+export const teacherState = createStateRef({ id: 'teacher' });
 
 /**
  * Teacher state type definition

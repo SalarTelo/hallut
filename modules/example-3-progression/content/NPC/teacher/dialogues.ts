@@ -5,18 +5,18 @@
  */
 
 import {
-  dialogueTree,
-  dialogueNode,
+  createDialogueTree,
+  createDialogueNode,
   acceptTask,
   callFunction,
-} from '@builders/dialogue/index.js';
+} from '@builders/index.js';
 import { teacherState } from './state.js';
 import { introTask } from '../../tasks.js';
 
 /**
  * Dialogue node: First meeting
  */
-const firstGreeting = dialogueNode({
+const firstGreeting = createDialogueNode({
   lines: [
     'Hello!',
     'Welcome to the Progression Example.',
@@ -50,7 +50,7 @@ const firstGreeting = dialogueNode({
 /**
  * Dialogue node: General greeting
  */
-const generalGreeting = dialogueNode({
+const generalGreeting = createDialogueNode({
   lines: [
     'Hello again!',
     'What can I help you with?',
@@ -74,7 +74,7 @@ const generalGreeting = dialogueNode({
 /**
  * Dialogue node: Task ready for submission
  */
-const taskReady = dialogueNode({
+const taskReady = createDialogueNode({
   task: introTask,
   lines: [
     'Are you ready to submit your introduction?',
@@ -101,7 +101,7 @@ const taskReady = dialogueNode({
 /**
  * Dialogue node: Task complete
  */
-const taskComplete = dialogueNode({
+const taskComplete = createDialogueNode({
   lines: [
     'Excellent work!',
     'You completed the introduction task successfully.',
@@ -119,7 +119,7 @@ const taskComplete = dialogueNode({
 /**
  * Teacher dialogue tree
  */
-export const teacherDialogueTree = dialogueTree()
+export const teacherDialogueTree = createDialogueTree()
   .nodes(firstGreeting, generalGreeting, taskReady, taskComplete)
   .configureEntry()
     .when((ctx) => teacherState(ctx).hasMet === true).use(generalGreeting)

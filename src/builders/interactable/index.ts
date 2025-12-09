@@ -4,7 +4,7 @@
  */
 
 // Position
-export { pos } from './position.js';
+export { position, pos } from './position.js';
 
 // Requirements
 export {
@@ -22,6 +22,7 @@ export {
   showImageViewer,
   showImage,
   showNote,
+  createViewer,
 } from './interactions.js';
 
 // NPC

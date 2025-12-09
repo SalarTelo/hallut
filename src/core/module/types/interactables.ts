@@ -109,7 +109,7 @@ export interface Object {
   avatar?: string;
   locked?: boolean;
   unlockRequirement?: UnlockRequirement | null;
-  interaction?: ObjectInteraction;
+  onInteract?: ObjectInteraction;
   getInteraction?: GetInteractionFunction;
 }
 
@@ -124,7 +124,7 @@ export interface Location {
   avatar?: string;
   locked?: boolean;
   unlockRequirement?: UnlockRequirement | null;
-  interaction?: ObjectInteraction;
+  onInteract?: ObjectInteraction;
   getInteraction?: GetInteractionFunction;
 }
 

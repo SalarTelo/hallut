@@ -1,18 +1,30 @@
 /**
  * Builders
- * Central export for all builders
+ * Central export for all builders - organized by concern
+ * 
+ * Each section handles one specific aspect of module creation.
+ * Import only what you need for your current task.
  */
 
-// Task builders
-export * from './task/index.js';
+// ============================================================================
+// NPCs - Creating Non-Player Characters
+// ============================================================================
 
-// Dialogue builders - export all except conflicting names
 export {
-  stateRef,
-  type StateRef,
-  dialogueNode,
+  createNPC,
+  type NPCOptions,
+} from './interactable/index.js';
+
+// ============================================================================
+// Dialogues - Creating conversation trees and dialogue systems
+// ============================================================================
+
+export {
+  createDialogueNode,
+  createDialogueTree,
   getNodeDefinition,
-  dialogueTree,
+  createStateRef,
+  type StateRef,
   taskActive,
   interactableStateCheck,
   moduleStateCheck,
@@ -34,11 +46,22 @@ export {
   stateCheck as dialogueStateCheck,
 } from './dialogue/conditions.js';
 
-// Interactable builders - export all except conflicting names
+// ============================================================================
+// Objects - Creating interactive objects
+// ============================================================================
+
 export {
-  pos,
-  taskComplete,
-  stateCheck,
+  createObject,
+  createNoteObject,
+  createImageObject,
+  type ObjectOptions,
+} from './interactable/index.js';
+
+// ============================================================================
+// Interactions - Defining what happens when objects are clicked
+// ============================================================================
+
+export {
   showComponent,
   showNoteViewer,
   showSignViewer,
@@ -46,20 +69,43 @@ export {
   showImageViewer,
   showImage,
   showNote,
-  createNPC,
-  type NPCOptions,
-  createObject,
-  createNoteObject,
-  createImageObject,
-  type ObjectOptions,
+  createViewer,
+} from './interactable/index.js';
+
+// ============================================================================
+// Locations - Creating location markers
+// ============================================================================
+
+export {
   createLocation,
   type LocationOptions,
 } from './interactable/index.js';
 
-// Re-export interactable moduleComplete with interactable prefix
+// ============================================================================
+// Tasks - Creating tasks and activities
+// ============================================================================
+
+export * from './task/index.js';
+
+// ============================================================================
+// Modules - Module configuration and setup
+// ============================================================================
+
+export * from './module/index.js';
+
+// ============================================================================
+// Utilities - Common helpers used across different concerns
+// ============================================================================
+
+// Position
+export { position, pos } from './interactable/index.js';
+
+// Requirements/unlock conditions
+export {
+  taskComplete,
+  stateCheck,
+} from './interactable/index.js';
+
 export {
   moduleComplete as interactableModuleComplete,
 } from './interactable/requirements.js';
-
-// Module builders
-export * from './module/index.js';

@@ -5,7 +5,7 @@
  * This demonstrates how NPCs can "remember" things about the player.
  */
 
-import { stateRef } from '@builders/dialogue/index.js';
+import { createStateRef } from '@builders/index.js';
 
 /**
  * Guide state reference
@@ -13,7 +13,7 @@ import { stateRef } from '@builders/dialogue/index.js';
  * Use this to access and modify guide-specific state in dialogues.
  * Example: guideState(context).hasMet = true;
  */
-export const guideState = stateRef({ id: 'guide' });
+export const guideState = createStateRef({ id: 'guide' });
 
 /**
  * Guide state type definition

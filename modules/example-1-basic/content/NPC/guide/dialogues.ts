@@ -9,11 +9,11 @@
  */
 
 import {
-  dialogueTree,
-  dialogueNode,
+  createDialogueTree,
+  createDialogueNode,
   acceptTask,
   callFunction,
-} from '@builders/dialogue/index.js';
+} from '@builders/index.js';
 import { guideState } from './state.js';
 import { greetingTask } from '../../tasks.js';
 
@@ -22,7 +22,7 @@ import { greetingTask } from '../../tasks.js';
  * 
  * Shown when the player first interacts with the guide.
  */
-const firstGreeting = dialogueNode({
+const firstGreeting = createDialogueNode({
   lines: [
     'Hello!',
     'Welcome to the Basic Example module.',
@@ -58,7 +58,7 @@ const firstGreeting = dialogueNode({
  * 
  * Shown when the player has met the guide before.
  */
-const generalGreeting = dialogueNode({
+const generalGreeting = createDialogueNode({
   lines: [
     'Hello again!',
     'What can I help you with?',
@@ -85,7 +85,7 @@ const generalGreeting = dialogueNode({
  * This is shown when the player has the task and is ready to submit.
  * The dialogue tree builder handles task-specific dialogue entry automatically.
  */
-const taskReady = dialogueNode({
+const taskReady = createDialogueNode({
   task: greetingTask, // Link this dialogue to the task
   lines: [
     'Are you ready to submit your greeting?',
@@ -114,7 +114,7 @@ const taskReady = dialogueNode({
  * 
  * This is shown after the task is successfully completed.
  */
-const taskComplete = dialogueNode({
+const taskComplete = createDialogueNode({
   lines: [
     'Excellent work!',
     'You completed the greeting task successfully.',
@@ -138,7 +138,7 @@ const taskComplete = dialogueNode({
  * Task-specific nodes (taskReady, taskComplete) are automatically shown
  * based on task state by the dialogue system.
  */
-export const guideDialogueTree = dialogueTree()
+export const guideDialogueTree = createDialogueTree()
   .nodes(firstGreeting, generalGreeting, taskReady, taskComplete)
   .configureEntry()
     .when((ctx) => guideState(ctx).hasMet === true).use(generalGreeting)

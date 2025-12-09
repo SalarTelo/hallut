@@ -29,6 +29,16 @@ export interface ModuleHandlers {
 }
 
 /**
+ * Component renderer for custom modals
+ */
+export type ComponentRenderer = (props: {
+  isOpen: boolean;
+  onClose: () => void;
+  props: Record<string, unknown>;
+  borderColor?: string;
+}) => import('react').ReactNode;
+
+/**
  * Module definition
  */
 export interface ModuleDefinition {
@@ -36,6 +46,12 @@ export interface ModuleDefinition {
   config: ModuleConfig;
   content: ModuleContent;
   handlers?: ModuleHandlers;
+  /**
+   * Optional custom component renderers for modals
+   * Keys are component names, values are render functions
+   * Use these to create custom viewers that work like showNoteViewer()
+   */
+  components?: Record<string, ComponentRenderer>;
 }
 
 /**
@@ -46,5 +62,6 @@ export interface ModuleData {
   config: ModuleConfig;
   interactables: Interactable[];
   tasks: Task[];
+  components?: Record<string, ComponentRenderer>;
 }
 

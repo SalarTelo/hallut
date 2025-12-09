@@ -12,7 +12,7 @@ import type {
   DialogueNodeDefinition,
 } from '@core/dialogue/types.js';
 import type { ModuleContext } from '@core/module/types/index.js';
-import { dialogueNode, getNodeDefinition } from './nodes.js';
+import { createDialogueNode, getNodeDefinition } from './nodes.js';
 
 /**
  * Dialogue tree builder
@@ -29,7 +29,7 @@ class DialogueTreeBuilder {
    * Extracts edges automatically from node definition
    */
   node(nodeOrDefinition: DialogueNode | DialogueNodeDefinition): DialogueTreeBuilder {
-    // Handle both DialogueNode (from dialogueNode()) and raw definitions
+    // Handle both DialogueNode (from createDialogueNode()) and raw definitions
     let node: DialogueNode;
     let definition: DialogueNodeDefinition;
 
@@ -54,7 +54,7 @@ class DialogueTreeBuilder {
     } else {
       // It's a DialogueNodeDefinition
       definition = nodeOrDefinition;
-      node = dialogueNode(definition);
+      node = createDialogueNode(definition);
     }
 
     // Store definition for runtime resolution
@@ -134,7 +134,7 @@ class DialogueTreeBuilder {
             targetNode = choiceDef.next;
             // Ensure target node is in tree (recursively add it)
             if (targetNode && !this.nodeList.find(n => n.id === targetNode!.id)) {
-              // It's already a DialogueNode (from dialogueNode() call)
+              // It's already a DialogueNode (from createDialogueNode() call)
               // Add it to the tree so its definition is stored
               this.node(targetNode);
             }
@@ -328,7 +328,7 @@ class DialogueEntryConditionBuilder {
 /**
  * Create a dialogue tree builder
  */
-export function dialogueTree(): DialogueTreeBuilder {
+export function createDialogueTree(): DialogueTreeBuilder {
   return new DialogueTreeBuilder();
 }
 

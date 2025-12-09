@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { ErrorBoundary } from '../ui/shared/components/ErrorBoundary.js';
+import { ErrorBoundary } from '@ui/shared/components/feedback/index.js';
 import { ModuleSelection } from './components/ModuleSelection.js';
 import { ModuleEngine } from './components/ModuleEngine.js';
 import { FullScreenLayout } from '../ui/shared/components/layouts/index.js';

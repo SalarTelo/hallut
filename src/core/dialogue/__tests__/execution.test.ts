@@ -11,7 +11,7 @@ import {
   executeActions,
   getAvailableChoices,
 } from '../execution.js';
-import { dialogueNode, dialogueTree, taskActive, taskComplete, acceptTask, setState, setInteractableState } from '@builders/dialogue/index.js';
+import { createDialogueNode, createDialogueTree, taskActive, taskComplete, acceptTask, setState, setInteractableState } from '@builders/index.js';
 import { createTask, textSubmission, textLengthValidator, success } from '@builders/task/index.js';
 import { createModuleContext } from '@core/module/context.js';
 import type { NPC } from '@core/module/types/index.js';
@@ -34,12 +34,12 @@ describe('getInitialDialogueNode', () => {
       validate: textLengthValidator(5, () => success('done', 'done')),
     });
 
-    const greeting = dialogueNode({
+    const greeting = createDialogueNode({
       id: 'greeting',
       lines: ['Hello!'],
     });
 
-    const tree = dialogueTree()
+    const tree = createDialogueTree()
       .node(greeting)
       .build();
 
@@ -75,10 +75,10 @@ describe('getInitialDialogueNode', () => {
   });
 
   it('should use entry node if specified', () => {
-    const entryNode = dialogueNode({ id: 'entry', lines: ['Entry'] });
-    const tree = dialogueTree()
+    const entryNode = createDialogueNode({ id: 'entry', lines: ['Entry'] });
+    const tree = createDialogueTree()
       .node(entryNode)
-      .node(dialogueNode({ id: 'other', lines: ['Other'] }))
+      .node(createDialogueNode({ id: 'other', lines: ['Other'] }))
       .build();
     tree.entry = entryNode;
 
@@ -90,10 +90,10 @@ describe('getInitialDialogueNode', () => {
   });
 
   it('should evaluate entry conditions', () => {
-    const taskReady = dialogueNode({ id: 'task-ready', lines: ['Ready?'] });
-    const greeting = dialogueNode({ id: 'greeting', lines: ['Hello'] });
+    const taskReady = createDialogueNode({ id: 'task-ready', lines: ['Ready?'] });
+    const greeting = createDialogueNode({ id: 'greeting', lines: ['Hello'] });
 
-    const tree = dialogueTree()
+    const tree = createDialogueTree()
       .node(greeting)
       .node(taskReady)
       .configureEntry()
@@ -122,7 +122,7 @@ describe('getInitialDialogueNode', () => {
   });
 
   it('should handle entry node with next: null edges', () => {
-    const entryNode = dialogueNode({
+    const entryNode = createDialogueNode({
       id: 'entry',
       lines: ['Entry'],
       choices: {
@@ -133,7 +133,7 @@ describe('getInitialDialogueNode', () => {
       },
     });
 
-    const tree = dialogueTree()
+    const tree = createDialogueTree()
       .node(entryNode)
       .build();
     tree.entry = entryNode;
@@ -153,12 +153,12 @@ describe('getNextDialogueNode', () => {
   let moduleData: ModuleData;
 
   beforeEach(() => {
-    const nextNode = dialogueNode({
+    const nextNode = createDialogueNode({
       id: 'next',
       lines: ['Next'],
     });
 
-    currentNode = dialogueNode({
+    currentNode = createDialogueNode({
       id: 'current',
       lines: ['Current'],
       choices: {
@@ -169,7 +169,7 @@ describe('getNextDialogueNode', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(currentNode)
       .node(nextNode)
       .build();
@@ -199,7 +199,7 @@ describe('getNextDialogueNode', () => {
   });
 
   it('should return null when edge has next: null (close dialogue)', () => {
-    const currentNode = dialogueNode({
+    const currentNode = createDialogueNode({
       id: 'current',
       lines: ['Current'],
       choices: {
@@ -210,7 +210,7 @@ describe('getNextDialogueNode', () => {
       },
     });
 
-    const tree = dialogueTree()
+    const tree = createDialogueTree()
       .node(currentNode)
       .build();
 
@@ -227,16 +227,8 @@ describe('getNextDialogueNode', () => {
       validate: () => success('done', 'done'),
     });
 
-    const currentNode = dialogueNode({
-      id: 'current',
-      lines: ['Current'],
-      choices: {
-        close: { text: 'Close' },
-      },
-    });
-
     const condition = taskComplete(testTask);
-    const currentNodeWithCondition = dialogueNode({
+    const currentNodeWithCondition = createDialogueNode({
       id: 'current',
       lines: ['Current'],
       choices: {
@@ -248,7 +240,7 @@ describe('getNextDialogueNode', () => {
       },
     });
 
-    const tree = dialogueTree()
+    const tree = createDialogueTree()
       .node(currentNodeWithCondition)
       .build();
 
@@ -268,7 +260,7 @@ describe('getNextDialogueNode', () => {
     });
 
     const condition = taskComplete(testTask);
-    const currentNode = dialogueNode({
+    const currentNode = createDialogueNode({
       id: 'current',
       lines: ['Current'],
       choices: {
@@ -280,7 +272,7 @@ describe('getNextDialogueNode', () => {
       },
     });
 
-    const tree = dialogueTree()
+    const tree = createDialogueTree()
       .node(currentNode)
       .build();
 
@@ -299,10 +291,10 @@ describe('getNextDialogueNode', () => {
       validate: () => success('done', 'done'),
     });
 
-    const nextNode = dialogueNode({ id: 'next', lines: ['Next'] });
+    const nextNode = createDialogueNode({ id: 'next', lines: ['Next'] });
     const condition = taskComplete(testTask);
 
-    const currentNodeWithCondition = dialogueNode({
+    const currentNodeWithCondition = createDialogueNode({
       id: 'current',
       lines: ['Current'],
       choices: {
@@ -314,7 +306,7 @@ describe('getNextDialogueNode', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(currentNodeWithCondition)
       .node(nextNode)
       .build();
@@ -334,10 +326,10 @@ describe('getNextDialogueNode', () => {
       validate: () => success('done', 'done'),
     });
 
-    const nextNode = dialogueNode({ id: 'next', lines: ['Next'] });
+    const nextNode = createDialogueNode({ id: 'next', lines: ['Next'] });
     const condition = taskComplete(testTask);
 
-    const currentNodeWithCondition = dialogueNode({
+    const currentNodeWithCondition = createDialogueNode({
       id: 'current',
       lines: ['Current'],
       choices: {
@@ -349,7 +341,7 @@ describe('getNextDialogueNode', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(currentNodeWithCondition)
       .node(nextNode)
       .build();
@@ -584,7 +576,7 @@ describe('getAvailableChoices', () => {
   let moduleData: ModuleData;
 
   beforeEach(() => {
-    node = dialogueNode({
+    node = createDialogueNode({
       id: 'test-node',
       lines: ['Choose'],
       choices: {
@@ -609,11 +601,11 @@ describe('getAvailableChoices', () => {
   });
 
   it('should return all choices when no conditions', () => {
-    const target1 = dialogueNode({ id: 'target1', lines: ['Target 1'] });
-    const target2 = dialogueNode({ id: 'target2', lines: ['Target 2'] });
-    const target3 = dialogueNode({ id: 'target3', lines: ['Target 3'] });
+    const target1 = createDialogueNode({ id: 'target1', lines: ['Target 1'] });
+    const target2 = createDialogueNode({ id: 'target2', lines: ['Target 2'] });
+    const target3 = createDialogueNode({ id: 'target3', lines: ['Target 3'] });
 
-    const nodeWithChoices = dialogueNode({
+    const nodeWithChoices = createDialogueNode({
       id: 'node',
       lines: ['Node'],
       choices: {
@@ -632,7 +624,7 @@ describe('getAvailableChoices', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(nodeWithChoices)
       .node(target1)
       .node(target2)
@@ -656,7 +648,7 @@ describe('getAvailableChoices', () => {
     });
 
     // Create node with only the choices we're testing
-    const testNode = dialogueNode({
+    const testNode = createDialogueNode({
       id: 'test-node',
       lines: ['Choose'],
       choices: {
@@ -665,11 +657,11 @@ describe('getAvailableChoices', () => {
       },
     });
 
-    const target1 = dialogueNode({ id: 'target1', lines: ['Target 1'] });
-    const target2 = dialogueNode({ id: 'target2', lines: ['Target 2'] });
+    const target1 = createDialogueNode({ id: 'target1', lines: ['Target 1'] });
+    const target2 = createDialogueNode({ id: 'target2', lines: ['Target 2'] });
     const condition = taskComplete(testTask);
 
-    const testNodeWithChoices = dialogueNode({
+    const testNodeWithChoices = createDialogueNode({
       id: 'test',
       lines: ['Test'],
       choices: {
@@ -685,7 +677,7 @@ describe('getAvailableChoices', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(testNodeWithChoices)
       .node(target1)
       .node(target2)
@@ -702,7 +694,7 @@ describe('getAvailableChoices', () => {
   });
 
   it('should include actions in available choices', () => {
-    const target = dialogueNode({ id: 'target', lines: ['Target'] });
+    const target = createDialogueNode({ id: 'target', lines: ['Target'] });
     const actions = [acceptTask(createTask({
       id: 'task',
       name: 'Task',
@@ -711,7 +703,7 @@ describe('getAvailableChoices', () => {
       validate: () => success('done', 'done'),
     }))];
 
-    const nodeWithActions = dialogueNode({
+    const nodeWithActions = createDialogueNode({
       id: 'node',
       lines: ['Node'],
       choices: {
@@ -723,7 +715,7 @@ describe('getAvailableChoices', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(nodeWithActions)
       .node(target)
       .build();
@@ -733,12 +725,12 @@ describe('getAvailableChoices', () => {
   });
 
   it('should return empty array for node with no choices', () => {
-    const nodeWithoutChoices = dialogueNode({
+    const nodeWithoutChoices = createDialogueNode({
       id: 'no-choices',
       lines: ['No choices'],
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(nodeWithoutChoices)
       .build();
 
@@ -747,7 +739,7 @@ describe('getAvailableChoices', () => {
   });
 
   it('should include choice with next: null in available choices', () => {
-    const testNode = dialogueNode({
+    const testNode = createDialogueNode({
       id: 'test-node',
       lines: ['Choose'],
       choices: {
@@ -758,7 +750,7 @@ describe('getAvailableChoices', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(testNode)
       .build();
 
@@ -778,7 +770,7 @@ describe('getAvailableChoices', () => {
     });
 
     const actions = [acceptTask(testTask)];
-    const testNode = dialogueNode({
+    const testNode = createDialogueNode({
       id: 'test-node',
       lines: ['Choose'],
       choices: {
@@ -790,7 +782,7 @@ describe('getAvailableChoices', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(testNode)
       .build();
 
@@ -809,7 +801,7 @@ describe('getAvailableChoices', () => {
     });
 
     const condition = taskComplete(testTask);
-    const testNode = dialogueNode({
+    const testNode = createDialogueNode({
       id: 'test-node',
       lines: ['Choose'],
       choices: {
@@ -825,7 +817,7 @@ describe('getAvailableChoices', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(testNode)
       .build();
 
@@ -846,7 +838,7 @@ describe('getAvailableChoices', () => {
     });
 
     const condition = taskComplete(testTask);
-    const testNode = dialogueNode({
+    const testNode = createDialogueNode({
       id: 'test-node',
       lines: ['Choose'],
       choices: {
@@ -858,7 +850,7 @@ describe('getAvailableChoices', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(testNode)
       .build();
 
@@ -882,7 +874,7 @@ describe('getAvailableChoices', () => {
       acceptTask(testTask),
       setState('flag', true),
     ];
-    const testNode = dialogueNode({
+    const testNode = createDialogueNode({
       id: 'test-node',
       lines: ['Choose'],
       choices: {
@@ -894,7 +886,7 @@ describe('getAvailableChoices', () => {
       },
     });
 
-    tree = dialogueTree()
+    tree = createDialogueTree()
       .node(testNode)
       .build();
 

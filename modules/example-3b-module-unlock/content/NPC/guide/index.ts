@@ -4,7 +4,7 @@
  * Simple NPC explaining this module was unlocked via module completion.
  */
 
-import { createNPC, pos } from '@builders/index.js';
+import { createNPC, position } from '@builders/index.js';
 import { welcomeTask, completionTask } from '../../tasks.js';
 import { guideDialogueTree } from './dialogues.js';
 
@@ -14,7 +14,7 @@ import { guideDialogueTree } from './dialogues.js';
 export const guideNPC = createNPC({
   id: 'guide',
   name: 'Guide',
-  position: pos(50, 50),
+  position: position(50, 50),
   avatar: '👤',
   tasks: [welcomeTask, completionTask],
   dialogueTree: guideDialogueTree,

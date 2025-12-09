@@ -3,12 +3,12 @@
  * State management for the guide NPC
  */
 
-import { stateRef } from '@builders/dialogue/index.js';
+import { createStateRef } from '@builders/index.js';
 
 /**
  * Guide state reference
  */
-export const guideState = stateRef({ id: 'guide' });
+export const guideState = createStateRef({ id: 'guide' });
 
 /**
  * Guide state type definition

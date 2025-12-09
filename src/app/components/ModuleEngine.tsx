@@ -7,28 +7,32 @@
  */
 
 import { useInteractableActions } from '@app/hooks/index.js';
-import { getThemeValue } from '../../shared/theme.js';
+import { getThemeValue } from '../../shared/index.js';
 import { InteractableView } from '@ui/views/InteractableView.js';
 import { WelcomeView } from '@ui/views/WelcomeView.js';
 import { LoadingState } from '@ui/shared/components/feedback/index.js';
 import { ErrorDisplay } from '@ui/shared/components/feedback/index.js';
-import { useModuleLoader } from './ModuleEngine/hooks/useModuleLoader.js';
-import { useModuleViews } from './ModuleEngine/hooks/useModuleViews.js';
-import { useModuleModals } from './ModuleEngine/hooks/useModuleModals.js';
-import { TaskOverlay } from './ModuleEngine/components/TaskOverlay.js';
-import { DialogueOverlay } from './ModuleEngine/components/DialogueOverlay.js';
-import { ContentModals } from './ModuleEngine/components/ContentModals.js';
-import { createDialogueContext } from './ModuleEngine/utils/dialogueHelpers.js';
-import type { ModuleEngineProps } from './ModuleEngine/types.js';
+import { useModuleLoader } from '@app/components/ModuleEngine/hooks/index.js';
+import { useModuleViews } from '@app/components/ModuleEngine/hooks/index.js';
+import { useModuleModals } from '@app/components/ModuleEngine/hooks/index.js';
+import { TaskOverlay, DialogueOverlay, ContentModals } from '@app/components/ModuleEngine/components/index.js';
+import { createDialogueContext } from '@app/components/ModuleEngine/utils/index.js';
+import type { ModuleEngineProps } from '@app/components/ModuleEngine/types.js';
 
-export type { ModuleEngineProps } from './ModuleEngine/types.js';
+export type { ModuleEngineProps };
 
 /**
  * Module Engine component
  */
-export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEngineProps) {
+export function ModuleEngine({ moduleId, locale = 'sv', onExit, customComponents }: ModuleEngineProps) {
   // Load module data
   const { moduleData, loading, error } = useModuleLoader(moduleId);
+  
+  // Merge module components with manually provided customComponents (manual takes precedence)
+  const allCustomComponents = {
+    ...moduleData?.components,
+    ...customComponents,
+  };
 
   // Manage views and navigation
   const {
@@ -46,15 +50,9 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
 
   // Manage modal states
   const {
-    imageModal,
-    noteModal,
-    signModal,
-    chatModal,
+    modal,
     handleComponentOpen,
-    closeImageModal,
-    closeNoteModal,
-    closeSignModal,
-    closeChatModal,
+    closeModal,
   } = useModuleModals();
 
   // Handle interactable actions
@@ -158,15 +156,10 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit }: ModuleEnginePr
 
       {/* Content modals */}
       <ContentModals
-        imageModal={imageModal}
-        noteModal={noteModal}
-        signModal={signModal}
-        chatModal={chatModal}
+        modal={modal}
+        onClose={closeModal}
         borderColor={borderColor}
-        onCloseImage={closeImageModal}
-        onCloseNote={closeNoteModal}
-        onCloseSign={closeSignModal}
-        onCloseChat={closeChatModal}
+        customComponents={Object.keys(allCustomComponents).length > 0 ? allCustomComponents : undefined}
       />
     </>
   );

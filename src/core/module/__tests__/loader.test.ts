@@ -11,8 +11,8 @@ import {
 import { registerModule } from '../registry.js';
 import { defineModule } from '../define.js';
 import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/module/index.js';
-import { createNPC, createObject, showNoteViewer, pos } from '@builders/interactable/index.js';
-import { dialogueTree, dialogueNode } from '@builders/dialogue/index.js';
+import { createNPC, createObject, showNoteViewer, position } from '@builders/index.js';
+import { createDialogueTree, createDialogueNode } from '@builders/index.js';
 import { createTask, textSubmission } from '@builders/task/index.js';
 import type { ModuleDefinition } from '@core/module/types/index.js';
 import { ErrorCode, ModuleError } from '@core/errors.js';
@@ -119,23 +119,23 @@ describe('Module Loader', () => {
       const npc = createNPC({
         id: 'test-npc',
         name: 'Test NPC',
-        position: pos(10, 10),
+        position: position(10, 10),
         avatar: '🧑',
-        dialogueTree: dialogueTree()
-          .node(dialogueNode({
+        dialogueTree: createDialogueTree()
+          .node(createDialogueNode({
             id: 'greeting',
             lines: ['Hello!'],
           }))
           .build(),
       });
 
-      const objectDialogueTree = dialogueTree()
-        .node(dialogueNode({
+      const objectDialogueTree = createDialogueTree()
+        .node(createDialogueNode({
           id: 'object-dialogue',
           lines: ['This is an object.'],
         }))
         .configureEntry()
-          .default(dialogueNode({
+          .default(createDialogueNode({
             id: 'object-dialogue',
             lines: ['This is an object.'],
           }))
@@ -144,9 +144,9 @@ describe('Module Loader', () => {
       const object = createObject({
         id: 'test-object',
         name: 'Test Object',
-        position: pos(20, 20),
+        position: position(20, 20),
         avatar: '📦',
-        interaction: showNoteViewer({
+        onInteract: showNoteViewer({
           content: 'This is an object.',
           title: 'Test Object',
         }),
@@ -209,14 +209,14 @@ describe('Module Loader', () => {
       const npc = createNPC({
         id: 'multi-npc',
         name: 'Multi NPC',
-        position: pos(10, 10),
+        position: position(10, 10),
         avatar: '🧑',
-        dialogueTree: dialogueTree()
-          .node(dialogueNode({
+        dialogueTree: createDialogueTree()
+          .node(createDialogueNode({
             id: 'greeting',
             lines: ['Hello!'],
           }))
-          .node(dialogueNode({
+          .node(createDialogueNode({
             id: 'farewell',
             lines: ['Goodbye!'],
           }))

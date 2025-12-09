@@ -13,6 +13,7 @@ export interface UseModuleLoaderReturn {
   moduleData: ModuleData | null;
   loading: boolean;
   error: Error | null;
+  components?: Record<string, import('@core/module/types/index.js').ComponentRenderer>;
 }
 
 /**

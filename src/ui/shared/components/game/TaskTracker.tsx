@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import type { Task } from '@core/task/types.js';
 import { PixelIcon } from '../icons/PixelIcon.js';
-import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { useThemeBorderColor } from '../../hooks/useThemeBorderColor.js';
 
 export interface TaskTrackerProps {
   activeTask: Task | null;

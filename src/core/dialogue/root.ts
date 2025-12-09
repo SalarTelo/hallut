@@ -3,7 +3,7 @@
  * Auto-generates root dialogue for NPCs
  */
 
-import { dialogueNode } from '@builders/dialogue/index.js';
+import { createDialogueNode } from '@builders/index.js';
 import { getActiveTasks } from '../task/availability.js';
 import { evaluateCondition } from './execution.js';
 import type { NPC } from '../module/types/index.js';
@@ -65,7 +65,7 @@ export function generateRootDialogue(
   // Add goodbye
   choices.goodbye = { text: 'Goodbye' };
 
-  return dialogueNode({
+  return createDialogueNode({
     id: `${npc.id}_root`,
     lines: [`Hello! What would you like to do?`],
     choices,

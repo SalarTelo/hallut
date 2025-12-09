@@ -3,12 +3,12 @@
  * State management for the expert NPC
  */
 
-import { stateRef } from '@builders/dialogue/index.js';
+import { createStateRef } from '@builders/index.js';
 
 /**
  * Expert state reference
  */
-export const expertState = stateRef({ id: 'expert' });
+export const expertState = createStateRef({ id: 'expert' });
 
 /**
  * Expert state type definition

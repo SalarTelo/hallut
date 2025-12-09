@@ -7,8 +7,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Modal } from '../overlays/Modal.js';
 import { PixelIcon } from '../icons/PixelIcon.js';
-import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
-import { getHeaderGradient, getSeparatorGradient } from '../utils/modalStyles.js';
+import { useThemeBorderColor } from '../../hooks/useThemeBorderColor.js';
+import { getHeaderGradient, getSeparatorGradient } from '../../utils/modalStyles.js';
 import { streamChatMessage, type OllamaMessage } from '@services/ollamaService.js';
 
 export interface ChatMessage {
@@ -20,58 +20,58 @@ export interface ChatMessage {
 
 export interface ChatWindowProps {
   /**
-   * Om chattfönstret är öppet
+   * Whether the chat window is open
    */
   isOpen: boolean;
 
   /**
-   * Callback för att stänga chatten
+   * Callback to close the chat
    */
   onClose: () => void;
 
   /**
-   * Chattitel (standard: "AI-kompanjon")
+   * Chat title (default: "AI Companion")
    */
   title?: string;
 
   /**
-   * Initiala meddelanden
+   * Initial messages
    */
   messages?: ChatMessage[];
 
   /**
-   * Callback när meddelande skickas
+   * Callback when message is sent
    */
   onSend?: (message: string) => void;
 
   /**
-   * Om AI skriver (visa typing indicator)
+   * Whether AI is typing (show typing indicator)
    */
   isTyping?: boolean;
 
   /**
-   * Kantfärg (standard från tema)
+   * Border color (default from theme)
    */
   borderColor?: string;
 
   /**
-   * Aktivera Ollama-integration (standard: true)
+   * Enable Ollama integration (default: true)
    */
   enableOllama?: boolean;
 
   /**
-   * Ollama-modell att använda (standard: 'llama3.2')
+   * Ollama model to use (default: 'llama3.2')
    */
   ollamaModel?: string;
 }
 
 /**
- * Chattfönsterkomponent
+ * Chat window component
  */
 export function ChatWindow({
   isOpen,
   onClose,
-  title = 'AI-kompanjon',
+  title = 'AI Companion',
   messages = [],
   onSend,
   isTyping = false,
@@ -85,14 +85,14 @@ export function ChatWindow({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const borderColorValue = useThemeBorderColor(borderColor);
 
-  // Synka med externa meddelanden
+  // Sync with external messages
   useEffect(() => {
     if (messages.length > 0) {
       setLocalMessages(messages);
     }
   }, [messages]);
 
-  // Auto-scrolla till botten när nya meddelanden kommer
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -100,7 +100,7 @@ export function ChatWindow({
   }, [localMessages, isTyping]);
 
   /**
-   * Konvertera chattmeddelanden till Ollama-meddelandeformat
+   * Convert chat messages to Ollama message format
    */
   const convertToOllamaMessages = (messages: ChatMessage[]): OllamaMessage[] => {
     return messages
@@ -112,7 +112,7 @@ export function ChatWindow({
   };
 
   /**
-   * Uppdatera AI-meddelande med streaming-text
+   * Update AI message with streaming text
    */
   const updateAiMessage = (messageId: string, text: string) => {
     setLocalMessages((prev) =>
@@ -121,7 +121,7 @@ export function ChatWindow({
   };
 
   /**
-   * Återställ konversationen
+   * Reset conversation
    */
   const handleReset = () => {
     setLocalMessages([]);
@@ -130,13 +130,13 @@ export function ChatWindow({
   };
 
   /**
-   * Hantera skickande av meddelande
+   * Handle sending message
    */
   const handleSend = async () => {
     const trimmedValue = inputValue.trim();
     if (!trimmedValue) return;
 
-    // Lägg till användarmeddelande omedelbart
+    // Add user message immediately
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       text: trimmedValue,
@@ -147,10 +147,10 @@ export function ChatWindow({
     setInputValue('');
     setOllamaError(null);
 
-    // Anropa onSend-callback om den finns
+    // Call onSend callback if it exists
     onSend?.(trimmedValue);
 
-    // Hämta AI-svar med streaming om Ollama är aktiverat
+    // Get AI response with streaming if Ollama is enabled
     if (!enableOllama) return;
 
     const conversationHistory = convertToOllamaMessages(localMessages);
@@ -162,7 +162,7 @@ export function ChatWindow({
       timestamp: new Date(),
     };
 
-    // Lägg till tomt AI-meddelande för streaming
+    // Add empty AI message for streaming
     setLocalMessages((prev) => [...prev, aiMessage]);
 
     try {
@@ -172,17 +172,17 @@ export function ChatWindow({
         updateAiMessage(aiMessageId, fullResponse);
       }
     } catch (error) {
-      console.error('Ollama-fel:', error);
-      setOllamaError('Kunde inte ansluta till AI. Kontrollera att Ollama är igång.');
+      console.error('Ollama error:', error);
+      setOllamaError('Could not connect to AI. Make sure Ollama is running.');
 
-      // Ersätt tomt meddelande med felmeddelande
+      // Replace empty message with error message
       setLocalMessages((prev) => {
         const filtered = prev.filter((msg) => msg.id !== aiMessageId);
         return [
           ...filtered,
           {
             id: `error-${Date.now()}`,
-            text: 'Tyvärr kunde jag inte svara just nu. Kontrollera att Ollama är igång och att modellen är installerad.',
+            text: 'Sorry, I could not respond right now. Make sure Ollama is running and the model is installed.',
             sender: 'ai' as const,
             timestamp: new Date(),
           },
@@ -221,7 +221,7 @@ export function ChatWindow({
           boxShadow: `0 8px 32px rgba(0, 0, 0, 0.8), 0 0 16px ${borderColorValue}40`,
         }}
       >
-        {/* Kompakt header */}
+        {/* Compact header */}
         <div
           className="px-5 py-3 flex items-center justify-between flex-shrink-0 relative"
           style={{
@@ -266,24 +266,24 @@ export function ChatWindow({
                   e.currentTarget.style.backgroundColor = `${borderColorValue}15`;
                   e.currentTarget.style.boxShadow = `0 2px 8px ${borderColorValue}30`;
                 }}
-                aria-label="Återställ konversation"
-                title="Återställ konversation"
+                aria-label="Reset conversation"
+                title="Reset conversation"
               >
                 <PixelIcon type="reload" size={16} color={borderColorValue} />
-                <span>Återställ</span>
+                <span>Reset</span>
               </button>
             )}
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-white transition-colors p-1.5 rounded hover:bg-gray-800"
-              aria-label="Stäng chatt"
+              aria-label="Close chat"
             >
               <PixelIcon type="close" size={18} color="currentColor" />
             </button>
           </div>
         </div>
 
-        {/* Meddelandeområde */}
+        {/* Message area */}
         <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4 scroll-smooth" style={{
           scrollbarWidth: 'thin',
           scrollbarColor: `${borderColorValue}40 transparent`,
@@ -305,10 +305,10 @@ export function ChatWindow({
                 <PixelIcon type="star" size={32} color={borderColorValue} className="opacity-70" />
               </div>
               <p className="text-base text-gray-300 mb-1 font-medium">
-                Inga meddelanden ännu
+                No messages yet
               </p>
               <p className="text-sm text-gray-500">
-                Starta en konversation för att få hjälp
+                Start a conversation to get help
               </p>
             </div>
           ) : (
@@ -335,12 +335,12 @@ export function ChatWindow({
                     ) : (
                       <div className="flex-shrink-0 mt-0.5">
                         <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center border-2 border-blue-400 shadow-lg">
-                          <span className="text-xs font-bold text-white">Du</span>
+                          <span className="text-xs font-bold text-white">You</span>
                         </div>
                       </div>
                     )}
 
-                    {/* Meddelandebubbla */}
+                    {/* Message bubble */}
                     <div
                       className={`rounded-xl px-4 py-3 ${
                         message.sender === 'user'
@@ -415,7 +415,7 @@ export function ChatWindow({
           )}
         </div>
 
-        {/* Inmatningsområde */}
+        {/* Input area */}
         <div
           className="px-5 py-4 flex flex-col gap-2 flex-shrink-0 relative"
           style={{
@@ -436,7 +436,7 @@ export function ChatWindow({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Skriv ditt meddelande... (Tryck Enter för att skicka, Shift+Enter för ny rad)"
+                placeholder="Type your message... (Press Enter to send, Shift+Enter for new line)"
                 rows={1}
                 className="w-full bg-gray-900 border rounded-xl px-4 py-3 pr-12 text-sm text-white placeholder-gray-500 resize-none focus:outline-none transition-all leading-normal"
                 style={{
@@ -478,7 +478,7 @@ export function ChatWindow({
                   ? `0 4px 12px ${borderColorValue}50, 0 0 8px ${borderColorValue}30`
                   : 'none',
               }}
-              aria-label="Skicka meddelande"
+              aria-label="Send message"
             >
               <PixelIcon type="arrow-right" size={20} color="currentColor" />
             </button>
@@ -488,12 +488,12 @@ export function ChatWindow({
           <div className="flex items-center justify-between text-xs text-gray-500 px-1">
             <span className="flex items-center gap-1.5">
               <PixelIcon type="pin" size={12} color="currentColor" />
-              <span>Enter för att skicka</span>
+              <span>Enter to send</span>
             </span>
             {inputValue.trim() && (
               <span className="flex items-center gap-1.5 text-gray-400">
                 <PixelIcon type="check" size={12} color="currentColor" />
-                <span>Redo att skicka</span>
+                <span>Ready to send</span>
               </span>
             )}
           </div>

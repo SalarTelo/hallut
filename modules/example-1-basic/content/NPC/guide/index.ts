@@ -5,7 +5,7 @@
  * This demonstrates the minimal NPC setup with proper dialogue structure.
  */
 
-import { createNPC, pos } from '@builders/index.js';
+import { createNPC, position } from '@builders/index.js';
 import { greetingTask } from '../../tasks.js';
 import { guideDialogueTree } from './dialogues.js';
 
@@ -21,7 +21,7 @@ import { guideDialogueTree } from './dialogues.js';
 export const guideNPC = createNPC({
   id: 'guide',
   name: 'Guide',
-  position: pos(30, 40),
+  position: position(30, 40),
   avatar: '👤',
   tasks: [greetingTask],
   dialogueTree: guideDialogueTree,

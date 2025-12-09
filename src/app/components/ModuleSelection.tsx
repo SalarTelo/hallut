@@ -10,10 +10,10 @@
 import { LoadingState } from '@ui/shared/components/feedback/index.js';
 import { FullScreenLayout } from '@ui/shared/components/layouts/index.js';
 import { PasswordUnlockModal } from '@ui/shared/components/game/index.js';
-import { useWorldmapLoader } from './ModuleSelection/hooks/useWorldmapLoader.js';
-import { usePasswordUnlock } from './ModuleSelection/hooks/usePasswordUnlock.js';
-import { WorldmapHeader } from './ModuleSelection/components/WorldmapHeader.js';
-import { WorldmapContent } from './ModuleSelection/components/WorldmapContent.js';
+import { useWorldmapLoader } from '@app/components/ModuleSelection/hooks/index.js';
+import { usePasswordUnlock } from '@app/components/ModuleSelection/hooks/index.js';
+import { WorldmapHeader } from '@app/components/ModuleSelection/components/index.js';
+import { WorldmapContent } from '@app/components/ModuleSelection/components/index.js';
 
 export interface ModuleSelectionProps {
   onSelectModule: (moduleId: string) => void;

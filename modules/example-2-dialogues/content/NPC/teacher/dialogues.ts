@@ -8,11 +8,11 @@
  */
 
 import {
-  dialogueTree,
-  dialogueNode,
+  createDialogueTree,
+  createDialogueNode,
   acceptTask,
   callFunction,
-} from '@builders/dialogue/index.js';
+} from '@builders/index.js';
 import { teacherState } from './state.js';
 import { reflectionTask } from '../../tasks.js';
 
@@ -21,7 +21,7 @@ import { reflectionTask } from '../../tasks.js';
  * 
  * Shown when the player first interacts with the teacher.
  */
-const firstGreeting = dialogueNode({
+const firstGreeting = createDialogueNode({
   lines: [
     'Hello there!',
     'Welcome! I\'m your teacher.',
@@ -57,7 +57,7 @@ const firstGreeting = dialogueNode({
  * Shown when the player has met the teacher before.
  * The dialogue changes based on state!
  */
-const generalGreeting = dialogueNode({
+const generalGreeting = createDialogueNode({
   lines: [
     'Hello again!',
     'Good to see you back.',
@@ -99,7 +99,7 @@ const generalGreeting = dialogueNode({
  * This is shown when the player has the task and is ready to submit.
  * The dialogue tree builder handles task-specific dialogue entry automatically.
  */
-const taskReady = dialogueNode({
+const taskReady = createDialogueNode({
   task: reflectionTask, // Link this dialogue to the task
   lines: [
     'Are you ready to submit your reflection?',
@@ -128,7 +128,7 @@ const taskReady = dialogueNode({
  * 
  * This is shown after the task is successfully completed.
  */
-const taskComplete = dialogueNode({
+const taskComplete = createDialogueNode({
   lines: [
     'Excellent work!',
     'You completed the reflection task successfully.',
@@ -152,7 +152,7 @@ const taskComplete = dialogueNode({
  * Task-specific nodes (taskReady, taskComplete) are automatically shown
  * based on task state by the dialogue system.
  */
-export const teacherDialogueTree = dialogueTree()
+export const teacherDialogueTree = createDialogueTree()
   .nodes(firstGreeting, generalGreeting, taskReady, taskComplete)
   .configureEntry()
     .when((ctx) => teacherState(ctx).hasMet === true).use(generalGreeting)

@@ -89,6 +89,7 @@ export async function loadModuleData(moduleId: string): Promise<ModuleData | nul
     config: moduleDefinition.config,
     interactables: moduleDefinition.content.interactables,
     tasks: moduleDefinition.content.tasks,
+    components: moduleDefinition.components,
   };
 }
 

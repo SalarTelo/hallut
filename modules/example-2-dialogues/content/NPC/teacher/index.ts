@@ -4,7 +4,7 @@
  * An NPC with a dialogue tree that demonstrates state management.
  */
 
-import { createNPC, pos } from '@builders/index.js';
+import { createNPC, position } from '@builders/index.js';
 import { reflectionTask } from '../../tasks.js';
 import { teacherDialogueTree } from './dialogues.js';
 
@@ -19,7 +19,7 @@ import { teacherDialogueTree } from './dialogues.js';
 export const teacherNPC = createNPC({
   id: 'teacher',
   name: 'Teacher',
-  position: pos(50, 50),
+  position: position(50, 50),
   avatar: '👨‍🏫',
   tasks: [reflectionTask],
   dialogueTree: teacherDialogueTree,

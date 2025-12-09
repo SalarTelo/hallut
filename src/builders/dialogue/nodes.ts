@@ -24,7 +24,7 @@ const nodeDefinitions = new WeakMap<DialogueNode, DialogueNodeDefinition>();
  * 
  * @example
  * ```typescript
- * const greeting = dialogueNode({
+ * const greeting = createDialogueNode({
  *   lines: ['Hello!'],
  *   choices: {
  *     accept: {
@@ -36,7 +36,7 @@ const nodeDefinitions = new WeakMap<DialogueNode, DialogueNodeDefinition>();
  * });
  * ```
  */
-export function dialogueNode(options: DialogueNodeDefinition): DialogueNode {
+export function createDialogueNode(options: DialogueNodeDefinition): DialogueNode {
   const { id, task, lines, choices } = options;
   
   // Auto-generate ID if not provided

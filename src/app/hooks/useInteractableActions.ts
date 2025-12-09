@@ -82,7 +82,7 @@ export function useInteractableActions({
             const context = createModuleContext(moduleId, locale, moduleData);
             interaction = interactable.getInteraction(context);
           } else {
-            interaction = interactable.interaction;
+            interaction = interactable.onInteract;
           }
 
           if (!interaction || interaction.type === 'none') {

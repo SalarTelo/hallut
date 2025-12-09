@@ -1,7 +1,7 @@
 /**
- * Modulväg-komponent
- * Super Mario-världskarteliknande modulval
- * Flexibla layouter, verktygstips, kopplingar
+ * Module path component
+ * Super Mario world map-like module selection
+ * Flexible layouts, tooltips, connections
  */
 
 import { useState, useCallback } from 'react';
@@ -10,33 +10,33 @@ import { actions } from '@core/state/actions.js';
 import { canUnlockModule } from '@core/unlock/service.js';
 import { getModule } from '@core/module/registry.js';
 import { ModuleInfoModal } from './ModuleInfoModal.js';
-import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { useThemeBorderColor } from '../../hooks/useThemeBorderColor.js';
 import { ConnectionLines, ModuleNode } from './modulePath/index.js';
 
 export interface ModulePathProps {
   /**
-   * Världskartskonfiguration
+   * Worldmap configuration
    */
   worldmap: WorldmapConfig;
 
   /**
-   * Callback när modul väljs för att gå in
+   * Callback when module is selected to enter
    */
   onSelectModule: (moduleId: string) => void;
 
   /**
-   * Callback när modul kräver lösenord
+   * Callback when module requires password
    */
   onPasswordRequired?: (moduleId: string, hint?: string, moduleName?: string) => void;
 
   /**
-   * Kantfärg (standard från tema)
+   * Border color (default from theme)
    */
   borderColor?: string;
 }
 
 /**
- * Modulväg-komponent
+ * Module path component
  */
 export function ModulePath({
   worldmap,
@@ -102,7 +102,7 @@ export function ModulePath({
     [getModuleProgression]
   );
 
-  // Hämta vald moduldata
+  // Get selected module data
   const selectedNode = selectedModuleId
     ? worldmap.nodes.find((n: WorldmapNode) => n.moduleId === selectedModuleId)
     : null;
@@ -166,7 +166,7 @@ export function ModulePath({
         style={{ borderColor: borderColorValue, opacity: 0.3 }}
       />
       
-      {/* SVG för kopplingar */}
+      {/* SVG for connections */}
       <ConnectionLines
         nodes={worldmap.nodes}
         connections={worldmap.connections}
@@ -175,7 +175,7 @@ export function ModulePath({
         getModuleProgression={getModuleProgression}
       />
 
-      {/* Modulnoder */}
+      {/* Module nodes */}
       {worldmap.nodes.map((node: WorldmapNode) => {
         const progression = getModuleProgression(node.moduleId);
         const isHovered = hoveredModuleId === node.moduleId;
@@ -194,7 +194,7 @@ export function ModulePath({
         );
       })}
 
-      {/* Modulinformationsmodal */}
+      {/* Module info modal */}
       {selectedNode && (() => {
         const progression = getModuleProgression(selectedNode.moduleId);
         return (

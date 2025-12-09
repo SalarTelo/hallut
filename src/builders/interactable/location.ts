@@ -21,7 +21,7 @@ export interface LocationOptions {
   avatar?: string;
   locked?: boolean;
   unlockRequirement?: UnlockRequirement | null;
-  interaction?: ObjectInteraction;
+  onInteract?: ObjectInteraction;
   getInteraction?: GetInteractionFunction;
 }
 
@@ -36,7 +36,7 @@ export function createLocation(options: LocationOptions): Location {
     avatar,
     locked = false,
     unlockRequirement = null,
-    interaction,
+    onInteract,
     getInteraction,
   } = options;
 
@@ -48,7 +48,7 @@ export function createLocation(options: LocationOptions): Location {
     avatar,
     locked,
     unlockRequirement,
-    interaction,
+    onInteract,
     getInteraction,
   };
 }

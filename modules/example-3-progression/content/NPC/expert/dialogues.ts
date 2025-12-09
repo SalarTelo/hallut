@@ -7,18 +7,18 @@
  */
 
 import {
-  dialogueTree,
-  dialogueNode,
+  createDialogueTree,
+  createDialogueNode,
   acceptTask,
   callFunction,
-} from '@builders/dialogue/index.js';
+} from '@builders/index.js';
 import { expertState } from './state.js';
 import { quizTask, reflectionTask, module3UnlockTask } from '../../tasks.js';
 
 /**
  * Dialogue node: First meeting - offers quiz task
  */
-const firstGreeting = dialogueNode({
+const firstGreeting = createDialogueNode({
   lines: [
     'Hello!',
     'I\'m the Expert.',
@@ -52,7 +52,7 @@ const firstGreeting = dialogueNode({
 /**
  * Dialogue node: General greeting - offers next available task
  */
-const generalGreeting = dialogueNode({
+const generalGreeting = createDialogueNode({
   lines: [
     'Hello again!',
     'What can I help you with?',
@@ -76,7 +76,7 @@ const generalGreeting = dialogueNode({
 /**
  * Dialogue node: General greeting with reflection task offer
  */
-const generalGreetingWithReflection = dialogueNode({
+const generalGreetingWithReflection = createDialogueNode({
   lines: [
     'Hello again!',
     'I have a reflection task for you.',
@@ -104,7 +104,7 @@ const generalGreetingWithReflection = dialogueNode({
 /**
  * Dialogue node: General greeting with module unlock task offer
  */
-const generalGreetingWithModuleUnlock = dialogueNode({
+const generalGreetingWithModuleUnlock = createDialogueNode({
   lines: [
     'Hello again!',
     'I have a special task for you.',
@@ -132,7 +132,7 @@ const generalGreetingWithModuleUnlock = dialogueNode({
 /**
  * Dialogue node: After quiz complete - offers reflection task
  */
-const offerReflectionTask = dialogueNode({
+const offerReflectionTask = createDialogueNode({
   lines: [
     'Great job on the quiz!',
     'Now I have a reflection task for you.',
@@ -155,7 +155,7 @@ const offerReflectionTask = dialogueNode({
 /**
  * Dialogue node: After reflection complete - offers module unlock task
  */
-const offerModuleUnlockTask = dialogueNode({
+const offerModuleUnlockTask = createDialogueNode({
   lines: [
     'Excellent reflection!',
     'I have one final special task for you.',
@@ -179,7 +179,7 @@ const offerModuleUnlockTask = dialogueNode({
 /**
  * Dialogue node: Quiz task ready
  */
-const quizTaskReady = dialogueNode({
+const quizTaskReady = createDialogueNode({
   task: quizTask,
   lines: [
     'Are you ready to answer the quiz?',
@@ -206,7 +206,7 @@ const quizTaskReady = dialogueNode({
 /**
  * Dialogue node: Reflection task ready
  */
-const reflectionTaskReady = dialogueNode({
+const reflectionTaskReady = createDialogueNode({
   task: reflectionTask,
   lines: [
     'Are you ready to submit your reflection?',
@@ -233,7 +233,7 @@ const reflectionTaskReady = dialogueNode({
 /**
  * Dialogue node: Module unlock task ready
  */
-const moduleUnlockTaskReady = dialogueNode({
+const moduleUnlockTaskReady = createDialogueNode({
   task: module3UnlockTask,
   lines: [
     'Are you ready to unlock a new module?',
@@ -260,7 +260,7 @@ const moduleUnlockTaskReady = dialogueNode({
 /**
  * Dialogue node: Quiz task complete - offers next task
  */
-const quizTaskComplete = dialogueNode({
+const quizTaskComplete = createDialogueNode({
   lines: [
     'Excellent! You answered the quiz correctly.',
   ],
@@ -279,7 +279,7 @@ const quizTaskComplete = dialogueNode({
 /**
  * Dialogue node: Reflection task complete - offers next task
  */
-const reflectionTaskComplete = dialogueNode({
+const reflectionTaskComplete = createDialogueNode({
   lines: [
     'Great reflection!',
     'You\'ve completed all the main tasks.',
@@ -299,7 +299,7 @@ const reflectionTaskComplete = dialogueNode({
 /**
  * Dialogue node: Module unlock task complete
  */
-const moduleUnlockTaskComplete = dialogueNode({
+const moduleUnlockTaskComplete = createDialogueNode({
   lines: [
     'Amazing!',
     'You\'ve unlocked a new module on the worldmap!',
@@ -318,7 +318,7 @@ const moduleUnlockTaskComplete = dialogueNode({
  * 
  * Offers tasks sequentially based on completion.
  */
-export const expertDialogueTree = dialogueTree()
+export const expertDialogueTree = createDialogueTree()
   .nodes(
     firstGreeting,
     generalGreeting,

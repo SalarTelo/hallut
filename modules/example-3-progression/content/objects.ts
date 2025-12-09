@@ -7,7 +7,7 @@
 import {
   createObject,
   showNoteViewer,
-  pos,
+  position,
 } from '@builders/index.js';
 import { taskComplete } from '@builders/interactable/index.js';
 import { introTask, quizTask } from './tasks.js';
@@ -19,9 +19,9 @@ import { introTask, quizTask } from './tasks.js';
 export const welcomeSign = createObject({
   id: 'welcome-sign',
   name: 'Welcome Sign',
-  position: pos(20, 70),
+  position: position(20, 70),
   avatar: 'note',
-  interaction: showNoteViewer({
+  onInteract: showNoteViewer({
     content: 'Welcome! Complete tasks to unlock new content. Start with the Teacher NPC.',
     title: 'Welcome',
   }),
@@ -34,11 +34,11 @@ export const welcomeSign = createObject({
 export const chest1 = createObject({
   id: 'chest-1',
   name: 'Locked Chest',
-  position: pos(50, 70),
+  position: position(50, 70),
   avatar: 'box',
   locked: true,
   unlockRequirement: taskComplete(introTask),
-  interaction: showNoteViewer({
+  onInteract: showNoteViewer({
     content: 'You unlocked this chest by completing the introduction task!',
     title: 'Chest 1 Unlocked',
   }),
@@ -51,11 +51,11 @@ export const chest1 = createObject({
 export const chest2 = createObject({
   id: 'chest-2',
   name: 'Locked Chest',
-  position: pos(80, 70),
+  position: position(80, 70),
   avatar: 'box',
   locked: true,
   unlockRequirement: taskComplete(quizTask),
-  interaction: showNoteViewer({
+  onInteract: showNoteViewer({
     content: 'You unlocked this chest by completing the quiz! Great job!',
     title: 'Chest 2 Unlocked',
   }),

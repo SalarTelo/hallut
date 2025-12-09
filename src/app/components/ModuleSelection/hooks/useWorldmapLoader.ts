@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { discoverModules, getModule } from '@core/module/registry.js';
+import { discoverModules } from '@core/module/registry.js';
 import { loadModuleInstance } from '@core/module/loader.js';
 import { generateWorldmap } from '@core/worldmap/generator.js';
 import { initializeModuleProgression } from '@core/unlock/service.js';

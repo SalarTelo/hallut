@@ -47,5 +47,6 @@ export type {
   ModuleHandlers,
   ModuleDefinition,
   ModuleData,
+  ComponentRenderer,
 } from './definition.js';
 

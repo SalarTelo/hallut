@@ -7,7 +7,7 @@
 import { Modal } from '../overlays/Modal.js';
 import { ModalContent } from '../overlays/ModalContent.js';
 import { ModalHeader } from '../overlays/ModalHeader.js';
-import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { useThemeBorderColor } from '../../hooks/useThemeBorderColor.js';
 
 export interface ContentViewerProps {
   /**

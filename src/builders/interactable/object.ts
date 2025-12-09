@@ -22,7 +22,7 @@ export interface ObjectOptions {
   avatar?: string;
   locked?: boolean;
   unlockRequirement?: UnlockRequirement | null;
-  interaction?: ObjectInteraction;
+  onInteract?: ObjectInteraction;
   getInteraction?: GetInteractionFunction;
 }
 
@@ -37,7 +37,7 @@ export function createObject(options: ObjectOptions): Object {
     avatar,
     locked = false,
     unlockRequirement = null,
-    interaction,
+    onInteract,
     getInteraction,
   } = options;
 
@@ -49,7 +49,7 @@ export function createObject(options: ObjectOptions): Object {
     avatar,
     locked,
     unlockRequirement,
-    interaction,
+    onInteract,
     getInteraction,
   };
 }
@@ -74,7 +74,7 @@ export function createNoteObject(options: {
     avatar: options.avatar,
     locked: options.locked,
     unlockRequirement: options.unlockRequirement,
-    interaction: showNote(options.content, options.title),
+    onInteract: showNote(options.content, options.title),
   });
 }
 
@@ -98,7 +98,7 @@ export function createImageObject(options: {
     avatar: options.avatar,
     locked: options.locked,
     unlockRequirement: options.unlockRequirement,
-    interaction: showImage(options.imageUrl, options.title),
+    onInteract: showImage(options.imageUrl, options.title),
   });
 }
 
