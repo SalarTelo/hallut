@@ -3,7 +3,7 @@
  * Consistent display of empty state
  */
 
-import { Card } from './Card.js';
+import { Card } from '../primitives/Card.js';
 import { getBackgroundColorStyle } from '@lib/color.js';
 
 export interface EmptyStateProps {

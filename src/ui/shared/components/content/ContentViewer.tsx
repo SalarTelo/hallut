@@ -4,9 +4,9 @@
  * Used internally by NoteViewer, SignViewer, and ImageViewer
  */
 
-import { Modal } from './Modal.js';
-import { ModalContent } from './ModalContent.js';
-import { ModalHeader } from './ModalHeader.js';
+import { Modal } from '../overlays/Modal.js';
+import { ModalContent } from '../overlays/ModalContent.js';
+import { ModalHeader } from '../overlays/ModalHeader.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 
 export interface ContentViewerProps {

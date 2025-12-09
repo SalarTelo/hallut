@@ -7,7 +7,7 @@ import type { WorldmapNode } from '@core/worldmap/types.js';
 import type { ModuleProgressionState } from '@core/state/types.js';
 import { useRef, useMemo } from 'react';
 import { ModuleTooltip } from './ModuleTooltip.js';
-import { PixelIcon } from '../PixelIcon.js';
+import { PixelIcon } from '../../icons/PixelIcon.js';
 import { formatModuleName } from './utils.js';
 
 export interface ModuleNodeProps {

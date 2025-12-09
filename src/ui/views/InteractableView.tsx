@@ -24,10 +24,10 @@ import type { Interactable } from '@core/module/types/index.js';
 import { actions } from '@core/state/actions.js';
 import { getAvailableTasks, getActiveTasks } from '@core/task/availability.js';
 import { createModuleContext } from '@core/module/context.js';
-import { ModuleBackground } from '@ui/shared/components/ModuleBackground.js';
-import { InteractableIcon } from '@ui/shared/components/InteractableIcon.js';
-import { Button } from '@ui/shared/components/Button.js';
-import { TaskTracker } from '@ui/shared/components/TaskTracker.js';
+import { ModuleBackground } from '@ui/shared/components/game/index.js';
+import { InteractableIcon } from '@ui/shared/components/game/index.js';
+import { Button } from '@ui/shared/components/primitives/index.js';
+import { TaskTracker } from '@ui/shared/components/game/index.js';
 
 export interface InteractableViewProps {
   /**

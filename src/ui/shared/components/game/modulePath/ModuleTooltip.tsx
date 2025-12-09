@@ -6,7 +6,7 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { ModuleProgressionState } from '@core/state/types.js';
-import { PixelIcon } from '../PixelIcon.js';
+import { PixelIcon } from '../../icons/PixelIcon.js';
 import { getModule } from '@core/module/registry.js';
 import { formatModuleName } from './utils.js';
 

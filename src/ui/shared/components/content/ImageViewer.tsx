@@ -1,18 +1,18 @@
 /**
- * Bildvisarkomponent
- * Modal för att visa bilder (som kylskåpet)
+ * Image Viewer Component
+ * Modal for displaying images (like the refrigerator)
  */
 
 import { ContentViewer } from './ContentViewer.js';
 
 export interface ImageViewerProps {
   /**
-   * Om visaren är öppen
+   * Whether the viewer is open
    */
   isOpen: boolean;
 
   /**
-   * Callback för att stänga visaren
+   * Callback to close the viewer
    */
   onClose: () => void;
 

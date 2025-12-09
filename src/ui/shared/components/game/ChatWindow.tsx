@@ -1,12 +1,12 @@
 /**
- * Chattfönsterkomponent
- * Modulspecifikt AI-kompanjon chattgränssnitt
- * Förbättrad design med bättre läsbarhet och visuell hierarki
+ * Chat Window Component
+ * Module-specific AI companion chat interface
+ * Enhanced design with better readability and visual hierarchy
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { Modal } from './Modal.js';
-import { PixelIcon } from './PixelIcon.js';
+import { Modal } from '../overlays/Modal.js';
+import { PixelIcon } from '../icons/PixelIcon.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { getHeaderGradient, getSeparatorGradient } from '../utils/modalStyles.js';
 import { streamChatMessage, type OllamaMessage } from '@services/ollamaService.js';

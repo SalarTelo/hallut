@@ -5,7 +5,7 @@
  */
 
 import { useState, type ReactNode } from 'react';
-import { PixelIcon, type PixelIconType } from './PixelIcon.js';
+import { PixelIcon, type PixelIconType } from '../icons/PixelIcon.js';
 
 export type IconShape = 'circle' | 'square' | string;
 

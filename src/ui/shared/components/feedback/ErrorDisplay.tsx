@@ -3,9 +3,9 @@
  * Consistent error status display with message and actions
  */
 
-import { Card } from './Card.js';
-import { Button } from './Button.js';
-import { Badge } from './Badge.js';
+import { Card } from '../primitives/Card.js';
+import { Button } from '../primitives/Button.js';
+import { Badge } from '../primitives/Badge.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { getBackgroundColorStyle } from '@lib/color.js';
 import { DEFAULT_THEME } from '@config/constants.js';

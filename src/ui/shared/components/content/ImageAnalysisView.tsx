@@ -4,9 +4,9 @@
  */
 
 import { useState, useRef } from 'react';
-import { Modal } from './Modal.js';
-import { PixelIcon } from './PixelIcon.js';
-import { Button } from './Button.js';
+import { Modal } from '../overlays/Modal.js';
+import { PixelIcon } from '../icons/PixelIcon.js';
+import { Button } from '../primitives/Button.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { getHeaderGradient } from '../utils/modalStyles.js';
 import { analyzeImage, DEFAULT_MODELS } from '@services/ollamaService.js';

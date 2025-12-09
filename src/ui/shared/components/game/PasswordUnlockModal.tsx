@@ -4,10 +4,10 @@
  */
 
 import { useState } from 'react';
-import { Modal } from './Modal.js';
-import { Button } from './Button.js';
-import { Input } from './Input.js';
-import { ModalContent } from './ModalContent.js';
+import { Modal } from '../overlays/Modal.js';
+import { Button } from '../primitives/Button.js';
+import { Input } from '../primitives/Input.js';
+import { ModalContent } from '../overlays/ModalContent.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 
 export interface PasswordUnlockModalProps {

@@ -23,10 +23,10 @@ import { useState } from 'react';
 import type { Task, TaskSubmission } from '@core/task/types.js';
 import { validateTask } from '@core/task/validation.js';
 import { actions } from '@core/state/actions.js';
-import { Card } from '@ui/shared/components/Card.js';
-import { Button } from '@ui/shared/components/Button.js';
-import { Textarea } from '@ui/shared/components/Textarea.js';
-import { Badge } from '@ui/shared/components/Badge.js';
+import { Card } from '@ui/shared/components/primitives/index.js';
+import { Button } from '@ui/shared/components/primitives/index.js';
+import { Textarea } from '@ui/shared/components/primitives/index.js';
+import { Badge } from '@ui/shared/components/primitives/index.js';
 
 export interface TaskViewProps {
   /**

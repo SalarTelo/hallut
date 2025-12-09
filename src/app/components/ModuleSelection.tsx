@@ -11,10 +11,10 @@ import { generateWorldmap } from '@core/worldmap/generator.js';
 import type { WorldmapConfig } from '@core/worldmap/types.js';
 import { initializeModuleProgression, unlockModule } from '@core/unlock/service.js';
 import { handleError } from '@services/errorService.js';
-import { ModulePath } from '@ui/shared/components/ModulePath.js';
-import { LoadingState } from '@ui/shared/components/LoadingState.js';
+import { ModulePath } from '@ui/shared/components/game/index.js';
+import { LoadingState } from '@ui/shared/components/feedback/index.js';
 import { FullScreenLayout } from '@ui/shared/components/layouts/index.js';
-import { PasswordUnlockModal } from '@ui/shared/components/PasswordUnlockModal.js';
+import { PasswordUnlockModal } from '@ui/shared/components/game/index.js';
 
 export interface ModuleSelectionProps {
   onSelectModule: (moduleId: string) => void;

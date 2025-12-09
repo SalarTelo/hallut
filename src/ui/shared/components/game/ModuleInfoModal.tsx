@@ -1,12 +1,12 @@
 /**
- * Modulinformationsmodal-komponent
- * Modaldialog som visar detaljerad modulinformation
- * JRPG-stilad modal
+ * Module Info Modal Component
+ * Modal dialog that displays detailed module information
+ * JRPG-styled modal
  */
 
 import { useEffect, useState } from 'react';
-import { Modal } from './Modal.js';
-import { PixelIcon } from './PixelIcon.js';
+import { Modal } from '../overlays/Modal.js';
+import { PixelIcon } from '../icons/PixelIcon.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { getHeaderGradient, getFooterGradient } from '../utils/modalStyles.js';
 import { getModule } from '@core/module/registry.js';
