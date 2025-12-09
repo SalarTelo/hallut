@@ -1,6 +1,6 @@
 /**
- * Tomt tillståndskomponent
- * Konsekvent visning av tomt tillstånd
+ * Empty State Component
+ * Consistent display of empty state
  */
 
 import { Card } from './Card.js';
@@ -8,17 +8,17 @@ import { getBackgroundColorStyle } from '@lib/color.js';
 
 export interface EmptyStateProps {
   /**
-   * Meddelande för tomt tillstånd
+   * Empty state message
    */
   message: string;
 
   /**
-   * Valfri ikon eller illustration
+   * Optional icon or illustration
    */
   icon?: React.ReactNode;
 
   /**
-   * Valfri åtgärdsknapp
+   * Optional action button
    */
   action?: {
     label: string;
@@ -26,13 +26,13 @@ export interface EmptyStateProps {
   };
 
   /**
-   * Ytterligare className
+   * Additional className
    */
   className?: string;
 }
 
 /**
- * Tomt tillståndskomponent
+ * Empty State component
  */
 export function EmptyState({
   message,

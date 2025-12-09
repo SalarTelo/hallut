@@ -1,6 +1,6 @@
 /**
- * Modulförloppsindikator-komponent
- * Visar förlopp för aktuell modul med uppgiftsräknare och progressbar
+ * Module Progress Indicator Component
+ * Displays progress for current module with task counter and progress bar
  */
 
 import { useMemo } from 'react';
@@ -11,23 +11,23 @@ import { useModuleActions } from '@app/hooks/useModuleActions.js';
 
 export interface ModuleProgressIndicatorProps {
   /**
-   * Moduldata
+   * Module data
    */
   moduleData: ModuleData;
 
   /**
-   * Modul-ID
+   * Module ID
    */
   moduleId: string;
 
   /**
-   * Kantfärg (standard från tema)
+   * Border color (defaults to theme)
    */
   borderColor?: string;
 }
 
 /**
- * Modulförloppsindikator-komponent
+ * Module Progress Indicator component
  */
 export function ModuleProgressIndicator({
   moduleData,
@@ -37,7 +37,7 @@ export function ModuleProgressIndicator({
   const { isTaskCompleted, isModuleCompleted } = useModuleActions();
   const borderColorValue = useThemeBorderColor(borderColor);
 
-  // Beräkna förlopp
+  // Calculate progress
   const progress = useMemo(() => {
     const totalTasks = moduleData.tasks.length;
     if (totalTasks === 0) {
@@ -68,12 +68,12 @@ export function ModuleProgressIndicator({
     return null;
   }
 
-  // Hämta header-höjd från CSS-variabel, fallback till 48px om inte satt
+  // Get header height from CSS variable, fallback to 48px if not set
   const headerHeight = typeof window !== 'undefined' 
     ? getComputedStyle(document.documentElement).getPropertyValue('--module-header-height').trim() || '48px'
     : '48px';
   
-  // Lägg till 16px spacing under headern
+  // Add 16px spacing below header
   const topPosition = `calc(${headerHeight} + 16px)`;
 
   return (
@@ -96,7 +96,7 @@ export function ModuleProgressIndicator({
             color={`${borderColorValue}85`}
           />
           <span className="text-xs font-medium text-gray-300">
-            Uppgifter
+            Tasks
           </span>
         </div>
         {progress.isCompleted && (
@@ -108,7 +108,7 @@ export function ModuleProgressIndicator({
               border: `1px solid ${borderColorValue}40`,
             }}
           >
-            Klar
+            Complete
           </div>
         )}
       </div>
@@ -117,7 +117,7 @@ export function ModuleProgressIndicator({
       <div className="mb-1.5">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-xs text-gray-400">
-            {progress.completed} / {progress.total} uppgifter
+            {progress.completed} / {progress.total} tasks
           </span>
           <span
             className="text-xs font-semibold"
@@ -149,7 +149,7 @@ export function ModuleProgressIndicator({
       {progress.isCompleted && (
         <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
           <PixelIcon type="check" size={11} color={`${borderColorValue}70`} />
-          <span>Modulen är klar</span>
+          <span>Module complete</span>
         </div>
       )}
     </div>

@@ -1,6 +1,22 @@
 /**
  * Task View
  * Displays task interface for submission
+ * 
+ * Provides a UI for users to complete tasks, supporting:
+ * - Text submissions (free-form answers)
+ * - Multiple choice questions
+ * - Task validation and feedback
+ * - Progress tracking
+ * 
+ * @example
+ * ```tsx
+ * <TaskView
+ *   task={task}
+ *   moduleId="example-1"
+ *   onComplete={handleTaskComplete}
+ *   onClose={handleClose}
+ * />
+ * ```
  */
 
 import { useState } from 'react';
@@ -13,9 +29,24 @@ import { Textarea } from '@ui/shared/components/Textarea.js';
 import { Badge } from '@ui/shared/components/Badge.js';
 
 export interface TaskViewProps {
+  /**
+   * Task to display
+   */
   task: Task;
+
+  /**
+   * Module ID
+   */
   moduleId: string;
+
+  /**
+   * Callback when task is completed successfully
+   */
   onComplete: () => void;
+
+  /**
+   * Callback when task view is closed
+   */
   onClose: () => void;
 }
 

@@ -3,7 +3,10 @@
  * Reusable input component with label and error states
  */
 
+import { useId } from 'react';
 import type { InputHTMLAttributes, ReactNode } from 'react';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { DEFAULT_THEME } from '@config/constants.js';
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /**
@@ -40,6 +43,21 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
    * Right icon
    */
   rightIcon?: ReactNode;
+
+  /**
+   * Use pixelated font (for game contexts)
+   */
+  pixelated?: boolean;
+
+  /**
+   * Border color (defaults to theme)
+   */
+  borderColor?: string;
+
+  /**
+   * Dark mode (default: false)
+   */
+  dark?: boolean;
 }
 
 const sizeStyles: Record<NonNullable<InputProps['size']>, string> = {
@@ -59,53 +77,78 @@ export function Input({
   fullWidth = false,
   leftIcon,
   rightIcon,
+  pixelated = false,
+  borderColor,
+  dark = false,
   className = '',
   id,
+  style,
   ...props
 }: InputProps) {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
-  const baseStyles = 'block border rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1';
+  const generatedId = useId();
+  const inputId = id || generatedId;
+  const borderColorValue = useThemeBorderColor(borderColor, DEFAULT_THEME.BORDER_COLOR);
   const sizeStyle = sizeStyles[size];
   const widthStyle = fullWidth ? 'w-full' : '';
+  const pixelatedStyle = pixelated ? 'pixelated' : '';
+  
+  // Background and text colors based on dark mode
+  const bgColor = dark ? 'bg-gray-900' : 'bg-white';
+  const textColor = dark ? 'text-gray-100' : 'text-gray-900';
+  const placeholderColor = dark ? 'placeholder-gray-500' : 'placeholder-gray-400';
+  const borderColorClass = dark ? 'border-gray-700' : 'border-gray-300';
+  const labelColor = dark ? 'text-gray-300' : 'text-gray-700';
+  
+  // Error and focus styles
   const errorStyle = error
     ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-    : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500';
+    : 'focus:ring-2 focus:ring-offset-1';
+  
+  const baseStyles = `block border rounded-md transition-colors focus:outline-none ${bgColor} ${textColor} ${borderColorClass} ${errorStyle} ${pixelatedStyle}`;
   const iconPadding = leftIcon ? 'pl-10' : '';
   const iconPaddingRight = rightIcon ? 'pr-10' : '';
+
+  const borderStyle = {
+    borderColor: error ? undefined : borderColorValue,
+    borderWidth: '1px',
+    ...(error ? {} : { '--tw-ring-color': borderColorValue }),
+    ...style,
+  };
 
   return (
     <div className={fullWidth ? 'w-full' : ''}>
       {label && (
-        <label htmlFor={inputId} className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor={inputId} className={`block text-sm font-medium ${labelColor} mb-1 ${pixelatedStyle}`}>
           {label}
         </label>
       )}
       <div className="relative">
         {leftIcon && (
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+          <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${dark ? 'text-gray-500' : 'text-gray-400'}`}>
             {leftIcon}
           </div>
         )}
         <input
           id={inputId}
-          className={`${baseStyles} ${sizeStyle} ${widthStyle} ${errorStyle} ${iconPadding} ${iconPaddingRight} ${className}`}
+          className={`${baseStyles} ${sizeStyle} ${widthStyle} ${iconPadding} ${iconPaddingRight} ${placeholderColor} ${className}`}
+          style={borderStyle}
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
           {...props}
         />
         {rightIcon && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+          <div className={`absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none ${dark ? 'text-gray-500' : 'text-gray-400'}`}>
             {rightIcon}
           </div>
         )}
       </div>
       {error && (
-        <p id={`${inputId}-error`} className="mt-1 text-sm text-red-600" role="alert">
+        <p id={`${inputId}-error`} className={`mt-1 text-sm ${dark ? 'text-red-400' : 'text-red-600'} ${pixelatedStyle}`} role="alert">
           {error}
         </p>
       )}
       {helperText && !error && (
-        <p id={`${inputId}-helper`} className="mt-1 text-sm text-gray-500">
+        <p id={`${inputId}-helper`} className={`mt-1 text-sm ${dark ? 'text-gray-400' : 'text-gray-500'} ${pixelatedStyle}`}>
           {helperText}
         </p>
       )}

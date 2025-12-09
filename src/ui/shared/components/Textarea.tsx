@@ -3,7 +3,10 @@
  * Reusable textarea component with label and error states
  */
 
+import { useId } from 'react';
 import type { TextareaHTMLAttributes } from 'react';
+import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
+import { DEFAULT_THEME } from '@config/constants.js';
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   /**
@@ -35,6 +38,21 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
    * Resize behavior
    */
   resize?: 'none' | 'vertical' | 'horizontal' | 'both';
+
+  /**
+   * Use pixelated font (for game contexts)
+   */
+  pixelated?: boolean;
+
+  /**
+   * Border color (defaults to theme)
+   */
+  borderColor?: string;
+
+  /**
+   * Dark mode (default: false)
+   */
+  dark?: boolean;
 }
 
 const sizeStyles: Record<NonNullable<TextareaProps['size']>, string> = {
@@ -60,42 +78,67 @@ export function Textarea({
   size = 'md',
   fullWidth = false,
   resize = 'vertical',
+  pixelated = false,
+  borderColor,
+  dark = false,
   className = '',
   id,
   rows = 4,
+  style,
   ...props
 }: TextareaProps) {
-  const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
-  const baseStyles = 'block border rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 bg-white text-gray-900 placeholder-gray-400';
+  const generatedId = useId();
+  const textareaId = id || generatedId;
+  const borderColorValue = useThemeBorderColor(borderColor, DEFAULT_THEME.BORDER_COLOR);
   const sizeStyle = sizeStyles[size];
   const widthStyle = fullWidth ? 'w-full' : '';
+  const pixelatedStyle = pixelated ? 'pixelated' : '';
+  const resizeStyle = resizeStyles[resize];
+  
+  // Background and text colors based on dark mode
+  const bgColor = dark ? 'bg-gray-900' : 'bg-white';
+  const textColor = dark ? 'text-gray-100' : 'text-gray-900';
+  const placeholderColor = dark ? 'placeholder-gray-500' : 'placeholder-gray-400';
+  const borderColorClass = dark ? 'border-gray-700' : 'border-gray-300';
+  const labelColor = dark ? 'text-gray-300' : 'text-gray-700';
+  
+  // Error and focus styles
   const errorStyle = error
     ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-    : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500';
-  const resizeStyle = resizeStyles[resize];
+    : 'focus:ring-2 focus:ring-offset-1';
+  
+  const baseStyles = `block border rounded-md transition-colors focus:outline-none ${bgColor} ${textColor} ${borderColorClass} ${errorStyle} ${pixelatedStyle}`;
+
+  const borderStyle = {
+    borderColor: error ? undefined : borderColorValue,
+    borderWidth: '1px',
+    ...(error ? {} : { '--tw-ring-color': borderColorValue }),
+    ...style,
+  };
 
   return (
     <div className={fullWidth ? 'w-full' : ''}>
       {label && (
-        <label htmlFor={textareaId} className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor={textareaId} className={`block text-sm font-medium ${labelColor} mb-1 ${pixelatedStyle}`}>
           {label}
         </label>
       )}
       <textarea
         id={textareaId}
         rows={rows}
-        className={`${baseStyles} ${sizeStyle} ${widthStyle} ${errorStyle} ${resizeStyle} ${className}`}
+        className={`${baseStyles} ${sizeStyle} ${widthStyle} ${resizeStyle} ${placeholderColor} ${className}`}
+        style={borderStyle}
         aria-invalid={error ? 'true' : 'false'}
         aria-describedby={error ? `${textareaId}-error` : helperText ? `${textareaId}-helper` : undefined}
         {...props}
       />
       {error && (
-        <p id={`${textareaId}-error`} className="mt-1 text-sm text-red-600" role="alert">
+        <p id={`${textareaId}-error`} className={`mt-1 text-sm ${dark ? 'text-red-400' : 'text-red-600'} ${pixelatedStyle}`} role="alert">
           {error}
         </p>
       )}
       {helperText && !error && (
-        <p id={`${textareaId}-helper`} className="mt-1 text-sm text-gray-500">
+        <p id={`${textareaId}-helper`} className={`mt-1 text-sm ${dark ? 'text-gray-400' : 'text-gray-500'} ${pixelatedStyle}`}>
           {helperText}
         </p>
       )}

@@ -3,6 +3,8 @@
  * Reusable close button with consistent styling
  */
 
+import { memo } from 'react';
+
 export interface CloseButtonProps {
   /**
    * Click handler
@@ -19,7 +21,7 @@ export interface CloseButtonProps {
  * Close Button component
  * Preserves exact styling from NoteViewer, SignViewer, ImageViewer
  */
-export function CloseButton({ onClick, ariaLabel = 'Close' }: CloseButtonProps) {
+export const CloseButton = memo(function CloseButton({ onClick, ariaLabel = 'Close' }: CloseButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -30,5 +32,5 @@ export function CloseButton({ onClick, ariaLabel = 'Close' }: CloseButtonProps) 
       ✕
     </button>
   );
-}
+});
 

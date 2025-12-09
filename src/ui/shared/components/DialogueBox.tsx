@@ -1,7 +1,7 @@
 /**
- * Dialogruta-komponent
- * Nedre positionerad dialogruta med konfigurerbar avatar
- * JRPG-stil dialogsystem med skrivmaskineffekt
+ * Dialogue Box Component
+ * Bottom-positioned dialogue box with configurable avatar
+ * JRPG-style dialogue system with typewriter effect
  */
 
 import type { ReactNode } from 'react';
@@ -16,60 +16,60 @@ import {
   type DialogueChoice,
 } from './dialogue/index.js';
 
-// Återexportera typer för bakåtkompatibilitet
+// Re-export types for backward compatibility
 export type { AvatarType, DialogueChoice };
 
 export interface DialogueBoxProps {
   /**
-   * Talarens namn
+   * Speaker's name
    */
   speaker: string;
 
   /**
-   * Avatartyp
+   * Avatar type
    */
   avatarType?: AvatarType;
 
   /**
-   * Avatardata (bild-URL, ikonkomponent, etc.)
+   * Avatar data (image URL, icon component, etc.)
    */
   avatarData?: string | ReactNode;
 
   /**
-   * Dialograder
+   * Dialogue lines
    */
   lines: string[];
 
   /**
-   * Aktuellt radindex (0-baserat)
+   * Current line index (0-based)
    */
   currentLineIndex: number;
 
   /**
-   * Callback när man fortsätter till nästa rad
+   * Callback when continuing to next line
    */
   onContinue: () => void;
 
   /**
-   * Val att visa i slutet av dialogen
-   * Bör alltid tillhandahållas (auto-genereras om inte specificerat)
+   * Choices to display at the end of dialogue
+   * Should always be provided (auto-generated if not specified)
    */
   choices?: DialogueChoice[];
 
   /**
-   * Kantfärg (standard från tema)
+   * Border color (defaults to theme)
    */
   borderColor?: string;
 
   /**
-   * Callback när dialogen stängs
+   * Callback when dialogue is closed
    */
   onClose?: () => void;
 }
 
 /**
- * Dialogruta-komponent
- * Orkestrerar dialog-underkomponenter
+ * Dialogue Box component
+ * Orchestrates dialogue sub-components
  */
 export function DialogueBox({
   speaker,
@@ -88,7 +88,7 @@ export function DialogueBox({
   const borderColorValue = useThemeBorderColor(borderColor);
   const choiceCount = choices?.length ?? 0;
 
-  // Skrivmaskineffekt med anpassad hook
+  // Typewriter effect with custom hook
   const { displayedText, isTyping, skip } = useTypewriter({
     text: currentLine,
     speed: 30,
@@ -111,7 +111,7 @@ export function DialogueBox({
     }
   };
 
-  // Tangentbords- och klickinteraktionshantering
+  // Keyboard and click interaction handling
   const { dialogueRef, handleClick, selectedChoiceIndex, setSelectedChoiceIndex } = useDialogueInteraction({
     isTyping,
     isLastLine,
@@ -144,7 +144,7 @@ export function DialogueBox({
     };
   }, []);
 
-  // Bestäm om val ska visas
+  // Determine if choices should be shown
   const showChoices = isLastLine && !isTyping && choices && choices.length > 0;
 
   return (
@@ -154,7 +154,7 @@ export function DialogueBox({
       onClick={handleClick}
       tabIndex={0}
       role="dialog"
-      aria-label={`Dialog med ${speaker}`}
+      aria-label={`Dialogue with ${speaker}`}
       aria-modal="true"
       aria-live="polite"
       aria-atomic="true"
@@ -179,7 +179,7 @@ export function DialogueBox({
           }}
         >
           <div className="min-h-[8rem] sm:min-h-[6rem]">
-            {/* Text och val */}
+            {/* Text and choices */}
             <DialogueText
               speaker={speaker}
               displayedText={displayedText}

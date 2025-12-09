@@ -1,6 +1,6 @@
 /**
- * Felvisningskomponent
- * Konsekvent felstatusvisning med meddelande och åtgärder
+ * Error Display Component
+ * Consistent error status display with message and actions
  */
 
 import { Card } from './Card.js';
@@ -13,43 +13,43 @@ import { getUserFriendlyMessage } from '@services/errorService.js';
 
 export interface ErrorDisplayProps {
   /**
-   * Felobjekt eller meddelande
+   * Error object or message
    */
   error: Error | string;
 
   /**
-   * Feltitel (standard: "Fel")
+   * Error title (default: "Error")
    */
   title?: string;
 
   /**
-   * Åtgärdsknapptext
+   * Action button text
    */
   actionLabel?: string;
 
   /**
-   * Åtgärdsknapphanterare
+   * Action button handler
    */
   onAction?: () => void;
 
   /**
-   * Visa feldetaljer i dev-läge
+   * Show error details in dev mode
    */
   showDetails?: boolean;
 
   /**
-   * Ytterligare className
+   * Additional className
    */
   className?: string;
 }
 
 /**
- * Felvisningskomponent
+ * Error Display component
  */
 export function ErrorDisplay({
   error,
-  title = 'Fel',
-  actionLabel = 'Gå tillbaka',
+  title = 'Error',
+  actionLabel = 'Go Back',
   onAction,
   showDetails = import.meta.env.DEV,
   className = '',
@@ -72,7 +72,7 @@ export function ErrorDisplay({
           {showDetails && errorObj && errorObj.stack && (
             <details className="text-left">
               <summary className="text-sm text-gray-500 cursor-pointer mb-2">
-                Feldetaljer
+                Error Details
               </summary>
               <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto max-h-48 text-gray-900">
                 {errorObj.stack}

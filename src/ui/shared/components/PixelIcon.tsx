@@ -1,9 +1,15 @@
 /**
- * Pixelikon-komponent
- * Använder Pixelarticons-biblioteket för pixelgrafikikoner
+ * Pixel Icon Component
+ * Uses the Pixelarticons library for pixel art icons
  * https://pixelarticons.com
+ * 
+ * @example
+ * ```tsx
+ * <PixelIcon type="check" size={24} color="#FFD700" />
+ * ```
  */
 
+import { memo } from 'react';
 import CheckIcon from 'pixelarticons/svg/check.svg?react';
 import LockIcon from 'pixelarticons/svg/lock.svg?react';
 import PlayIcon from 'pixelarticons/svg/play.svg?react';
@@ -49,40 +55,40 @@ export type PixelIconType =
 
 export interface PixelIconProps {
   /**
-   * Ikontyp
+   * Icon type
    */
   type: PixelIconType;
 
   /**
-   * Storlek i pixlar (standard: 24, rekommenderat: 24, 48, 72, 96)
-   * För mindre storlekar används 24px och skalas med CSS
+   * Size in pixels (default: 24, recommended: 24, 48, 72, 96)
+   * For smaller sizes, 24px is used and scaled down with CSS
    */
   size?: number;
 
   /**
-   * Färg (standard: currentColor)
+   * Color (default: currentColor)
    */
   color?: string;
 
   /**
-   * CSS-klasser
+   * CSS classes
    */
   className?: string;
 }
 
 /**
- * Konvertera önskad storlek till närmaste rekommenderad storlek
- * Pixelarticons rekommenderar 24, 48, 72, 96px för skarp rendering
+ * Convert desired size to nearest recommended size
+ * Pixelarticons recommends 24, 48, 72, 96px for sharp rendering
  */
 function getOptimalSize(desiredSize: number): { renderSize: number; scale: number } {
   const recommendedSizes = [24, 48, 72, 96];
   
-  // För små storlekar, använd 24px och skala ner
+  // For small sizes, use 24px and scale down
   if (desiredSize < 24) {
     return { renderSize: 24, scale: desiredSize / 24 };
   }
   
-  // Hitta närmaste rekommenderad storlek
+  // Find nearest recommended size
   const closest = recommendedSizes.reduce((prev, curr) => {
     return Math.abs(curr - desiredSize) < Math.abs(prev - desiredSize) ? curr : prev;
   });
@@ -114,10 +120,10 @@ const iconComponents: Record<PixelIconType, React.ComponentType<React.SVGProps<S
 };
 
 /**
- * Pixelikon-komponent
- * Renderar pixelgrafikikoner från Pixelarticons
+ * Pixel Icon component
+ * Renders pixel art icons from Pixelarticons
  */
-export function PixelIcon({
+export const PixelIcon = memo(function PixelIcon({
   type,
   size = 24,
   color = 'currentColor',
@@ -150,4 +156,4 @@ export function PixelIcon({
       }}
     />
   );
-}
+});

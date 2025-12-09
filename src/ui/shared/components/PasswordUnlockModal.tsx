@@ -66,11 +66,11 @@ export function PasswordUnlockModal({
         setError(null);
         onClose();
       } else {
-        setError('Fel lösenord. Försök igen.');
+        setError('Incorrect password. Please try again.');
         setPassword('');
       }
     } catch (err) {
-      setError('Ett fel uppstod. Försök igen.');
+      setError('An error occurred. Please try again.');
       console.error('Password unlock error:', err);
     } finally {
       setSubmitting(false);
@@ -101,17 +101,17 @@ export function PasswordUnlockModal({
     >
       <ModalContent borderColor={borderColorValue} className="space-y-4">
         <h3 className="pixelated text-yellow-400 text-lg font-bold mb-4">
-          {moduleName ? `Lås upp ${moduleName}` : 'Lås upp modul'}
+          {moduleName ? `Unlock ${moduleName}` : 'Unlock Module'}
         </h3>
         {hint && (
           <p className="text-sm text-gray-400 italic pixelated">
-            Ledtråd: {hint}
+            Hint: {hint}
           </p>
         )}
 
         <div>
           <label htmlFor="password-input" className="block text-sm font-medium text-gray-300 mb-2 pixelated">
-            Lösenord
+            Password
           </label>
           <Input
             id="password-input"
@@ -122,7 +122,7 @@ export function PasswordUnlockModal({
               setError(null);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Ange lösenord"
+            placeholder="Enter password"
             autoFocus
             disabled={submitting}
             className="w-full"
@@ -140,7 +140,7 @@ export function PasswordUnlockModal({
             disabled={submitting}
             pixelated
           >
-            Avbryt
+            Cancel
           </Button>
           <Button
             onClick={handleSubmit}
@@ -148,7 +148,7 @@ export function PasswordUnlockModal({
             loading={submitting}
             pixelated
           >
-            Lås upp
+            Unlock
           </Button>
         </div>
       </ModalContent>

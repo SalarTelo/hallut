@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { formatChoiceText } from './choiceFormatter.js';
 
 /**
- * Dialogval-komponent
- * Renderar valknapparna i slutet av dialogen
+ * Dialogue Choices Component
+ * Renders choice buttons at the end of the dialogue
  */
 
 export interface DialogueChoice {
@@ -13,38 +13,38 @@ export interface DialogueChoice {
 
 export interface DialogueChoicesProps {
   /**
-   * Array med val att visa
+   * Array of choices to display
    */
   choices: DialogueChoice[];
 
   /**
-   * Kantfärg för styling
+   * Border color for styling
    */
   borderColor: string;
 
   /**
-   * Index för valt val (för tangentbordsnavigering)
+   * Index of selected choice (for keyboard navigation)
    */
   selectedIndex?: number;
 
   /**
-   * Callback när valt index ändras
+   * Callback when selected index changes
    */
   onSelectedIndexChange?: (index: number) => void;
 
   /**
-   * Index för val som ska spelas animation för (används för tangentbordsval)
+   * Index of choice to play animation for (used for keyboard selection)
    */
   selectingIndex?: number | null;
 
   /**
-   * Callback när ett val klickas (för att trigga animation)
+   * Callback when a choice is clicked (to trigger animation)
    */
   onChoiceClick?: (index: number) => void;
 }
 
 /**
- * Dialogval-komponent
+ * Dialogue Choices component
  */
 export function DialogueChoices({
   choices,

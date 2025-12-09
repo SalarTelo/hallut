@@ -1,6 +1,6 @@
 /**
- * Märkeskomponent
- * Återanvändbar märkeskomponent för etiketter och statusindikatorer
+ * Badge Component
+ * Reusable badge component for labels and status indicators
  */
 
 import type { HTMLAttributes, ReactNode } from 'react';
@@ -10,27 +10,27 @@ export type BadgeSize = 'sm' | 'md' | 'lg';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   /**
-   * Märkesinnehåll
+   * Badge content
    */
   children: ReactNode;
 
   /**
-   * Märkesvariant
+   * Badge variant
    */
   variant?: BadgeVariant;
 
   /**
-   * Märkesstorlek
+   * Badge size
    */
   size?: BadgeSize;
 
   /**
-   * Avrundat märke
+   * Rounded badge
    */
   rounded?: boolean;
 
   /**
-   * Konturstil
+   * Outline style
    */
   outline?: boolean;
 }
@@ -75,7 +75,7 @@ const sizeStyles: Record<BadgeSize, string> = {
 };
 
 /**
- * Märkeskomponent
+ * Badge component
  */
 export function Badge({
   children,

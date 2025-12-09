@@ -1,6 +1,22 @@
 /**
  * Interactable View
- * Main environment view with interactables
+ * Main environment view with interactables (NPCs, objects, etc.)
+ * 
+ * Displays the module's interactable elements on a background, showing:
+ * - NPCs with task badges
+ * - Objects and other interactables
+ * - Task tracker for active tasks
+ * - Exit button (optional)
+ * 
+ * @example
+ * ```tsx
+ * <InteractableView
+ *   moduleData={moduleData}
+ *   moduleId="example-1"
+ *   onInteractableClick={handleInteractableClick}
+ *   onExit={handleExit}
+ * />
+ * ```
  */
 
 import type { ModuleData } from '@core/module/types/index.js';
@@ -14,9 +30,24 @@ import { Button } from '@ui/shared/components/Button.js';
 import { TaskTracker } from '@ui/shared/components/TaskTracker.js';
 
 export interface InteractableViewProps {
+  /**
+   * Module data containing interactables, tasks, and configuration
+   */
   moduleData: ModuleData;
+
+  /**
+   * Module ID
+   */
   moduleId: string;
+
+  /**
+   * Callback when an interactable is clicked
+   */
   onInteractableClick: (interactable: Interactable) => void | Promise<void>;
+
+  /**
+   * Optional callback when exit button is clicked
+   */
   onExit?: () => void;
 }
 

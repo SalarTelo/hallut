@@ -3,6 +3,7 @@
  * Reusable loading spinner with configurable size and color
  */
 
+import { memo } from 'react';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { DEFAULT_THEME } from '@config/constants.js';
 
@@ -26,7 +27,7 @@ export interface LoadingSpinnerProps {
 /**
  * Loading spinner component
  */
-export function LoadingSpinner({
+export const LoadingSpinner = memo(function LoadingSpinner({
   size = 48,
   borderColor,
   className = '',
@@ -46,5 +47,5 @@ export function LoadingSpinner({
       role="status"
     />
   );
-}
+});
 

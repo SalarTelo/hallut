@@ -1,6 +1,6 @@
 /**
- * Knappkomponent
- * JRPG-stilad knapp med konfigurerbar kantfärg och pixelat teckensnittsval
+ * Button Component
+ * JRPG-styled button with configurable border color and pixelated font option
  */
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
@@ -12,42 +12,42 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
-   * Knappvariant
+   * Button variant
    */
   variant?: ButtonVariant;
 
   /**
-   * Knappstorlek
+   * Button size
    */
   size?: ButtonSize;
 
   /**
-   * Knappinnehåll
+   * Button content
    */
   children: ReactNode;
 
   /**
-   * Laddningsstatus
+   * Loading state
    */
   loading?: boolean;
 
   /**
-   * Knapp med full bredd
+   * Full width button
    */
   fullWidth?: boolean;
 
   /**
-   * Använd pixelat typsnitt (för spelkontexter)
+   * Use pixelated font (for game contexts)
    */
   pixelated?: boolean;
 
   /**
-   * Kantfärg (standard från tema)
+   * Border color (defaults to theme)
    */
   borderColor?: string;
 
   /**
-   * Aktivera glödeffekt
+   * Enable glow effect
    */
   glow?: boolean;
 }
@@ -92,7 +92,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 };
 
 /**
- * Knappkomponent
+ * Button component
  */
 export function Button({
   variant = 'primary',
@@ -115,12 +115,12 @@ export function Button({
   const loadingStyle = loading ? 'cursor-wait' : '';
   const pixelatedStyle = pixelated ? 'pixelated' : '';
   
-  // Kantstil - konturvariant använder kant, andra använder glöd
+  // Border style - outline variant uses border, others use glow
   const borderStyle = variant === 'outline' 
     ? { borderColor: borderColorValue, borderWidth: '1px' }
     : {};
   
-  // Glödeffektstil - använd endast för betoning/aktiva tillstånd
+  // Glow effect style - use only for emphasis/active states
   const glowStyle = glow
     ? {
         boxShadow: `0 0 8px ${borderColorValue}`,

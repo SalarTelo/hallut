@@ -1,6 +1,6 @@
 /**
- * Laddningsstatuskomponent
- * Helskärmsladdningsstatus med spinner och meddelande
+ * Loading State Component
+ * Full-screen loading state with spinner and message
  */
 
 import { LoadingSpinner } from './LoadingSpinner.js';
@@ -8,31 +8,31 @@ import { getBackgroundColorStyle } from '@lib/color.js';
 
 export interface LoadingStateProps {
   /**
-   * Laddningsmeddelande
+   * Loading message
    */
   message?: string;
 
   /**
-   * Spinnerstorlek
+   * Spinner size
    */
   spinnerSize?: number;
 
   /**
-   * Kantfärg för spinner
+   * Border color for spinner
    */
   borderColor?: string;
 
   /**
-   * Ytterligare className
+   * Additional className
    */
   className?: string;
 }
 
 /**
- * Laddningsstatuskomponent
+ * Loading State component
  */
 export function LoadingState({
-  message = 'Laddar...',
+  message = 'Loading...',
   spinnerSize = 48,
   borderColor,
   className = '',

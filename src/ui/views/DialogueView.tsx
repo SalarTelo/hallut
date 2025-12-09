@@ -1,6 +1,24 @@
 /**
  * Dialogue View
  * Displays a dialogue with choices
+ * 
+ * Renders a dialogue interface showing:
+ * - Dialogue lines with typewriter effect
+ * - Speaker information
+ * - Choice options at the end
+ * - Keyboard and mouse interaction support
+ * 
+ * @example
+ * ```tsx
+ * <DialogueView
+ *   node={dialogueNode}
+ *   npc={npc}
+ *   moduleId="example-1"
+ *   availableChoices={choices}
+ *   onChoiceSelected={handleChoiceSelected}
+ *   onClose={handleClose}
+ * />
+ * ```
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -9,11 +27,34 @@ import type { NPC } from '@core/module/types/index.js';
 import { DialogueBox, type DialogueChoice as UIDialogueChoice } from '@ui/shared/components/DialogueBox.js';
 
 export interface DialogueViewProps {
+  /**
+   * Dialogue node to display
+   */
   node: DialogueNode;
+
+  /**
+   * NPC speaking the dialogue
+   */
   npc: NPC;
+
+  /**
+   * Module ID
+   */
   moduleId: string;
+
+  /**
+   * Available choices for the dialogue
+   */
   availableChoices: Array<{ key: string; text: string; actions: ChoiceAction[] }>;
+
+  /**
+   * Callback when a choice is selected
+   */
   onChoiceSelected: (choiceKey: string, actions: ChoiceAction[]) => void | Promise<void>;
+
+  /**
+   * Callback when dialogue is closed
+   */
   onClose: () => void;
 }
 

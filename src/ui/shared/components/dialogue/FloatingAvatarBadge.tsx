@@ -3,6 +3,7 @@
  * Circular avatar badge that floats to the left of the dialogue box
  */
 
+import { memo } from 'react';
 import type { ReactNode } from 'react';
 
 export type AvatarType = 'silhouette' | 'image' | 'icon';
@@ -33,7 +34,7 @@ export interface FloatingAvatarBadgeProps {
  * Floating Avatar Badge component
  * Circular badge that floats to the left of dialogue box
  */
-export function FloatingAvatarBadge({
+export const FloatingAvatarBadge = memo(function FloatingAvatarBadge({
   type,
   data,
   speaker,
@@ -85,5 +86,5 @@ export function FloatingAvatarBadge({
       {renderContent()}
     </div>
   );
-}
+});
 
