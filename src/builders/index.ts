@@ -26,11 +26,6 @@ export {
   callFunction,
   goToNode,
   closeDialogue,
-  createDialogue,
-  choice,
-  simpleChoice,
-  type DialogueOptions,
-  type ChoiceBuilder,
 } from './dialogue/index.js';
 
 // Re-export dialogue conditions/actions with dialogue prefix to avoid conflicts
@@ -44,7 +39,6 @@ export {
   pos,
   taskComplete,
   stateCheck,
-  showDialogue,
   showComponent,
   showNoteViewer,
   showSignViewer,

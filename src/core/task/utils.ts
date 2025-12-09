@@ -3,7 +3,7 @@
  * Helper functions for working with tasks
  */
 
-import type { Task } from './types/index.js';
+import type { Task } from './types.js';
 
 /**
  * Extract task ID from task (string or Task object)

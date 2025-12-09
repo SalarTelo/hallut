@@ -35,12 +35,5 @@ export {
   closeDialogue,
 } from './actions.js';
 
-// Legacy builders
-export {
-  createDialogue,
-  choice,
-  simpleChoice,
-  type DialogueOptions,
-  type ChoiceBuilder,
-} from './legacy.js';
+// Legacy builders removed - use dialogueTree() and dialogueNode() instead
 

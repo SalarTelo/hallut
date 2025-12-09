@@ -6,8 +6,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { actions } from '../actions.js';
 import { useAppStore } from '../store.js';
-import type { ModuleData } from '../module/types/index.js';
-import type { Task } from '../task/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
+import type { Task } from '@core/task/types.js';
 
 // Mock the store
 vi.mock('../store.js', () => ({
@@ -73,7 +73,7 @@ describe('State Actions', () => {
 
   describe('Progress Actions', () => {
     it('should update progress', () => {
-      actions.updateProgress('test-module', { state: { completedTasks: [] } });
+      actions.updateProgress('test-module', { state: { completedTasks: [], seenGreetings: {} } });
 
       expect(mockStore.updateProgress).toHaveBeenCalledWith('test-module', {
         state: { completedTasks: [] },

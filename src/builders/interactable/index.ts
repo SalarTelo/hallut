@@ -15,7 +15,6 @@ export {
 
 // Interactions
 export {
-  showDialogue,
   showComponent,
   showNoteViewer,
   showSignViewer,

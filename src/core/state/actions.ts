@@ -7,8 +7,7 @@
 import { useAppStore } from './store.js';
 import type { ModuleData } from '../module/types/index.js';
 import type { Task } from '../task/types.js';
-import type { ModuleProgress, ModuleProgressionState } from './types/index.js';
-import { getTaskId } from '../task/utils.js';
+import type { ModuleProgress, ModuleProgressionState } from './types.js';
 
 /**
  * State actions

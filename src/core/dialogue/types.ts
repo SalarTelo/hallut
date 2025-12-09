@@ -123,16 +123,15 @@ export type ChoiceAction =
   | { type: 'none' };
 
 /**
- * Dialogue choice (for backward compatibility)
+ * @deprecated DialogueChoice and DialogueConfig are deprecated
+ * Use DialogueTree and DialogueNode instead for NPCs
+ * Use component interactions (showNoteViewer, etc.) for objects
  */
 export interface DialogueChoice {
   text: string;
   action: ChoiceAction | ChoiceAction[] | null;
 }
 
-/**
- * Dialogue configuration (for backward compatibility during migration)
- */
 export interface DialogueConfig {
   id: string;
   lines: string[];

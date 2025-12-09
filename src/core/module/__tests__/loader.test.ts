@@ -11,7 +11,7 @@ import {
 import { registerModule } from '../registry.js';
 import { defineModule } from '../define.js';
 import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/module/index.js';
-import { createNPC, createObject, showDialogue, pos } from '@builders/interactable/index.js';
+import { createNPC, createObject, showNoteViewer, pos } from '@builders/interactable/index.js';
 import { dialogueTree, dialogueNode } from '@builders/dialogue/index.js';
 import { createTask, textSubmission } from '@builders/task/index.js';
 import type { ModuleDefinition } from '@core/module/types/index.js';
@@ -129,14 +129,26 @@ describe('Module Loader', () => {
           .build(),
       });
 
+      const objectDialogueTree = dialogueTree()
+        .node(dialogueNode({
+          id: 'object-dialogue',
+          lines: ['This is an object.'],
+        }))
+        .configureEntry()
+          .default(dialogueNode({
+            id: 'object-dialogue',
+            lines: ['This is an object.'],
+          }))
+        .build();
+
       const object = createObject({
         id: 'test-object',
         name: 'Test Object',
         position: pos(20, 20),
         avatar: '📦',
-        interaction: showDialogue({
-          id: 'object-dialogue',
-          lines: ['This is an object.'],
+        interaction: showNoteViewer({
+          content: 'This is an object.',
+          title: 'Test Object',
         }),
       });
 

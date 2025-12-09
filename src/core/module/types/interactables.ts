@@ -4,7 +4,7 @@
  */
 
 import type { Task } from '../../task/types.js';
-import type { DialogueConfig, DialogueTree } from '../../dialogue/types.js';
+import type { DialogueTree } from '../../dialogue/types.js';
 import type { UnlockRequirement } from '../../unlock/types.js';
 import type { ModuleContext } from './context.js';
 
@@ -65,7 +65,6 @@ export interface ImageViewerProps {
  * Predefined components have type-safe props, custom components use generic props
  */
 export type ObjectInteraction =
-  | { type: 'dialogue'; dialogue: DialogueConfig }
   | { type: 'component'; component: 'NoteViewer'; props?: NoteViewerProps }
   | { type: 'component'; component: 'SignViewer'; props?: SignViewerProps }
   | { type: 'component'; component: 'ChatWindow'; props?: ChatWindowProps }

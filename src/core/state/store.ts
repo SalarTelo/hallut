@@ -8,7 +8,7 @@ import { persist } from 'zustand/middleware';
 import { createModuleSlice, type ModuleSlice } from './slices/moduleSlice.js';
 import { createProgressSlice, type ProgressSlice } from './slices/progressSlice.js';
 import { createProgressionSlice, type ProgressionSlice } from './slices/progressionSlice.js';
-import type { ModuleProgression } from './slices/progressionSlice.js';
+// ModuleProgression type exported below
 
 /**
  * Application state
@@ -39,7 +39,7 @@ export type AppStore = AppState & AppActions;
 export const useAppStore = create<AppStore>()(
   persist(
     (set, get) => ({
-      ...createModuleSlice(set, get),
+      ...createModuleSlice(set),
       ...createProgressSlice(set, get),
       ...createProgressionSlice(set, get),
     }),

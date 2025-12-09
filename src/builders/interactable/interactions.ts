@@ -11,17 +11,9 @@ import type {
   ChatWindowProps,
   ImageViewerProps,
 } from '@core/module/types/index.js';
-import type { DialogueConfig } from '@core/dialogue/types.js';
 
-/**
- * Show dialogue interaction
- */
-export function showDialogue(dialogue: DialogueConfig): ObjectInteraction {
-  return {
-    type: 'dialogue',
-    dialogue,
-  };
-}
+// showDialogue removed - objects should use showNoteViewer, showSignViewer, etc. instead
+// For NPCs, use dialogueTree with createNPC
 
 /**
  * Show component interaction

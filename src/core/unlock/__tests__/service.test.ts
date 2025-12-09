@@ -62,7 +62,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'test-module', name: 'Test', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
         },
         content: { interactables: [], tasks: [] },
       };
@@ -82,7 +81,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'test-module', name: 'Test', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
         },
         content: { interactables: [], tasks: [] },
       };
@@ -102,7 +100,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'test-module', name: 'Test', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
         },
         content: { interactables: [], tasks: [] },
       };
@@ -122,7 +119,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'test-module', name: 'Test', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
           unlockRequirement: {
             type: 'password',
             password: 'secret123',
@@ -156,7 +152,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'test-module', name: 'Test', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
           unlockRequirement: {
             type: 'module-complete',
             moduleId: 'required-module',
@@ -185,7 +180,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'test-module', name: 'Test', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
         },
         content: { interactables: [], tasks: [] },
       };
@@ -206,7 +200,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'test-module', name: 'Test', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
           unlockRequirement: {
             type: 'password',
             password: 'secret',
@@ -231,7 +224,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'test-module', name: 'Test', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
           unlockRequirement: {
             type: 'password',
             password: 'secret',
@@ -266,7 +258,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'dependent-module', name: 'Dependent', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
           unlockRequirement: {
             type: 'module-complete',
             moduleId: 'test-module',
@@ -305,7 +296,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'module1', name: 'Module 1', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
         },
         content: { interactables: [], tasks: [] },
       };
@@ -329,7 +319,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'module1', name: 'Module 1', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
         },
         content: { interactables: [], tasks: [] },
       };
@@ -351,7 +340,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'module1', name: 'Module 1', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
           unlockRequirement: {
             type: 'module-complete',
             moduleId: 'required-module',
@@ -382,7 +370,6 @@ describe('Unlock Service', () => {
           manifest: { id: 'module1', name: 'Module 1', version: '1.0.0' },
           background: {},
           welcome: { speaker: 'Test', lines: [] },
-          taskOrder: [],
           unlockRequirement: {
             type: 'password',
             password: 'secret',

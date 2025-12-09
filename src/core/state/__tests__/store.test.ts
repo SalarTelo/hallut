@@ -37,7 +37,6 @@ describe('App Store', () => {
         config: {} as any,
         interactables: [],
         tasks: [],
-        dialogues: {},
       };
 
       useAppStore.getState().setCurrentModule(mockModule);
@@ -53,7 +52,6 @@ describe('App Store', () => {
         config: {} as any,
         interactables: [],
         tasks: [],
-        dialogues: {},
       };
 
       useAppStore.getState().setCurrentModule(mockModule);

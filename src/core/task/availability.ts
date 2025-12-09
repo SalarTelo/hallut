@@ -4,7 +4,7 @@
  */
 
 import { actions } from '../state/actions.js';
-import type { Task } from './types/index.js';
+import type { Task } from './types.js';
 import type { ModuleContext } from '../module/types/index.js';
 import type { ModuleData } from '../module/types/index.js';
 

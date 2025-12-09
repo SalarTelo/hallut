@@ -5,7 +5,7 @@
 
 // Re-export for convenience
 export type { Task } from '../../task/types.js';
-export type { DialogueConfig } from '../../dialogue/types.js';
+// DialogueConfig removed - use DialogueTree for NPCs, component interactions for objects
 
 // Interactable types
 export type {

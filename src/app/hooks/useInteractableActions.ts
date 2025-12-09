@@ -90,23 +90,6 @@ export function useInteractableActions({
           }
 
           switch (interaction.type) {
-            case 'dialogue':
-              // For objects/locations with dialogue, convert DialogueConfig to DialogueNode
-              // This is for backward compatibility
-              const dialogueConfig = interaction.dialogue;
-              const dialogueNode: DialogueNode = {
-                id: dialogueConfig.id,
-                lines: dialogueConfig.lines,
-                choices: dialogueConfig.choices ? Object.fromEntries(
-                  dialogueConfig.choices.map((choice, index) => [`choice_${index}`, { text: choice.text }])
-                ) : undefined,
-              };
-              // For object dialogues, we don't have an NPC, so pass a dummy NPC-like object
-              // This is a workaround - ideally objects shouldn't use dialogue type
-              const dummyNPC = { id: interactable.id, name: interactable.name, type: 'npc' as const, position: interactable.position };
-              onDialogueSelected?.(dialogueNode, dummyNPC as NPC);
-              return { type: 'dialogue', dialogueNode, npc: dummyNPC as NPC };
-
             case 'component':
               // Handle all components through the same callback
               // Props can be specific types or generic Record, normalize to Record for callback

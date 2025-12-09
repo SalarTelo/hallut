@@ -19,7 +19,7 @@ export interface ModuleSlice {
 /**
  * Create module slice
  */
-export function createModuleSlice(set: any, get: any): ModuleSlice {
+export function createModuleSlice(set: any): ModuleSlice {
   return {
     currentModule: null,
     currentModuleId: null,
