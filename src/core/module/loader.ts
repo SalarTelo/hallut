@@ -3,15 +3,15 @@
  * Loads module definitions and converts them to module data
  */
 
-import type { ModuleDefinition, ModuleData } from '../types/module.js';
+import type { ModuleDefinition, ModuleData } from './types.js';
 import { registerModule } from './registry.js';
-import { ErrorCode, ModuleError } from '../types/errors.js';
+import { ErrorCode, ModuleError } from '../errors.js';
 import { actions } from '../state/actions.js';
 
 /**
  * Initialize interactable state for all interactables
  */
-function initializeInteractableStates(moduleId: string, interactables: import('../types/interactable.js').Interactable[]): void {
+function initializeInteractableStates(moduleId: string, interactables: import('./types.js').Interactable[]): void {
   for (const interactable of interactables) {
     actions.initializeInteractableState(moduleId, interactable.id);
   }

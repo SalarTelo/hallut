@@ -3,7 +3,7 @@
  * Helper to define modules
  */
 
-import type { ModuleDefinition, ModuleConfig, ModuleContent, ModuleHandlers } from '../types/module.js';
+import type { ModuleDefinition, ModuleConfig, ModuleContent, ModuleHandlers } from './types.js';
 
 /**
  * Define a module

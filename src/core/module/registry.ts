@@ -3,8 +3,8 @@
  * Discovers and registers all available modules
  */
 
-import type { ModuleDefinition, ModuleConfig } from '../types/module.js';
-import { ErrorCode, ModuleError } from '../types/errors.js';
+import type { ModuleDefinition, ModuleConfig } from './types.js';
+import { ErrorCode, ModuleError } from '../errors.js';
 
 /**
  * Module registry
