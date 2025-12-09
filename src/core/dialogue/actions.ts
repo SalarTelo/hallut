@@ -18,25 +18,19 @@ async function executeAction(
       context.acceptTask(action.task);
       break;
     case 'set-state':
+    case 'set-module-state':
       context.setModuleStateField(action.key, action.value);
       break;
     case 'set-interactable-state':
       context.setInteractableState(action.interactableId, action.key, action.value);
       break;
-    case 'set-module-state':
-      context.setModuleStateField(action.key, action.value);
-      break;
     case 'call-function':
       await action.handler(context);
       break;
     case 'go-to':
-      // Navigation is handled separately
-      break;
     case 'close-dialogue':
-      // Dialogue closing is handled separately in the UI layer
-      break;
     case 'none':
-      // No action
+      // Handled separately or no-op
       break;
   }
 }

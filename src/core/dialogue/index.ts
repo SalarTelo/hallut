@@ -6,5 +6,5 @@
 export * from './execution.js';
 export * from './processing.js';
 export * from './root.js';
-export * from './conversation.js';
+// Conversation state functions removed - not used
 export * from './types.js';

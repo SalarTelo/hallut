@@ -85,45 +85,28 @@ export function getNextDialogueNode(
   context: ModuleContext,
   moduleData: ModuleData
 ): DialogueNode | null {
-  // If choiceKey is null, check for node-level next (auto-advance)
+  // Handle auto-advance (null choiceKey)
   if (choiceKey === null) {
     const definition = getNodeDefinitionFromTree(currentNode.id, tree);
-    if (definition?.next !== undefined) {
-      const nextNode = resolveNode(definition.next, context, tree);
-      return nextNode;
-    }
-    return null; // No auto-advance
+    return definition?.next !== undefined ? resolveNode(definition.next, context, tree) : null;
   }
 
   // Find edge matching this choice
-  const edge = tree.edges.find(
-    e => e.from.id === currentNode.id && e.choiceKey === choiceKey
-  );
+  const edge = tree.edges.find(e => e.from.id === currentNode.id && e.choiceKey === choiceKey);
+  if (!edge) return null;
 
-  if (!edge) {
-    return null; // No edge found
+  // Check condition if present
+  if (edge.condition) {
+    const condition = resolveCondition(edge.condition as DynamicCondition, context);
+    if (!evaluateCondition(condition, context, moduleData)) return null;
   }
 
-  // Resolve dynamic condition if needed
-  const condition = edge.condition 
-    ? resolveCondition(edge.condition as DynamicCondition, context)
-    : undefined;
-
-  // Check condition
-  if (condition) {
-    if (!evaluateCondition(condition, context, moduleData)) {
-      return null; // Condition not met
-    }
-  }
-
-  // Resolve dynamic next if needed
-  // Note: edge.next is static, but we need to check if there's a dynamic definition
+  // Check for dynamic next in definition
   const definition = getNodeDefinitionFromTree(currentNode.id, tree);
   if (definition?.choices && typeof definition.choices !== 'function') {
     const choiceDef = definition.choices[choiceKey];
     if (choiceDef?.next !== undefined) {
-      const resolvedNext = resolveNode(choiceDef.next, context, tree);
-      return resolvedNext;
+      return resolveNode(choiceDef.next, context, tree);
     }
   }
 

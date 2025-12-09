@@ -20,6 +20,13 @@ import type {
 import type { ModuleContext } from '../module/types/index.js';
 
 /**
+ * Generic helper to resolve dynamic values (functions or static values)
+ */
+function resolveDynamic<T>(value: T | ((context: ModuleContext) => T), context: ModuleContext): T {
+  return typeof value === 'function' ? value(context) : value;
+}
+
+/**
  * Get node definition from tree metadata
  */
 function getNodeDefinition(
@@ -36,20 +43,14 @@ export function resolveLines(
   lines: DynamicStringArray,
   context: ModuleContext
 ): string[] {
-  if (typeof lines === 'function') {
-    return lines(context);
-  }
-  return lines;
+  return resolveDynamic(lines, context);
 }
 
 /**
  * Resolve dynamic string to static string
  */
 export function resolveString(text: DynamicString, context: ModuleContext): string {
-  if (typeof text === 'function') {
-    return text(context);
-  }
-  return text;
+  return resolveDynamic(text, context);
 }
 
 /**
@@ -60,19 +61,14 @@ export function resolveNode(
   context: ModuleContext,
   tree: DialogueTree
 ): DialogueNode | null {
-  if (typeof next === 'function') {
-    const result = next(context);
-    // Result might be a string ID, resolve it
-    if (typeof result === 'string') {
-      return tree.nodes.find(n => n.id === result) || null;
-    }
-    return result;
+  const resolved = typeof next === 'function' ? next(context) : next;
+  
+  // If result is a string ID, look up node in tree
+  if (typeof resolved === 'string') {
+    return tree.nodes.find(n => n.id === resolved) || null;
   }
-  if (typeof next === 'string') {
-    // String ID - look up node in tree
-    return tree.nodes.find(n => n.id === next) || null;
-  }
-  return next;
+  
+  return resolved;
 }
 
 /**
@@ -82,10 +78,7 @@ export function resolveChoices(
   choices: DynamicChoices,
   context: ModuleContext
 ): Record<string, DialogueChoiceDefinition> {
-  if (typeof choices === 'function') {
-    return choices(context);
-  }
-  return choices;
+  return resolveDynamic(choices, context);
 }
 
 /**
@@ -95,10 +88,7 @@ export function resolveActions(
   actions: DynamicActions,
   context: ModuleContext
 ): ChoiceAction[] {
-  if (typeof actions === 'function') {
-    return actions(context);
-  }
-  return actions;
+  return resolveDynamic(actions, context);
 }
 
 /**
@@ -106,7 +96,7 @@ export function resolveActions(
  */
 export function resolveCondition(
   condition: DynamicCondition,
-  _context: ModuleContext
+  context: ModuleContext
 ): DialogueCondition {
   if (typeof condition === 'function') {
     return { type: 'custom', check: condition };

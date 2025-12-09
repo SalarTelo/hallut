@@ -27,36 +27,34 @@ export type StateRef<T extends Record<string, unknown> = Record<string, unknown>
  * (ctx) => { guardState(ctx).hasMet = true; }
  * ```
  */
+/**
+ * Helper to check if prop is a string key
+ */
+function isStringKey(prop: string | symbol): prop is string {
+  return typeof prop === 'string';
+}
+
 export function stateRef<T extends Record<string, unknown> = Record<string, unknown>>(
   interactable: { id: string }
 ): StateRef<T> {
   return (context: ModuleContext) => {
     return new Proxy({} as T, {
       get(_target, prop: string | symbol) {
-        // Read from Zustand store via context
-        if (typeof prop === 'string') {
-          return context.getInteractableState(interactable.id, prop);
-        }
-        return undefined;
+        return isStringKey(prop) ? context.getInteractableState(interactable.id, prop) : undefined;
       },
       set(_target, prop: string | symbol, value: unknown) {
-        // Write to Zustand store via context
-        if (typeof prop === 'string') {
+        if (isStringKey(prop)) {
           context.setInteractableState(interactable.id, prop, value);
         }
-        return true; // Indicate success
+        return true;
       },
       has(_target, prop: string | symbol) {
-        // Check if property exists in store
-        if (typeof prop === 'string') {
-          const value = context.getInteractableState(interactable.id, prop);
-          return value !== undefined;
-        }
-        return false;
+        return isStringKey(prop) 
+          ? context.getInteractableState(interactable.id, prop) !== undefined
+          : false;
       },
       ownKeys(_target) {
-        // This is tricky - we'd need to get all keys from the store
-        // For now, return empty array (can be enhanced if needed)
+        // Would need store access to get all keys - return empty for now
         return [];
       },
     });

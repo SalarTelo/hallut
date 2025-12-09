@@ -52,34 +52,19 @@ export function getAvailableChoices(
   const available: Array<{ key: string; text: string; actions: ChoiceAction[] }> = [];
 
   for (const [choiceKey, choiceDef] of Object.entries(choicesToProcess)) {
-    // Resolve condition
-    const condition = choiceDef.condition
-      ? resolveCondition(choiceDef.condition, context)
-      : undefined;
-
-    // Check condition
-    if (condition) {
-      if (!evaluateCondition(condition, context, moduleData)) {
-        continue; // Condition not met, skip this choice
-      }
+    // Check condition if present
+    if (choiceDef.condition) {
+      const condition = resolveCondition(choiceDef.condition, context);
+      if (!evaluateCondition(condition, context, moduleData)) continue;
     }
 
     // Resolve text
     const text = resolveString(choiceDef.text, context);
 
-    // Resolve actions
-    let actions: ChoiceAction[] = [];
-    if (choiceDef.actions) {
-      actions = resolveActions(choiceDef.actions, context) as ChoiceAction[];
-    } else {
-      // Fall back to edge actions if no definition actions
-      const edge = tree.edges.find(
-        e => e.from.id === node.id && e.choiceKey === choiceKey
-      );
-      if (edge?.actions) {
-        actions = edge.actions;
-      }
-    }
+    // Resolve actions - prefer definition actions, fall back to edge actions
+    const actions: ChoiceAction[] = choiceDef.actions
+      ? (resolveActions(choiceDef.actions, context) as ChoiceAction[])
+      : tree.edges.find(e => e.from.id === node.id && e.choiceKey === choiceKey)?.actions || [];
 
     available.push({
       key: choiceKey,

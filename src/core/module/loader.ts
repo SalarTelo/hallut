@@ -11,7 +11,7 @@ import { actions } from '../state/actions.js';
 /**
  * Initialize interactable state for all interactables
  */
-function initializeInteractableStates(moduleId: string, interactables: import('./types.js').Interactable[]): void {
+function initializeInteractableStates(moduleId: string, interactables: import('./types/index.js').Interactable[]): void {
   for (const interactable of interactables) {
     actions.initializeInteractableState(moduleId, interactable.id);
   }
@@ -63,7 +63,7 @@ export async function loadModuleInstance(moduleId: string): Promise<ModuleDefini
       throw error;
     }
     throw new ModuleError(
-      ErrorCode.MODULE_LOAD_FAILED,
+      ErrorCode.MODULE_LOAD_ERROR,
       moduleId,
       `Failed to load module: ${getErrorMessage(error)}`,
       { originalError: error }

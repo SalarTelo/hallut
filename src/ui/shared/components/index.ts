@@ -11,7 +11,7 @@
  *
  * Domain-specific:
  * - layouts/: CenteredLayout, ContainerLayout, FullScreenLayout
- * - dialogue/: DialogueAvatar, DialogueText, DialogueChoices
+ * - dialogue/: FloatingAvatarBadge, DialogueText, DialogueChoices
  * - modulePath/: ModuleNode, ConnectionLines, ModuleTooltip
  *
  * Game UI:

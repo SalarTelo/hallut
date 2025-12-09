@@ -50,7 +50,6 @@ describe('State Actions', () => {
         config: {} as any,
         interactables: [],
         tasks: [],
-        dialogues: {},
       };
 
       actions.setCurrentModule(moduleData);

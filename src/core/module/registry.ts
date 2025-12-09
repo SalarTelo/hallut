@@ -29,7 +29,7 @@ export async function discoverModules(): Promise<string[]> {
     }
   } catch (error) {
     throw new ModuleError(
-      ErrorCode.MODULE_LOAD_FAILED,
+      ErrorCode.MODULE_LOAD_ERROR,
       'unknown',
       `Error discovering modules: ${getErrorMessage(error)}`,
       { originalError: error }
