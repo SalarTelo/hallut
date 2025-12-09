@@ -10,6 +10,7 @@ export { ModuleInfoModal, type ModuleInfoModalProps } from './ModuleInfoModal.js
 export { ModuleProgressIndicator, type ModuleProgressIndicatorProps } from './ModuleProgressIndicator.js';
 export { TaskTracker, type TaskTrackerProps } from './TaskTracker.js';
 export { ChatWindow, type ChatWindowProps, type ChatMessage } from './ChatWindow.js';
+export { FloatingChatWidget, type FloatingChatWidgetProps } from './FloatingChatWidget.js';
 export { PasswordUnlockModal, type PasswordUnlockModalProps } from './PasswordUnlockModal.js';
 
 // ModulePath sub-components
