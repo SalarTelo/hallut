@@ -5,8 +5,8 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { defineModule } from '../define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/modules.js';
-import type { ModuleDefinition } from '@core/module/types.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/module/index.js';
+import type { ModuleDefinition } from '@core/module/types/index.js';
 
 describe('Module Define', () => {
   describe('defineModule', () => {

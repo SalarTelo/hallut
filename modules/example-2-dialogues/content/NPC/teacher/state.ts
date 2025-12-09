@@ -5,7 +5,7 @@
  * This demonstrates how NPCs can "remember" things about the player.
  */
 
-import { stateRef } from '@builders/dialogues.js';
+import { stateRef } from '@builders/dialogue/index.js';
 
 /**
  * Teacher state reference

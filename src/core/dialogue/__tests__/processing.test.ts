@@ -6,7 +6,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { processDialogueAction, processDialogueActions } from '../processing.js';
 import type { ChoiceAction } from '../types.js';
-import type { ModuleContext, Task } from '../../module/types.js';
+import type { ModuleContext, Task } from '../../module/types/index.js';
 
 describe('Dialogue Service', () => {
   let mockContext: ModuleContext;

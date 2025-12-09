@@ -3,7 +3,7 @@
  * Business logic for task validation
  */
 
-import type { Task, TaskSubmission, TaskSolveResult } from './types.js';
+import type { Task, TaskSubmission, TaskSolveResult } from './types/index.js';
 
 /**
  * Validate a task submission

@@ -3,7 +3,7 @@
  * State management for the teacher NPC
  */
 
-import { stateRef } from '@builders/dialogues.js';
+import { stateRef } from '@builders/dialogue/index.js';
 
 /**
  * Teacher state reference

@@ -9,11 +9,11 @@ import {
   getAvailableTasks,
   getActiveTasks,
 } from '../availability.js';
-import { createTask, textSubmission, textLengthValidator, success } from '@builders/tasks.js';
-import { taskComplete, stateCheck } from '@builders/interactables.js';
-import { andRequirements } from '@builders/modules.js';
+import { createTask, textSubmission, textLengthValidator, success } from '@builders/task/index.js';
+import { taskComplete, stateCheck } from '@builders/interactable/index.js';
+import { andRequirements } from '@builders/module/index.js';
 import { createModuleContext } from '@core/module/context.js';
-import type { ModuleData } from '@core/module/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import type { Task } from '@core/task/types.js';
 import { getTaskId } from '../utils.js';
 

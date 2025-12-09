@@ -8,7 +8,7 @@
 import { getModule, getRegisteredModuleIds } from './registry.js';
 import { actions } from '../state/actions.js';
 import type { ModuleProgressionState } from '../state/types.js';
-import type { ModuleConfig } from './types.js';
+import type { ModuleConfig } from './types/index.js';
 import { checkUnlockRequirement } from '../unlock/requirements.js';
 import { handleError } from '@services/errorService.js';
 

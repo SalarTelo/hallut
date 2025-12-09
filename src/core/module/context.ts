@@ -5,7 +5,7 @@
 
 import { actions } from '../state/actions.js';
 import { useAppStore } from '../state/store.js';
-import type { ModuleContext, ModuleData, Task, Interactable } from './types.js';
+import type { ModuleContext, ModuleData, Task, Interactable } from './types/index.js';
 
 /**
  * Create module context

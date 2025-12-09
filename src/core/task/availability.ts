@@ -4,9 +4,9 @@
  */
 
 import { actions } from '../state/actions.js';
-import type { Task } from './types.js';
-import type { ModuleContext } from '../module/types.js';
-import type { ModuleData } from '../module/types.js';
+import type { Task } from './types/index.js';
+import type { ModuleContext } from '../module/types/index.js';
+import type { ModuleData } from '../module/types/index.js';
 
 /**
  * Check if a task is available (unlock requirement met and not completed)

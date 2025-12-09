@@ -3,7 +3,7 @@
  * Loads module definitions and converts them to module data
  */
 
-import type { ModuleDefinition, ModuleData } from './types.js';
+import type { ModuleDefinition, ModuleData } from './types/index.js';
 import { registerModule } from './registry.js';
 import { ErrorCode, ModuleError, getErrorMessage } from '../errors.js';
 import { actions } from '../state/actions.js';

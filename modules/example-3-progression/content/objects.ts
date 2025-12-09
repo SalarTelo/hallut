@@ -9,7 +9,7 @@ import {
   showNoteViewer,
   pos,
 } from '@builders/index.js';
-import { taskComplete } from '@builders/interactables.js';
+import { taskComplete } from '@builders/interactable/index.js';
 import { introTask, quizTask } from './tasks.js';
 
 /**

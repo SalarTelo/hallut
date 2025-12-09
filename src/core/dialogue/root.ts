@@ -3,12 +3,12 @@
  * Auto-generates root dialogue for NPCs
  */
 
-import { dialogueNode } from '@builders/dialogues.js';
+import { dialogueNode } from '@builders/dialogue/index.js';
 import { getActiveTasks } from '../task/availability.js';
 import { evaluateCondition } from './execution.js';
-import type { NPC } from '../module/types.js';
-import type { ModuleData } from '../module/types.js';
-import type { ModuleContext } from '../module/types.js';
+import type { NPC } from '../module/types/index.js';
+import type { ModuleData } from '../module/types/index.js';
+import type { ModuleContext } from '../module/types/index.js';
 import type { DialogueNode, DialogueTree, DialogueEdge } from './types.js';
 import type { Task } from '../task/types.js';
 

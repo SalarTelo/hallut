@@ -3,7 +3,7 @@
  * Global test configuration and mocks
  */
 
-import { expect, afterEach, vi } from 'vitest';
+import { afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom';
 
 // Clean up after each test

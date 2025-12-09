@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { generateWorldmap } from '../generator.js';
 import { getModule } from '../../module/registry.js';
 import { extractModuleDependencies, extractRequirementTypes, extractRequirementDetails } from '../../unlock/requirements.js';
-import type { ModuleDefinition } from '../../module/types.js';
+import type { ModuleDefinition } from '../../module/types/index.js';
 
 // Mock dependencies
 vi.mock('@core/module/registry.js', () => ({

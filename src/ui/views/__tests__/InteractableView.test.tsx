@@ -6,12 +6,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { InteractableView } from '../InteractableView.js';
-import { createTask, textSubmission, textLengthValidator, success } from '@builders/tasks.js';
-import { createNPC, pos } from '@builders/interactables.js';
-import { dialogueTree, dialogueNode } from '@builders/dialogues.js';
+import { createTask, textSubmission, textLengthValidator, success } from '@builders/task/index.js';
+import { createNPC, pos } from '@builders/interactable/index.js';
+import { dialogueTree, dialogueNode } from '@builders/dialogue/index.js';
 import { actions } from '@core/state/actions.js';
-import type { ModuleData } from '@core/module/types.js';
-import type { NPC } from '@core/module/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
+import type { NPC } from '@core/module/types/index.js';
 
 // Mock PixelIcon to avoid SVG import issues
 vi.mock('@ui/shared/components/PixelIcon.js', () => ({

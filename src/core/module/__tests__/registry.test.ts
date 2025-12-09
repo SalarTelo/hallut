@@ -13,8 +13,8 @@ import {
   discoverModules,
 } from '../registry.js';
 import { defineModule } from '../define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/modules.js';
-import type { ModuleDefinition } from '@core/module/types.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/module/index.js';
+import type { ModuleDefinition } from '@core/module/types/index.js';
 import { ErrorCode, ModuleError } from '@core/errors.js';
 
 describe('Module Registry', () => {

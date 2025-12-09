@@ -3,8 +3,8 @@
  * Main environment view with interactables
  */
 
-import type { ModuleData } from '@core/module/types.js';
-import type { Interactable } from '@core/module/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
+import type { Interactable } from '@core/module/types/index.js';
 import { actions } from '@core/state/actions.js';
 import { getAvailableTasks, getActiveTasks } from '@core/task/availability.js';
 import { createModuleContext } from '@core/module/context.js';

@@ -13,7 +13,7 @@ import {
 import { getModule } from '../registry.js';
 import { actions } from '../../state/actions.js';
 import { defineModule } from '../define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/modules.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/module/index.js';
 import type { Task } from '../../task/types.js';
 
 // Mock the actions
@@ -77,7 +77,7 @@ describe('Module Service', () => {
     });
 
     it('should return true if all dependencies are completed', async () => {
-        const { andRequirements, moduleComplete } = await import('@builders/modules.js');
+        const { andRequirements, moduleComplete } = await import('@builders/module/index.js');
       
       const module = defineModule({
         id: 'with-deps',
@@ -109,7 +109,7 @@ describe('Module Service', () => {
     });
 
     it('should return false if any dependency is not completed', async () => {
-        const { andRequirements, moduleComplete } = await import('@builders/modules.js');
+        const { andRequirements, moduleComplete } = await import('@builders/module/index.js');
       
       const module = defineModule({
         id: 'with-deps',

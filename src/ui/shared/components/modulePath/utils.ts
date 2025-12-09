@@ -5,7 +5,6 @@
 
 import type { WorldmapConnection, WorldmapNode } from '@core/worldmap/types.js';
 import type { ModuleProgressionState } from '@core/state/types.js';
-import { hexToRgba } from '@lib/color.js';
 
 /**
  * Format module ID to display name (capitalize words)

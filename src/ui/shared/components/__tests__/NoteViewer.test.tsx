@@ -3,8 +3,8 @@
  * Tests for NoteViewer component (wrapper around ContentViewer)
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render } from '@testing-library/react';
 import { NoteViewer } from '../NoteViewer.js';
 import * as contentViewer from '../ContentViewer.js';
 

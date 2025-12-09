@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { actions } from '../actions.js';
 import { useAppStore } from '../store.js';
-import type { ModuleData } from '../module/types.js';
+import type { ModuleData } from '../module/types/index.js';
 import type { Task } from '../task/types.js';
 
 // Mock the store

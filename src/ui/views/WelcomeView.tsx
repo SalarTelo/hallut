@@ -3,7 +3,7 @@
  * Displays welcome dialogue when entering a module
  */
 
-import type { ModuleData } from '@core/module/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import type { DialogueNode } from '@core/dialogue/types.js';
 import { DialogueView } from './DialogueView.js';
 import { CenteredLayout } from '@ui/shared/components/layouts/index.js';

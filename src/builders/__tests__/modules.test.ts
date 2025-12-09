@@ -16,8 +16,8 @@ import {
   moduleComplete,
   andRequirements,
   orRequirements,
-} from '../modules.js';
-import type { ModuleManifest, ModuleBackground, ModuleWelcome, ModuleTheme, ModuleConfig } from '@core/module/types.js';
+} from '../module/index.js';
+import type { ModuleManifest, ModuleBackground, ModuleWelcome, ModuleTheme, ModuleConfig } from '@core/module/types/index.js';
 import type { UnlockRequirement } from '@core/unlock/types.js';
 
 describe('Module Builders', () => {

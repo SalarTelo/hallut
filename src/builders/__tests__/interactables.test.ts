@@ -9,10 +9,10 @@ import {
   createObject,
   createLocation,
   pos,
-} from '../interactables.js';
-import { dialogueTree, dialogueNode } from '../dialogues.js';
-import { createTask, textSubmission, textLengthValidator, success } from '../tasks.js';
-import type { NPC, Object, Location } from '@core/module/types.js';
+} from '../interactable/index.js';
+import { dialogueTree, dialogueNode } from '../dialogue/index.js';
+import { createTask, textSubmission, textLengthValidator, success } from '../task/index.js';
+import type { NPC, Object, Location } from '@core/module/types/index.js';
 import type { DialogueTree } from '@core/dialogue/types.js';
 import type { Task } from '@core/task/types.js';
 
@@ -98,7 +98,7 @@ describe('createNPC', () => {
       id: 'test-npc',
       name: 'Test NPC',
       position: pos(50, 50),
-      dialogueTree,
+      dialogueTree: testDialogueTree,
     });
 
     expect((npc as any).dialogues).toBeUndefined();

@@ -8,5 +8,5 @@ export * from './registry.js';
 export * from './loader.js';
 export * from './context.js';
 export * from './progression.js';
-export * from './types.js';
+export * from './types/index.js';
 export * from './utils.js';

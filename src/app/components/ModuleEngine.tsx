@@ -21,10 +21,10 @@ import { InteractableView } from '@ui/views/InteractableView.js';
 import { DialogueView } from '@ui/views/DialogueView.js';
 import { TaskView } from '@ui/views/TaskView.js';
 import { WelcomeView } from '@ui/views/WelcomeView.js';
-import type { ModuleData } from '@core/module/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import { ErrorCode, ModuleError } from '@core/errors.js';
 import { getThemeValue } from '@lib/theme.js';
-import type { NPC } from '@core/module/types.js';
+import type { NPC } from '@core/module/types/index.js';
 import type { DialogueNode } from '@core/dialogue/types.js';
 
 export interface ModuleEngineProps {

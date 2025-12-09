@@ -5,7 +5,6 @@
 
 import { LoadingSpinner } from './LoadingSpinner.js';
 import { getBackgroundColorStyle } from '@lib/color.js';
-import { DEFAULT_THEME } from '@config/constants.js';
 
 export interface LoadingStateProps {
   /**

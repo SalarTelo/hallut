@@ -13,7 +13,7 @@ import {
   dialogueNode,
   acceptTask,
   callFunction,
-} from '@builders/dialogues.js';
+} from '@builders/dialogue/index.js';
 import { guideState } from './state.js';
 import { greetingTask } from '../../tasks.js';
 

@@ -22,8 +22,8 @@ import {
   callFunction,
   goToNode,
   closeDialogue,
-} from '../dialogues.js';
-import { createTask, textSubmission, textLengthValidator, success } from '../tasks.js';
+} from '../dialogue/index.js';
+import { createTask, textSubmission, textLengthValidator, success } from '../task/index.js';
 import type { DialogueNode } from '@core/dialogue/types.js';
 import type { Task } from '@core/task/types.js';
 

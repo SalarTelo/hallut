@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
 import { useTypewriter, useDialogueInteraction } from '../hooks/index.js';
 import {

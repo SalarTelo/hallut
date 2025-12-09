@@ -12,7 +12,7 @@ import {
   dialogueNode,
   acceptTask,
   callFunction,
-} from '@builders/dialogues.js';
+} from '@builders/dialogue/index.js';
 import { teacherState } from './state.js';
 import { reflectionTask } from '../../tasks.js';
 

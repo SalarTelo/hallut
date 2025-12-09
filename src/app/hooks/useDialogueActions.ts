@@ -7,11 +7,13 @@ import { useCallback } from 'react';
 import { createModuleContext } from '@core/module/context.js';
 import { processDialogueActions } from '@core/dialogue/processing.js';
 import type { ChoiceAction } from '@core/dialogue/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import { DialogueError, ErrorCode } from '@core/errors.js';
 import { getTaskId } from '@core/task/utils.js';
 
 export interface UseDialogueActionsOptions {
   moduleId: string;
+  moduleData: ModuleData;
   dialogueId: string;
   locale?: string;
   onTaskSubmissionOpen?: (taskId: string) => void;
@@ -23,6 +25,7 @@ export interface UseDialogueActionsOptions {
  */
 export function useDialogueActions({
   moduleId,
+  moduleData,
   dialogueId,
   locale = 'sv',
   onTaskSubmissionOpen,
@@ -30,7 +33,7 @@ export function useDialogueActions({
 }: UseDialogueActionsOptions) {
   const handleDialogueActions = useCallback(
     async (actions: ChoiceAction | ChoiceAction[]): Promise<boolean> => {
-      const context = createModuleContext(moduleId, locale);
+      const context = createModuleContext(moduleId, locale, moduleData);
       let viewChanged = false;
 
       // Add UI callback for opening task submission
@@ -63,7 +66,7 @@ export function useDialogueActions({
 
       return viewChanged;
     },
-    [moduleId, dialogueId, locale, onTaskSubmissionOpen, onError]
+    [moduleId, moduleData, dialogueId, locale, onTaskSubmissionOpen, onError]
   );
 
   return {

@@ -18,7 +18,7 @@ import {
   wordCountValidator,
   keywordsValidator,
   combineValidators,
-} from '../tasks.js';
+} from '../task/index.js';
 import type { TaskSubmission } from '@core/task/types.js';
 
 describe('Task Builders', () => {

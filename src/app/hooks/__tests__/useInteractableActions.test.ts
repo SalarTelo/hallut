@@ -6,9 +6,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useInteractableActions } from '../useInteractableActions.js';
-import { dialogueTree, dialogueNode } from '@builders/dialogues.js';
-import type { NPC, Object } from '@core/module/types.js';
-import type { ModuleData } from '@core/module/types.js';
+import { dialogueTree, dialogueNode } from '@builders/dialogue/index.js';
+import type { NPC, Object } from '@core/module/types/index.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import type { DialogueNode } from '@core/dialogue/types.js';
 
 describe('useInteractableActions', () => {

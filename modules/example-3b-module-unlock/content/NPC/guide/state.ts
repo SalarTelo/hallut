@@ -3,7 +3,7 @@
  * State management for the guide NPC
  */
 
-import { stateRef } from '@builders/dialogues.js';
+import { stateRef } from '@builders/dialogue/index.js';
 
 /**
  * Guide state reference

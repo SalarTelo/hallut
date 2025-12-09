@@ -4,7 +4,7 @@
  */
 
 import type { Task } from '../task/types.js';
-import type { ModuleContext } from '../module/types.js';
+import type { ModuleContext } from '../module/types/index.js';
 
 /**
  * Dynamic type helpers for runtime resolution

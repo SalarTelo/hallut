@@ -6,8 +6,8 @@
 import { useCallback } from 'react';
 import { createModuleContext } from '@core/module/context.js';
 import { getInitialDialogueNode } from '@core/dialogue/execution.js';
-import type { Interactable, ObjectInteraction, NPC } from '@core/module/types.js';
-import type { ModuleData } from '@core/module/types.js';
+import type { Interactable, ObjectInteraction, NPC } from '@core/module/types/index.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import type { DialogueNode } from '@core/dialogue/types.js';
 import { ModuleError, ErrorCode } from '@core/errors.js';
 

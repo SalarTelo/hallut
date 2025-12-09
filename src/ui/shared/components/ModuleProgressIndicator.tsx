@@ -6,7 +6,7 @@
 import { useMemo } from 'react';
 import { PixelIcon } from './PixelIcon.js';
 import { useThemeBorderColor } from '../hooks/useThemeBorderColor.js';
-import type { ModuleData } from '@core/module/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import { useModuleActions } from '@app/hooks/useModuleActions.js';
 
 export interface ModuleProgressIndicatorProps {

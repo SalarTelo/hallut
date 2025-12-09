@@ -11,7 +11,7 @@ import {
   textLengthValidator,
   success,
   failure,
-} from '@builders/tasks.js';
+} from '@builders/task/index.js';
 
 /**
  * Simple greeting task

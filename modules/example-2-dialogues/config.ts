@@ -7,7 +7,7 @@ import {
   createManifest,
   colorBackground,
   createWelcome,
-} from '@builders/modules.js';
+} from '@builders/module/index.js';
 
 export function createConfig() {
   return createModuleConfig({

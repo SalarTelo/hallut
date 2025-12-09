@@ -5,5 +5,5 @@
 
 export * from './validation.js';
 export * from './availability.js';
-export * from './types.js';
+export * from './types/index.js';
 export * from './utils.js';

@@ -6,8 +6,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { DialogueView } from '../DialogueView.js';
-import { dialogueNode } from '@builders/dialogues.js';
-import type { NPC } from '@core/module/types.js';
+import { dialogueNode } from '@builders/dialogue/index.js';
+import type { NPC } from '@core/module/types/index.js';
 import type { DialogueNode, ChoiceAction } from '@core/dialogue/types.js';
 
 // Mock the typewriter hook to render text immediately

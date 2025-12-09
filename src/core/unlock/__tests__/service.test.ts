@@ -8,7 +8,7 @@ import { canUnlockModule, unlockModule, evaluateModuleCompletion, initializeModu
 import { actions } from '../../state/actions.js';
 import { getModule, getRegisteredModuleIds } from '../../module/registry.js';
 import { isModuleFullyCompleted } from '../../module/progression.js';
-import type { ModuleDefinition } from '../../module/types.js';
+import type { ModuleDefinition } from '../../module/types/index.js';
 
 // Mock dependencies
 vi.mock('@core/state/actions.js', () => ({

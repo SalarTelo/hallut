@@ -4,7 +4,7 @@
  */
 
 import type { ChoiceAction } from './types.js';
-import type { ModuleContext } from '../module/types.js';
+import type { ModuleContext } from '../module/types/index.js';
 
 /**
  * Process dialogue action

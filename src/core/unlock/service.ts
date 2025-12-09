@@ -118,29 +118,8 @@ export async function evaluateModuleCompletion(moduleId: string): Promise<void> 
 /**
  * Initialize module progression
  * Unlocks modules with no requirements or requirements already met
+ * 
+ * Note: This is a re-export from module/progression.ts for convenience.
+ * The actual implementation is in module/progression.ts
  */
-export async function initializeModuleProgression(moduleIds?: string[]): Promise<void> {
-  const ids = moduleIds || getRegisteredModuleIds();
-
-  // First, lock everything (except completed)
-  for (const moduleId of ids) {
-    const state = actions.getModuleProgression(moduleId);
-    if (state !== 'completed') {
-      actions.setModuleProgression(moduleId, 'locked');
-    }
-  }
-
-  // Then, unlock modules with no requirements or requirements already met
-  const toUnlock: string[] = [];
-  for (const moduleId of ids) {
-    const { canUnlock, requiresInteraction } = await canUnlockModule(moduleId);
-    if (canUnlock && !requiresInteraction) {
-      toUnlock.push(moduleId);
-    }
-  }
-
-  // Unlock them
-  for (const moduleId of toUnlock) {
-    actions.unlockModule(moduleId);
-  }
-}
+export { initializeModuleProgression } from '../module/progression.js';

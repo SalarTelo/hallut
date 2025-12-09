@@ -9,6 +9,7 @@ import { useDialogueActions } from '../useDialogueActions.js';
 import { processDialogueActions } from '@core/dialogue/processing.js';
 import { createModuleContext } from '@core/module/context.js';
 import type { ChoiceAction } from '@core/dialogue/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
 
 // Mock dependencies
 vi.mock('@core/dialogue/processing.js', () => ({
@@ -23,6 +24,16 @@ describe('useDialogueActions', () => {
   const moduleId = 'test-module';
   const dialogueId = 'test-dialogue';
   const locale = 'en';
+  const moduleData: ModuleData = {
+    id: moduleId,
+    config: {
+      manifest: { id: moduleId, name: 'Test', version: '1.0.0' },
+      background: { color: '#000' },
+      welcome: { speaker: 'Test', lines: [] },
+    },
+    interactables: [],
+    tasks: [],
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -44,6 +55,7 @@ describe('useDialogueActions', () => {
     const { result } = renderHook(() =>
       useDialogueActions({
         moduleId,
+        moduleData,
         dialogueId,
         locale,
       })
@@ -60,6 +72,7 @@ describe('useDialogueActions', () => {
     const { result } = renderHook(() =>
       useDialogueActions({
         moduleId,
+        moduleData,
         dialogueId,
         locale,
       })
@@ -68,7 +81,7 @@ describe('useDialogueActions', () => {
     await result.current.handleDialogueActions(mockAction);
 
     expect(processDialogueActions).toHaveBeenCalled();
-    expect(createModuleContext).toHaveBeenCalledWith(moduleId, locale);
+    expect(createModuleContext).toHaveBeenCalledWith(moduleId, locale, moduleData);
   });
 
   it('should set up context with openTaskSubmission callback', async () => {
@@ -102,6 +115,7 @@ describe('useDialogueActions', () => {
     const { result } = renderHook(() =>
       useDialogueActions({
         moduleId,
+        moduleData,
         dialogueId,
         locale,
         onTaskSubmissionOpen,
@@ -125,6 +139,7 @@ describe('useDialogueActions', () => {
     const { result } = renderHook(() =>
       useDialogueActions({
         moduleId,
+        moduleData,
         dialogueId,
         locale,
         onError,
@@ -159,6 +174,7 @@ describe('useDialogueActions', () => {
     const { result } = renderHook(() =>
       useDialogueActions({
         moduleId,
+        moduleData,
         dialogueId,
         locale,
         onTaskSubmissionOpen,

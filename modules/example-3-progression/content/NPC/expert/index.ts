@@ -6,7 +6,7 @@
  */
 
 import { createNPC, pos } from '@builders/index.js';
-import { taskComplete } from '@builders/interactables.js';
+import { taskComplete } from '@builders/interactable/index.js';
 import { quizTask, reflectionTask, module3UnlockTask } from '../../tasks.js';
 import { introTask } from '../../tasks.js';
 import { expertDialogueTree } from './dialogues.js';

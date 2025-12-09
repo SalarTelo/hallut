@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAppStore } from '../store.js';
-import type { ModuleData } from '@core/module/types.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import type { Task } from '@core/task/types.js';
 
 describe('App Store', () => {

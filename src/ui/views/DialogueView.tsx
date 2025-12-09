@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { DialogueNode, ChoiceAction } from '@core/dialogue/types.js';
-import type { NPC } from '@core/module/types.js';
+import type { NPC } from '@core/module/types/index.js';
 import { DialogueBox, type DialogueChoice as UIDialogueChoice } from '@ui/shared/components/DialogueBox.js';
 
 export interface DialogueViewProps {

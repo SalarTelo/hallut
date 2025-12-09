@@ -11,11 +11,11 @@ import {
   executeActions,
   getAvailableChoices,
 } from '../execution.js';
-import { dialogueNode, dialogueTree, taskActive, taskComplete, acceptTask, setState, setInteractableState } from '@builders/dialogues.js';
-import { createTask, textSubmission, textLengthValidator, success } from '@builders/tasks.js';
+import { dialogueNode, dialogueTree, taskActive, taskComplete, acceptTask, setState, setInteractableState } from '@builders/dialogue/index.js';
+import { createTask, textSubmission, textLengthValidator, success } from '@builders/task/index.js';
 import { createModuleContext } from '@core/module/context.js';
-import type { NPC } from '@core/module/types.js';
-import type { ModuleData } from '@core/module/types.js';
+import type { NPC } from '@core/module/types/index.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import type { DialogueNode, DialogueTree, DialogueCondition } from '@core/dialogue/types.js';
 import type { Task } from '@core/task/types.js';
 

@@ -10,11 +10,11 @@ import {
 } from '../loader.js';
 import { registerModule } from '../registry.js';
 import { defineModule } from '../define.js';
-import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/modules.js';
-import { createNPC, createObject, showDialogue, pos } from '@builders/interactables.js';
-import { dialogueTree, dialogueNode } from '@builders/dialogues.js';
-import { createTask, textSubmission } from '@builders/tasks.js';
-import type { ModuleDefinition } from '@core/module/types.js';
+import { createModuleConfig, createManifest, colorBackground, createWelcome } from '@builders/module/index.js';
+import { createNPC, createObject, showDialogue, pos } from '@builders/interactable/index.js';
+import { dialogueTree, dialogueNode } from '@builders/dialogue/index.js';
+import { createTask, textSubmission } from '@builders/task/index.js';
+import type { ModuleDefinition } from '@core/module/types/index.js';
 import { ErrorCode, ModuleError } from '@core/errors.js';
 
 describe('Module Loader', () => {

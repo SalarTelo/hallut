@@ -3,7 +3,7 @@
  * Types for state management
  */
 
-import type { ModuleState } from '../module/types.js';
+import type { ModuleState } from '../module/types/index.js';
 
 /**
  * Module progress state

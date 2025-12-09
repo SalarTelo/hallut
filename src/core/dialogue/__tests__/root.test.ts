@@ -9,11 +9,11 @@ import {
   getTaskStatus,
   formatTaskChoice,
 } from '../root.js';
-import { createTask, textSubmission, textLengthValidator, success } from '@builders/tasks.js';
-import { dialogueNode, dialogueTree, taskActive } from '@builders/dialogues.js';
+import { createTask, textSubmission, textLengthValidator, success } from '@builders/task/index.js';
+import { dialogueNode, dialogueTree, taskActive } from '@builders/dialogue/index.js';
 import { createModuleContext } from '@core/module/context.js';
-import type { NPC } from '@core/module/types.js';
-import type { ModuleData } from '@core/module/types.js';
+import type { NPC } from '@core/module/types/index.js';
+import type { ModuleData } from '@core/module/types/index.js';
 import type { Task } from '@core/task/types.js';
 
 describe('generateRootDialogue', () => {
