@@ -1,0 +1,406 @@
+{
+  "modules": {
+    "module-creator-showcase": {
+      "id": "module-creator-showcase",
+      "name": "module-creator-showcase",
+      "tasks": {
+        "exploration": {
+          "id": "exploration",
+          "name": "Explore the Showcase",
+          "description": "Write \"explore\" to unlock all showcase submodules (at least 7 characters).",
+          "requirements": "Write at least 7 characters including \"explore\"",
+          "goals": [
+            "Unlock all showcase submodules"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have an exploration task for you. Complete it to unlock all showcase submodules!",
+          "dialogueReady": "Ready to explore and unlock the submodules?",
+          "dialogueComplete": "Great! All showcase submodules are now available on the worldmap!",
+          "hints": [
+            "Include the word \"explore\" in your answer",
+            "Write at least 7 characters"
+          ],
+          "examples": [
+            "I want to explore the showcase",
+            "Let me explore all the features"
+          ]
+        }
+      },
+      "npcs": {
+        "showcase-guide": {
+          "id": "showcase-guide",
+          "name": "Showcase Guide",
+          "avatar": "👤",
+          "personality": "A helpful character",
+          "role": "guide"
+        }
+      },
+      "objectTypes": [
+        "note"
+      ]
+    },
+    "showcase-advanced": {
+      "id": "showcase-advanced",
+      "name": "showcase-advanced",
+      "tasks": {
+        "advanced-task": {
+          "id": "advanced-task",
+          "name": "Advanced Task",
+          "description": "Write about advanced features (at least 20 characters).",
+          "requirements": "Write at least 20 characters",
+          "goals": [
+            "Demonstrate advanced features"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have an advanced task for you.",
+          "dialogueReady": "Ready to submit?",
+          "dialogueComplete": "Excellent! You completed the advanced task.",
+          "hints": [
+            "Write about advanced features",
+            "At least 20 characters"
+          ],
+          "examples": [
+            "Advanced features include password locks and handlers",
+            "I learned about custom components"
+          ]
+        }
+      },
+      "npcs": {
+        "advanced-teacher": {
+          "id": "advanced-teacher",
+          "name": "Advanced Teacher",
+          "avatar": "👨‍🏫",
+          "personality": "A helpful character",
+          "role": "teacher"
+        }
+      },
+      "objectTypes": [
+        "note"
+      ]
+    },
+    "showcase-basics": {
+      "id": "showcase-basics",
+      "name": "showcase-basics",
+      "tasks": {
+        "basic-task": {
+          "id": "basic-task",
+          "name": "Basic Text Task",
+          "description": "Write a simple message (at least 10 characters).",
+          "requirements": "Write at least 10 characters",
+          "goals": [
+            "Complete a basic task"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have a simple task for you.",
+          "dialogueReady": "Ready to submit?",
+          "dialogueComplete": "Excellent! You completed the basic task.",
+          "hints": [
+            "Write at least 10 characters",
+            "Any message will do"
+          ],
+          "examples": [
+            "Hello, this is a test",
+            "I am learning module creation"
+          ]
+        }
+      },
+      "npcs": {
+        "basic-npc": {
+          "id": "basic-npc",
+          "name": "Basic NPC",
+          "avatar": "👤",
+          "personality": "A helpful character",
+          "role": "teacher"
+        }
+      },
+      "objectTypes": [
+        "note"
+      ]
+    },
+    "showcase-dialogues": {
+      "id": "showcase-dialogues",
+      "name": "showcase-dialogues",
+      "tasks": {
+        "dialogue-task": {
+          "id": "dialogue-task",
+          "name": "Dialogue Task",
+          "description": "Write about dialogues (at least 15 characters).",
+          "requirements": "Write at least 15 characters",
+          "goals": [
+            "Complete a task offered via dialogue"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have a task for you about dialogues.",
+          "dialogueReady": "Ready to submit?",
+          "dialogueComplete": "Excellent! You completed the dialogue task.",
+          "hints": [
+            "Write about dialogues",
+            "At least 15 characters"
+          ],
+          "examples": [
+            "Dialogues are interactive conversations",
+            "I learned about dialogue trees"
+          ]
+        }
+      },
+      "npcs": {
+        "dialogue-teacher": {
+          "id": "dialogue-teacher",
+          "name": "Dialogue Teacher",
+          "avatar": "👨‍🏫",
+          "personality": "A helpful character",
+          "role": "teacher"
+        }
+      },
+      "objectTypes": [
+        "note"
+      ]
+    },
+    "showcase-objects": {
+      "id": "showcase-objects",
+      "name": "showcase-objects",
+      "tasks": {
+        "unlock-object": {
+          "id": "unlock-object",
+          "name": "Unlock the Locked Object",
+          "description": "Write \"unlock\" to unlock the locked object (at least 6 characters).",
+          "requirements": "Write at least 6 characters including \"unlock\"",
+          "goals": [
+            "Unlock the locked object"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have a task that will unlock a special object.",
+          "dialogueReady": "Ready to unlock the object?",
+          "dialogueComplete": "Excellent! The locked object is now available.",
+          "hints": [
+            "Include the word \"unlock\"",
+            "Write at least 6 characters"
+          ],
+          "examples": [
+            "I want to unlock the object",
+            "Let me unlock it"
+          ]
+        }
+      },
+      "npcs": {
+        "object-guide": {
+          "id": "object-guide",
+          "name": "Object Guide",
+          "avatar": "👤",
+          "personality": "A helpful character",
+          "role": "guide"
+        }
+      },
+      "objectTypes": [
+        "note"
+      ]
+    },
+    "showcase-progression": {
+      "id": "showcase-progression",
+      "name": "showcase-progression",
+      "tasks": {
+        "progression-task-1": {
+          "id": "progression-task-1",
+          "name": "Task 1: Start the Chain",
+          "description": "Write \"start\" to begin the progression chain (at least 5 characters).",
+          "requirements": "Write at least 5 characters including \"start\"",
+          "goals": [
+            "Start the task chain",
+            "Unlock Task 2"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have the first task in a chain. Complete it to unlock the next task, a locked object, and a locked NPC.",
+          "dialogueReady": "Ready to start the chain?",
+          "dialogueComplete": "Excellent! Task 2, the locked object, and the locked NPC are now unlocked.",
+          "hints": [
+            "Include the word \"start\"",
+            "Write at least 5 characters"
+          ],
+          "examples": [
+            "I want to start",
+            "Let me start the chain"
+          ]
+        },
+        "progression-task-2": {
+          "id": "progression-task-2",
+          "name": "Task 2: Continue the Chain",
+          "description": "Write \"continue\" to continue the progression (at least 8 characters).",
+          "requirements": "Write at least 8 characters including \"continue\"",
+          "goals": [
+            "Continue the task chain",
+            "Unlock Task 3"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have the second task. Complete it to unlock Task 3.",
+          "dialogueReady": "Ready to continue?",
+          "dialogueComplete": "Excellent! Task 3 is now available.",
+          "hints": [
+            "Include the word \"continue\"",
+            "Write at least 8 characters"
+          ],
+          "examples": [
+            "I will continue",
+            "Let me continue the chain"
+          ]
+        },
+        "progression-task-3": {
+          "id": "progression-task-3",
+          "name": "Task 3: Complete the Chain",
+          "description": "Write \"complete\" to finish the progression chain (at least 8 characters).",
+          "requirements": "Write at least 8 characters including \"complete\"",
+          "goals": [
+            "Complete the task chain"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have the final task in the chain.",
+          "dialogueReady": "Ready to complete the chain?",
+          "dialogueComplete": "Congratulations! You completed the entire task chain!",
+          "hints": [
+            "Include the word \"complete\"",
+            "Write at least 8 characters"
+          ],
+          "examples": [
+            "I will complete it",
+            "Let me complete the chain"
+          ]
+        }
+      },
+      "npcs": {
+        "progression-guide": {
+          "id": "progression-guide",
+          "name": "Progression Guide",
+          "avatar": "👤",
+          "personality": "A helpful character",
+          "role": "guide"
+        },
+        "locked-npc": {
+          "id": "locked-npc",
+          "name": "Locked NPC",
+          "avatar": "🔒",
+          "personality": "A helpful character",
+          "role": "teacher"
+        }
+      },
+      "objectTypes": [
+        "note"
+      ]
+    },
+    "showcase-tasks": {
+      "id": "showcase-tasks",
+      "name": "showcase-tasks",
+      "tasks": {
+        "text-length": {
+          "id": "text-length",
+          "name": "Text Task",
+          "description": "Write a message about tasks (at least 20 characters).",
+          "requirements": "Write at least 20 characters",
+          "goals": [
+            "Demonstrate text length validation"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have a text task with length validation.",
+          "dialogueReady": "Ready to submit?",
+          "dialogueComplete": "Excellent! Text length validation works.",
+          "hints": [
+            "Write at least 20 characters",
+            "Write about tasks"
+          ],
+          "examples": [
+            "Tasks are activities that users solve",
+            "I am learning about task types"
+          ]
+        },
+        "word-count": {
+          "id": "word-count",
+          "name": "Text Task",
+          "description": "Write a description using at least 5 words.",
+          "requirements": "Write at least 5 words",
+          "goals": [
+            "Demonstrate word count validation"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have a text task with word count validation.",
+          "dialogueReady": "Ready to submit?",
+          "dialogueComplete": "Excellent! Word count validation works.",
+          "hints": [
+            "Use at least 5 words",
+            "Separate words with spaces"
+          ],
+          "examples": [
+            "This is a test task with words",
+            "I am learning about validators"
+          ]
+        },
+        "keywords": {
+          "id": "keywords",
+          "name": "Text Task",
+          "description": "Write about tasks and include the word \"task\" or \"activity\".",
+          "requirements": "Include \"task\" or \"activity\"",
+          "goals": [
+            "Demonstrate keyword validation"
+          ],
+          "submissionType": "text",
+          "dialogueOffer": "I have a text task with keyword validation.",
+          "dialogueReady": "Ready to submit?",
+          "dialogueComplete": "Excellent! Keyword validation works.",
+          "hints": [
+            "Include the word \"task\" or \"activity\"",
+            "Write at least a few words"
+          ],
+          "examples": [
+            "This is a task about learning",
+            "I like this activity"
+          ]
+        },
+        "multiple-choice": {
+          "id": "multiple-choice",
+          "name": "Multiple Choice Task",
+          "description": "Which task type allows users to select from predefined options?",
+          "requirements": "Select the correct option",
+          "goals": [
+            "Demonstrate multiple choice tasks"
+          ],
+          "submissionType": "multiple_choice",
+          "dialogueOffer": "I have a multiple choice question for you.",
+          "dialogueReady": "Ready to answer?",
+          "dialogueComplete": "Excellent! You understand multiple choice tasks.",
+          "hints": [
+            "Read the question carefully",
+            "Think about what each task type does"
+          ],
+          "examples": []
+        },
+        "custom": {
+          "id": "custom",
+          "name": "Custom Submission Task",
+          "description": "This demonstrates custom submission components with a unique interface.",
+          "requirements": "Select a color and provide a reason (at least 10 characters)",
+          "goals": [
+            "Demonstrate custom submission components"
+          ],
+          "submissionType": "custom",
+          "dialogueOffer": "I have a custom submission task for you.",
+          "dialogueReady": "Ready to submit?",
+          "dialogueComplete": "Excellent! Custom submission works.",
+          "hints": [
+            "Use the custom component",
+            "Select a color and write a reason"
+          ],
+          "examples": []
+        }
+      },
+      "npcs": {
+        "task-teacher": {
+          "id": "task-teacher",
+          "name": "Task Teacher",
+          "avatar": "👨‍🏫",
+          "personality": "A helpful character",
+          "role": "teacher"
+        }
+      },
+      "objectTypes": [
+        "note"
+      ]
+    }
+  }
+}

@@ -90,6 +90,7 @@ export async function loadModuleData(moduleId: string): Promise<ModuleData | nul
     interactables: moduleDefinition.content.interactables,
     tasks: moduleDefinition.content.tasks,
     components: moduleDefinition.components,
+    taskSubmissionComponents: moduleDefinition.taskSubmissionComponents,
   };
 }
 

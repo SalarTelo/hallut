@@ -39,6 +39,15 @@ export type ComponentRenderer = (props: {
 }) => import('react').ReactNode;
 
 /**
+ * Task submission component renderer
+ */
+export type TaskSubmissionComponentRenderer = (props: {
+  value?: unknown;
+  onChange: (value: unknown) => void;
+  config?: Record<string, unknown>;
+}) => import('react').ReactNode;
+
+/**
  * Module definition
  */
 export interface ModuleDefinition {
@@ -52,6 +61,12 @@ export interface ModuleDefinition {
    * Use these to create custom viewers that work like showNoteViewer()
    */
   components?: Record<string, ComponentRenderer>;
+  /**
+   * Optional custom task submission components
+   * Keys are component names, values are render functions
+   * Use these to create custom task submission interfaces
+   */
+  taskSubmissionComponents?: Record<string, TaskSubmissionComponentRenderer>;
 }
 
 /**
@@ -63,5 +78,6 @@ export interface ModuleData {
   interactables: Interactable[];
   tasks: Task[];
   components?: Record<string, ComponentRenderer>;
+  taskSubmissionComponents?: Record<string, TaskSubmissionComponentRenderer>;
 }
 

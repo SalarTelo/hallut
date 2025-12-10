@@ -14,6 +14,7 @@ export function defineModule(options: {
   content: ModuleContent;
   handlers?: ModuleHandlers;
   components?: Record<string, import('./types/index.js').ComponentRenderer>;
+  taskSubmissionComponents?: Record<string, import('./types/index.js').TaskSubmissionComponentRenderer>;
 }): ModuleDefinition {
   return {
     id: options.id,
@@ -21,6 +22,7 @@ export function defineModule(options: {
     content: options.content,
     handlers: options.handlers,
     components: options.components,
+    taskSubmissionComponents: options.taskSubmissionComponents,
   };
 }
 

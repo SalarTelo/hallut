@@ -44,6 +44,7 @@ export function TaskOverlay({
       <TaskView
         task={task}
         moduleId={moduleId}
+        customSubmissionComponents={moduleData.taskSubmissionComponents}
         onComplete={async () => {
           // Task is already marked as complete in TaskView
           // Find NPC that gave this task and show task-complete dialogue

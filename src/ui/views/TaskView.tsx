@@ -20,6 +20,7 @@
  */
 
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import type { Task, TaskSubmission } from '@core/task/types.js';
 import { validateTask } from '@core/task/validation.js';
 import { actions } from '@core/state/actions.js';
@@ -27,6 +28,12 @@ import { Card } from '@ui/shared/components/primitives/index.js';
 import { Button } from '@ui/shared/components/primitives/index.js';
 import { Textarea } from '@ui/shared/components/primitives/index.js';
 import { Badge } from '@ui/shared/components/primitives/index.js';
+
+export interface TaskSubmissionComponentProps {
+  value?: unknown;
+  onChange: (value: unknown) => void;
+  config?: Record<string, unknown>;
+}
 
 export interface TaskViewProps {
   /**
@@ -48,19 +55,30 @@ export interface TaskViewProps {
    * Callback when task view is closed
    */
   onClose: () => void;
+
+  /**
+   * Optional custom task submission components
+   */
+  customSubmissionComponents?: Record<string, (props: TaskSubmissionComponentProps) => ReactNode>;
 }
 
 /**
  * Task View component
  */
-export function TaskView({ task, moduleId, onComplete, onClose }: TaskViewProps) {
+export function TaskView({ task, moduleId, onComplete, onClose, customSubmissionComponents }: TaskViewProps) {
   const [textSubmission, setTextSubmission] = useState<string>('');
   const [selectedChoice, setSelectedChoice] = useState<string>('');
+  const [customSubmission, setCustomSubmission] = useState<unknown>(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ solved: boolean; details: string } | null>(null);
 
   const isMultipleChoice = task.submission.type === 'multiple_choice';
+  const isCustom = task.submission.type === 'custom';
   const choices = isMultipleChoice ? (task.submission.config?.options as string[] || []) : [];
+  const customComponentName = isCustom ? (task.submission.component || undefined) : undefined;
+  const CustomSubmissionComponent = customComponentName && customSubmissionComponents
+    ? customSubmissionComponents[customComponentName]
+    : null;
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -69,6 +87,12 @@ export function TaskView({ task, moduleId, onComplete, onClose }: TaskViewProps)
         ? {
             type: 'multiple_choice',
             choice: selectedChoice,
+          }
+        : isCustom
+        ? {
+            type: 'custom',
+            data: customSubmission,
+            component: customComponentName,
           }
         : {
             type: 'text',
@@ -150,6 +174,12 @@ export function TaskView({ task, moduleId, onComplete, onClose }: TaskViewProps)
               </label>
             ))}
           </div>
+        ) : isCustom && CustomSubmissionComponent ? (
+          <CustomSubmissionComponent
+            value={customSubmission}
+            onChange={setCustomSubmission}
+            config={task.submission.config}
+          />
         ) : (
           <Textarea
             value={textSubmission}
@@ -175,7 +205,7 @@ export function TaskView({ task, moduleId, onComplete, onClose }: TaskViewProps)
           variant="primary"
           pixelated
           onClick={handleSubmit}
-          disabled={submitting || (isMultipleChoice ? !selectedChoice : !textSubmission.trim())}
+          disabled={submitting || (isMultipleChoice ? !selectedChoice : isCustom ? !customSubmission : !textSubmission.trim())}
         >
           {submitting ? 'Submitting...' : 'Submit'}
         </Button>
