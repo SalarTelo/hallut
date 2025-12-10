@@ -6,6 +6,13 @@
 import type { UnlockRequirement } from '../../unlock/types.js';
 
 /**
+ * Module metadata for additional context (AI, UI, etc.)
+ */
+export interface ModuleMeta {
+  [key: string]: unknown; // Flexible for future use
+}
+
+/**
  * Module manifest
  */
 export interface ModuleManifest {
@@ -13,6 +20,7 @@ export interface ModuleManifest {
   name: string;
   version: string;
   summary?: string;
+  meta?: ModuleMeta;
 }
 
 /**

@@ -6,6 +6,7 @@
 import type {
   NPC,
   Position,
+  NPCMeta,
 } from '@core/module/types/index.js';
 import type { DialogueTree } from '@core/dialogue/types.js';
 import type { Task } from '@core/task/types.js';
@@ -19,10 +20,12 @@ export interface NPCOptions {
   name: string;
   position: Position;
   avatar?: string;
+  personality?: string;
   locked?: boolean;
   unlockRequirement?: UnlockRequirement | null;
   tasks?: Task[]; // Changed from Record<string, Task>
   dialogueTree?: DialogueTree; // New - replaces dialogues
+  meta?: NPCMeta;
 }
 
 /**
@@ -34,13 +37,15 @@ export function createNPC(options: NPCOptions): NPC {
     name,
     position,
     avatar,
+    personality,
     locked = false,
     unlockRequirement = null,
     tasks,
     dialogueTree,
+    meta,
   } = options;
 
-  return {
+  const npc: NPC = {
     id,
     type: 'npc',
     name,
@@ -51,5 +56,15 @@ export function createNPC(options: NPCOptions): NPC {
     tasks,
     dialogueTree,
   };
+
+  if (personality) {
+    npc.personality = personality;
+  }
+
+  if (meta) {
+    npc.meta = meta;
+  }
+
+  return npc;
 }
 

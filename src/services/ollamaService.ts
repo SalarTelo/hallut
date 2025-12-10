@@ -100,6 +100,79 @@ export async function* streamChatMessage(
 }
 
 /**
+ * Stream chat with full message array (including system messages)
+ * @param messages - Full message array including system, user, and assistant messages
+ * @param model - Model name (default: llama3.2)
+ * @returns Async generator yielding text chunks
+ */
+export async function* streamChatMessageWithSystem(
+  messages: OllamaMessage[],
+  model: string = DEFAULT_MODELS.chat
+): AsyncGenerator<string, void, unknown> {
+  try {
+    const response = await fetch('/api/ollama/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        stream: true,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ollama API error: ${response.statusText}`);
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('No response body reader available');
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (line.trim() === '') continue;
+        try {
+          const data = JSON.parse(line);
+          if (data.message?.content) {
+            yield data.message.content;
+          }
+        } catch (e) {
+          // Skip invalid JSON lines
+        }
+      }
+    }
+
+    // Process remaining buffer
+    if (buffer.trim()) {
+      try {
+        const data = JSON.parse(buffer);
+        if (data.message?.content) {
+          yield data.message.content;
+        }
+      } catch (e) {
+        // Skip invalid JSON
+      }
+    }
+  } catch (error) {
+    console.error('Error streaming chat message with system:', error);
+    throw error;
+  }
+}
+
+/**
  * Analyze an image using Ollama vision model
  * @param prompt - Analysis prompt
  * @param imageBase64 - Base64 encoded image

@@ -20,6 +20,8 @@ export type {
   ObjectInteraction,
   GetInteractionFunction,
   InteractableType,
+  NPCMeta,
+  ObjectMeta,
   NPC,
   Object,
   Location,
@@ -28,6 +30,7 @@ export type {
 
 // Configuration types
 export type {
+  ModuleMeta,
   ModuleManifest,
   ModuleBackground,
   ModuleWelcome,

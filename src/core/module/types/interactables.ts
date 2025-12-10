@@ -83,6 +83,21 @@ export type GetInteractionFunction = (context: ModuleContext) => ObjectInteracti
 export type InteractableType = 'npc' | 'object' | 'location';
 
 /**
+ * NPC metadata for additional context (AI, UI, etc.)
+ */
+export interface NPCMeta {
+  role?: string;        // "teacher", "guide", "expert"
+  [key: string]: unknown; // Allow extension
+}
+
+/**
+ * Object metadata for additional context (AI, UI, etc.)
+ */
+export interface ObjectMeta {
+  [key: string]: unknown; // Flexible for future use
+}
+
+/**
  * NPC (Non-Player Character)
  */
 export interface NPC {
@@ -91,11 +106,13 @@ export interface NPC {
   name: string;
   position: Position;
   avatar?: string;
+  personality?: string; // Keep existing (for backward compat)
   locked?: boolean;
   unlockRequirement?: UnlockRequirement | null;
   tasks?: Task[]; // Changed from Record<string, Task>
   dialogueTree?: DialogueTree; // New - replaces dialogues
   state?: InteractableState; // Runtime state (not in definition)
+  meta?: NPCMeta;
 }
 
 /**
@@ -111,6 +128,7 @@ export interface Object {
   unlockRequirement?: UnlockRequirement | null;
   onInteract?: ObjectInteraction;
   getInteraction?: GetInteractionFunction;
+  meta?: ObjectMeta;
 }
 
 /**

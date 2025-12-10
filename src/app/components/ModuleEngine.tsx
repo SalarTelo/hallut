@@ -6,6 +6,7 @@
  * for better maintainability and separation of concerns.
  */
 
+import { useEffect } from 'react';
 import { useInteractableActions } from '@app/hooks/index.js';
 import { getThemeValue } from '../../shared/index.js';
 import { InteractableView } from '@ui/views/InteractableView.js';
@@ -24,7 +25,7 @@ export type { ModuleEngineProps };
 /**
  * Module Engine component
  */
-export function ModuleEngine({ moduleId, locale = 'sv', onExit, customComponents }: ModuleEngineProps) {
+export function ModuleEngine({ moduleId, locale = 'sv', onExit, customComponents, onViewChange }: ModuleEngineProps) {
   // Load module data
   const { moduleData, loading, error } = useModuleLoader(moduleId);
   
@@ -47,6 +48,11 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit, customComponents
     returnToInteractable,
     setSelectedDialogueNode,
   } = useModuleViews(moduleId, moduleData);
+
+  // Notify parent of view changes
+  useEffect(() => {
+    onViewChange?.(currentView);
+  }, [currentView, onViewChange]);
 
   // Manage modal states
   const {

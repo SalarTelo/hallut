@@ -40,6 +40,15 @@ export interface TaskSubmissionConfig {
 }
 
 /**
+ * Task metadata for additional context (AI, UI, etc.)
+ */
+export interface TaskMeta {
+  hints?: string[];      // AI guidance hints
+  examples?: string[];   // Example solutions/approaches
+  [key: string]: unknown; // Allow extension
+}
+
+/**
  * Task definition
  */
 export interface Task {
@@ -58,4 +67,5 @@ export interface Task {
     ready?: string[];
     complete?: string[];
   };
+  meta?: TaskMeta;
 }

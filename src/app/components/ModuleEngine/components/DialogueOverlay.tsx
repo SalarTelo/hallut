@@ -88,7 +88,8 @@ export function DialogueOverlay({
             await executeActions(choiceActions, actionContext);
           }
 
-          // If task view was opened, close dialogue and let task view handle it
+          // If task view was opened, close dialogue
+          // The view will automatically switch to 'task' since selectedTaskId is set
           if (taskOpened) {
             onClose();
             return;

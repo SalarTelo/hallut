@@ -8,7 +8,9 @@ import { useState, useEffect, useRef } from 'react';
 import { PixelIcon } from '../icons/PixelIcon.js';
 import { useThemeBorderColor } from '@ui/shared/hooks';
 import { getHeaderGradient } from '@ui/shared/utils';
-import { streamChatMessage, type OllamaMessage } from '@services/ollamaService.js';
+import { type OllamaMessage } from '@services/ollamaService.js';
+import { streamContextualChat } from '@services/aiAssistantService.js';
+import { useAppStore } from '@core/state/store.js';
 import type { ChatMessage } from './ChatWindow.js';
 
 export interface FloatingChatWidgetProps {
@@ -56,6 +58,11 @@ export interface FloatingChatWidgetProps {
    * Whether widget starts minimized (default: true)
    */
   startMinimized?: boolean;
+
+  /**
+   * View change key - widget will auto-minimize when this changes
+   */
+  viewChangeKey?: string | number;
 }
 
 /**
@@ -68,9 +75,10 @@ export function FloatingChatWidget({
   isTyping = false,
   borderColor,
   enableOllama = true,
-  ollamaModel = 'llama3.2',
+  ollamaModel: _ollamaModel = 'llama3.2', // Unused but kept for API compatibility
   position = 'bottom-right',
   startMinimized = true,
+  viewChangeKey,
 }: FloatingChatWidgetProps) {
   const [isMinimized, setIsMinimized] = useState(startMinimized);
   const [inputValue, setInputValue] = useState('');
@@ -78,6 +86,16 @@ export function FloatingChatWidget({
   const [ollamaError, setOllamaError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const borderColorValue = useThemeBorderColor(borderColor);
+  const currentModuleId = useAppStore((state) => state.currentModuleId);
+  const prevViewChangeKeyRef = useRef<string | number | undefined>(viewChangeKey);
+
+  // Auto-minimize when view changes
+  useEffect(() => {
+    if (viewChangeKey !== undefined && viewChangeKey !== prevViewChangeKeyRef.current) {
+      setIsMinimized(true);
+      prevViewChangeKeyRef.current = viewChangeKey;
+    }
+  }, [viewChangeKey]);
 
   // Sync with external messages
   useEffect(() => {
@@ -147,6 +165,12 @@ export function FloatingChatWidget({
     // Get AI response with streaming if Ollama is enabled
     if (!enableOllama) return;
 
+    // Check if we have a current module for context-aware chat
+    if (!currentModuleId) {
+      setOllamaError('Please select a module to use the AI assistant.');
+      return;
+    }
+
     const conversationHistory = convertToOllamaMessages(localMessages);
     const aiMessageId = `ai-${Date.now()}`;
     const aiMessage: ChatMessage = {
@@ -161,7 +185,7 @@ export function FloatingChatWidget({
 
     try {
       let fullResponse = '';
-      for await (const chunk of streamChatMessage(trimmedValue, conversationHistory, ollamaModel)) {
+      for await (const chunk of streamContextualChat(trimmedValue, currentModuleId, conversationHistory)) {
         fullResponse += chunk;
         updateAiMessage(aiMessageId, fullResponse);
       }
@@ -222,18 +246,6 @@ export function FloatingChatWidget({
           aria-label="Open chat"
         >
           <PixelIcon type="chat" size={24} color={borderColorValue} />
-          {/* Notification badge if there are unread messages */}
-          {localMessages.length > 0 && (
-            <div
-              className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
-              style={{
-                backgroundColor: borderColorValue,
-                color: '#000',
-              }}
-            >
-              {localMessages.length > 9 ? '9+' : localMessages.length}
-            </div>
-          )}
         </button>
       </div>
     );

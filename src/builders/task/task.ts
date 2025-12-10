@@ -3,7 +3,7 @@
  * Functions for creating task definitions
  */
 
-import type { Task, TaskSubmissionConfig, TaskSolveFunction } from '@core/task/types.js';
+import type { Task, TaskSubmissionConfig, TaskSolveFunction, TaskMeta } from '@core/task/types.js';
 import type { UnlockRequirement } from '@core/unlock/types.js';
 
 /**
@@ -25,13 +25,14 @@ export interface TaskOptions {
     ready?: string[];
     complete?: string[];
   };
+  meta?: TaskMeta;
 }
 
 /**
  * Create a task definition
  */
 export function createTask(options: TaskOptions): Task {
-  const { id, name, description, submission, validate, overview, unlockRequirement, dialogues } = options;
+  const { id, name, description, submission, validate, overview, unlockRequirement, dialogues, meta } = options;
 
   const task: Task = {
     id,
@@ -51,6 +52,10 @@ export function createTask(options: TaskOptions): Task {
 
   if (dialogues) {
     task.dialogues = dialogues;
+  }
+
+  if (meta) {
+    task.meta = meta;
   }
 
   return task;
