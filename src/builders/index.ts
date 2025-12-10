@@ -68,6 +68,7 @@ export {
   showSignViewer,
   showChatWindow,
   showImageViewer,
+  showVideoViewer,
   showImage,
   showNote,
   createViewer,

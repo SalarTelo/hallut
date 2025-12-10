@@ -69,7 +69,7 @@ export interface FloatingChatWidgetProps {
  * Floating chat widget component
  */
 export function FloatingChatWidget({
-  title = 'Support',
+  title = 'AI Companion',
   messages = [],
   onSend,
   isTyping = false,

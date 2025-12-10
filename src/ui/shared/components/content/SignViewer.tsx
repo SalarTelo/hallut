@@ -51,6 +51,7 @@ export function SignViewer({
       textContent={content}
       title={title}
       borderColor={borderColor}
+      variant="sign"
     />
   );
 }

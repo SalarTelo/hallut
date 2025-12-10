@@ -1,11 +1,11 @@
 /**
- * Note Viewer Component
- * Modal for displaying note content
+ * Video Viewer Component
+ * Modal for displaying video content
  */
 
 import { ContentViewer } from './ContentViewer.js';
 
-export interface NoteViewerProps {
+export interface VideoViewerProps {
   /**
    * Whether the viewer is open
    */
@@ -17,12 +17,12 @@ export interface NoteViewerProps {
   onClose: () => void;
 
   /**
-   * Note content to display
+   * Video URL to display
    */
-  content: string;
+  videoUrl: string;
 
   /**
-   * Note title
+   * Title for the video
    */
   title?: string;
 
@@ -33,26 +33,24 @@ export interface NoteViewerProps {
 }
 
 /**
- * Note Viewer component
- * Maintains exact same props interface and default values
+ * Video Viewer component
+ * Wrapper around ContentViewer for video content
  */
-export function NoteViewer({
+export function VideoViewer({
   isOpen,
   onClose,
-  content,
-  title = 'Note',
+  videoUrl,
+  title = 'Video',
   borderColor,
-}: NoteViewerProps) {
+}: VideoViewerProps) {
   return (
     <ContentViewer
       isOpen={isOpen}
       onClose={onClose}
-      contentType="text"
-      textContent={content}
+      contentType="video"
+      videoUrl={videoUrl}
       title={title}
       borderColor={borderColor}
-      variant="note"
     />
   );
 }
-

@@ -1,9 +1,12 @@
 /**
  * Image Viewer Component
- * Modal for displaying images (like the refrigerator)
+ * Modal for displaying images
+ * 
+ * @deprecated This is now consolidated into ContentViewer. Use ContentViewer directly with contentType="image"
  */
 
 import { ContentViewer } from './ContentViewer.js';
+import type { ContentViewerProps } from './ContentViewer.js';
 
 export interface ImageViewerProps {
   /**
@@ -17,30 +20,30 @@ export interface ImageViewerProps {
   onClose: () => void;
 
   /**
-   * Bild-URL att visa
+   * Image URL to display
    */
   imageUrl: string;
 
   /**
-   * Titel/alt-text för bilden
+   * Title/alt-text for the image
    */
   title?: string;
 
   /**
-   * Kantfärg (standard från tema)
+   * Border color (default from theme)
    */
   borderColor?: string;
 }
 
 /**
- * Bildvisarkomponent
- * Maintains exact same props interface and default values
+ * Image Viewer component
+ * Wrapper around ContentViewer for backward compatibility
  */
 export function ImageViewer({
   isOpen,
   onClose,
   imageUrl,
-  title = 'Bild',
+  title = 'Image',
   borderColor,
 }: ImageViewerProps) {
   return (

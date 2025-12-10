@@ -6,9 +6,10 @@
  */
 
 import type { ReactNode } from 'react';
-import { ImageViewer } from '@ui/shared/components/content/index.js';
+import { ContentViewer } from '@ui/shared/components/content/index.js';
 import { NoteViewer } from '@ui/shared/components/content/index.js';
 import { SignViewer } from '@ui/shared/components/content/index.js';
+import { VideoViewer } from '@ui/shared/components/content/index.js';
 import { ChatWindow } from '@ui/shared/components/game/index.js';
 import type { ModalState } from '../hooks/useModuleModals.js';
 
@@ -69,9 +70,10 @@ export function ContentModals({
     // Predefined component renderers
     const predefinedRenderers: Record<string, ComponentRenderer> = {
       ImageViewer: ({ isOpen, onClose, props, borderColor }) => (
-        <ImageViewer
+        <ContentViewer
           isOpen={isOpen}
           onClose={onClose}
+          contentType="image"
           imageUrl={(props.imageUrl as string) || ''}
           title={props.title as string | undefined}
           borderColor={borderColor}
@@ -91,6 +93,15 @@ export function ContentModals({
           isOpen={isOpen}
           onClose={onClose}
           content={(props.content as string) || ''}
+          title={props.title as string | undefined}
+          borderColor={borderColor}
+        />
+      ),
+      VideoViewer: ({ isOpen, onClose, props, borderColor }) => (
+        <VideoViewer
+          isOpen={isOpen}
+          onClose={onClose}
+          videoUrl={(props.videoUrl as string) || ''}
           title={props.title as string | undefined}
           borderColor={borderColor}
         />
@@ -116,11 +127,11 @@ export function ContentModals({
   const renderer = getComponentRenderer(modal.component);
 
   if (!renderer) {
-    console.warn(
-      `[ContentModals] Unknown component "${modal.component}". ` +
-      `Predefined: ImageViewer, NoteViewer, SignViewer, ChatWindow. ` +
-      `Provide custom renderer via customComponents prop.`
-    );
+      console.warn(
+        `[ContentModals] Unknown component "${modal.component}". ` +
+        `Predefined: ImageViewer, NoteViewer, SignViewer, VideoViewer, ChatWindow. ` +
+        `Provide custom renderer via customComponents prop.`
+      );
     return null;
   }
 

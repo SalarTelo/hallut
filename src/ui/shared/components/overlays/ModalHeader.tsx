@@ -58,7 +58,7 @@ export function ModalHeader({
       className="mb-4 pb-3 flex items-center justify-between"
       style={showBorder ? { borderBottom: `1px solid ${borderColorWithOpacity}` } : undefined}
     >
-      <h3 className="pixelated text-yellow-400 text-lg font-bold">{title}</h3>
+      <h3 className="pixelated text-yellow-400 text-sm font-bold">{title}</h3>
       {rightContent || <CloseButton onClick={onClose} ariaLabel={closeAriaLabel} />}
     </div>
   );

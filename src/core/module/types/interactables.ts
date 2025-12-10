@@ -35,7 +35,8 @@ export type InteractableComponentName =
   | 'NoteViewer'
   | 'SignViewer'
   | 'ChatWindow'
-  | 'ImageViewer';
+  | 'ImageViewer'
+  | 'VideoViewer';
 
 /**
  * Component-specific props based on component type
@@ -60,6 +61,11 @@ export interface ImageViewerProps {
   title?: string;
 }
 
+export interface VideoViewerProps {
+  videoUrl: string;
+  title?: string;
+}
+
 /**
  * Object interaction types with type-safe component names
  * Predefined components have type-safe props, custom components use generic props
@@ -69,6 +75,7 @@ export type ObjectInteraction =
   | { type: 'component'; component: 'SignViewer'; props?: SignViewerProps }
   | { type: 'component'; component: 'ChatWindow'; props?: ChatWindowProps }
   | { type: 'component'; component: 'ImageViewer'; props?: ImageViewerProps }
+  | { type: 'component'; component: 'VideoViewer'; props?: VideoViewerProps }
   | { type: 'component'; component: string; props?: Record<string, unknown> } // Generic fallback for custom components
   | { type: 'none' };
 

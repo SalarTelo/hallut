@@ -17,6 +17,7 @@ export type {
   SignViewerProps,
   ChatWindowProps,
   ImageViewerProps,
+  VideoViewerProps,
   ObjectInteraction,
   GetInteractionFunction,
   InteractableType,

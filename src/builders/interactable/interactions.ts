@@ -10,6 +10,7 @@ import type {
   SignViewerProps,
   ChatWindowProps,
   ImageViewerProps,
+  VideoViewerProps,
 } from '@core/module/types/index.js';
 
 // showDialogue removed - objects should use showNoteViewer, showSignViewer, etc. instead
@@ -70,6 +71,17 @@ export function showImageViewer(props: ImageViewerProps): ObjectInteraction {
   return {
     type: 'component',
     component: 'ImageViewer',
+    props,
+  };
+}
+
+/**
+ * Show VideoViewer component interaction (type-safe)
+ */
+export function showVideoViewer(props: VideoViewerProps): ObjectInteraction {
+  return {
+    type: 'component',
+    component: 'VideoViewer',
     props,
   };
 }
