@@ -12,8 +12,8 @@ export interface WorldmapHeaderProps {
  * Worldmap Header component
  */
 export function WorldmapHeader({
-  title = 'Världskarta',
-  subtitle = 'Välj en modul att utforska',
+  title = 'Worldmap',
+  subtitle = 'Choose a module to play',
 }: WorldmapHeaderProps) {
   return (
     <div

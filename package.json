@@ -14,7 +14,13 @@
     "test:coverage": "vitest run --coverage",
     "cli": "tsx scripts/cli.ts",
     "module:create": "tsx scripts/cli.ts create module",
-    "module:validate": "tsx scripts/cli.ts validate"
+    "module:validate": "tsx scripts/cli.ts validate",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f ollama",
+    "ollama:pull": "docker exec prototyp-ollama ollama pull llama3.2",
+    "setup": "npm install && docker compose up -d && echo 'Waiting for Ollama to start...' && sleep 5 && npm run ollama:pull",
+    "dev:with-ollama": "docker compose up -d && npm run dev"
   },
   "dependencies": {
     "pixelarticons": "^1.8.1",
