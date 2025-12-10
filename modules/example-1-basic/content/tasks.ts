@@ -43,6 +43,10 @@ export const greetingTask = createTask({
     ready: ['Are you ready to submit your greeting?'],
     complete: ['Excellent! You completed the task.'],
   },
+  meta: {
+    hints: ['Try using words like "hello", "hi", or "hey"', 'Make sure your message is at least 10 characters long'],
+    examples: ['Hello! How are you?', 'Hi there!', 'Hey, nice to meet you!'],
+  },
 });
 
 /**

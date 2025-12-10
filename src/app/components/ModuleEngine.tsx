@@ -6,7 +6,7 @@
  * for better maintainability and separation of concerns.
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useInteractableActions } from '@app/hooks/index.js';
 import { getThemeValue } from '../../shared/index.js';
 import { InteractableView } from '@ui/views/InteractableView.js';
@@ -17,8 +17,12 @@ import { useModuleLoader } from '@app/components/ModuleEngine/hooks/index.js';
 import { useModuleViews } from '@app/components/ModuleEngine/hooks/index.js';
 import { useModuleModals } from '@app/components/ModuleEngine/hooks/index.js';
 import { TaskOverlay, DialogueOverlay, ContentModals } from '@app/components/ModuleEngine/components/index.js';
+import { TaskOfferModal } from '@ui/shared/components/game/index.js';
 import { createDialogueContext } from '@app/components/ModuleEngine/utils/index.js';
+import { actions } from '@core/state/actions.js';
+import { getTaskId } from '@core/task/utils.js';
 import type { ModuleEngineProps } from '@app/components/ModuleEngine/types.js';
+import type { Task } from '@core/task/types.js';
 
 export type { ModuleEngineProps };
 
@@ -61,6 +65,9 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit, customComponents
     closeModal,
   } = useModuleModals();
 
+  // Task offer modal state
+  const [offeredTask, setOfferedTask] = useState<Task | null>(null);
+
   // Handle interactable actions
   const { handleInteractableAction } = useInteractableActions({
     moduleId,
@@ -90,6 +97,30 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit, customComponents
     return null;
   }
 
+  // Handle task offer
+  const handleTaskOffer = (task: Task | string) => {
+    const taskId = getTaskId(task);
+    const taskObj = moduleData?.tasks.find((t) => t.id === taskId);
+    if (taskObj) {
+      setOfferedTask(taskObj);
+    }
+  };
+
+  // Handle task offer acceptance
+  const handleTaskOfferAccept = () => {
+    if (offeredTask) {
+      actions.acceptTask(moduleId, offeredTask);
+      setOfferedTask(null);
+      // Close dialogue if open
+      closeDialogue();
+    }
+  };
+
+  // Handle task offer decline
+  const handleTaskOfferDecline = () => {
+    setOfferedTask(null);
+  };
+
   // Welcome view
   if (currentView === 'welcome') {
     return (
@@ -103,7 +134,7 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit, customComponents
 
   // Create dialogue context
   const dialogueContext = moduleData
-    ? createDialogueContext(moduleId, locale, moduleData, openTask)
+    ? createDialogueContext(moduleId, locale, moduleData, openTask, handleTaskOffer)
     : null;
 
   // Get current task if task view is open
@@ -157,6 +188,17 @@ export function ModuleEngine({ moduleId, locale = 'sv', onExit, customComponents
           onClose={closeDialogue}
           onTaskRequested={openTask}
           onNodeChange={setSelectedDialogueNode}
+        />
+      )}
+
+      {/* Task Offer Modal */}
+      {offeredTask && (
+        <TaskOfferModal
+          isOpen={!!offeredTask}
+          task={offeredTask}
+          onAccept={handleTaskOfferAccept}
+          onDecline={handleTaskOfferDecline}
+          borderColor={borderColor}
         />
       )}
 

@@ -12,6 +12,7 @@ export { TaskTracker, type TaskTrackerProps } from './TaskTracker.js';
 export { ChatWindow, type ChatWindowProps, type ChatMessage } from './ChatWindow.js';
 export { FloatingChatWidget, type FloatingChatWidgetProps } from './FloatingChatWidget.js';
 export { PasswordUnlockModal, type PasswordUnlockModalProps } from './PasswordUnlockModal.js';
+export { TaskOfferModal, type TaskOfferModalProps } from './TaskOfferModal.js';
 
 // ModulePath sub-components
 export { ModuleNode, type ModuleNodeProps } from './modulePath/ModuleNode.js';

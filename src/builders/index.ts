@@ -32,6 +32,7 @@ export {
   orConditions,
   customCondition,
   acceptTask,
+  offerTask,
   setState,
   setInteractableState,
   setModuleState,

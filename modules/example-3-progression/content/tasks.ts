@@ -39,6 +39,10 @@ export const introTask = createTask({
     ready: ['Ready to submit your introduction?'],
     complete: ['Great! Now you can move on to the next task.'],
   },
+  meta: {
+    hints: ['Introduce yourself with your name and interests', 'Write at least 20 characters'],
+    examples: ['Hi, I\'m Alex and I love learning about game development.', 'Hello! My name is Sam and I enjoy coding.'],
+  },
 });
 
 /**
@@ -71,6 +75,10 @@ export const quizTask = createTask({
     ready: ['Ready to answer the quiz?'],
     complete: ['Excellent! You\'ve unlocked the final task.'],
   },
+  meta: {
+    hints: ['Think about famous European cities', 'The answer is a city known for the Eiffel Tower'],
+    examples: ['Paris'],
+  },
 });
 
 /**
@@ -97,6 +105,10 @@ export const reflectionTask = createTask({
     offer: ['For the final task, write a reflection.'],
     ready: ['Ready to submit your reflection?'],
     complete: ['Congratulations! You\'ve completed all tasks in this module!'],
+  },
+  meta: {
+    hints: ['Reflect on what you learned from the previous tasks', 'Write at least 30 characters'],
+    examples: ['I learned about task progression and how tasks can unlock each other.', 'This module taught me how to chain tasks together in a logical sequence.'],
   },
 });
 
@@ -126,6 +138,10 @@ export const module3UnlockTask = createTask({
     offer: ['Complete this special task to unlock a new module!'],
     ready: ['Ready to unlock a new module?'],
     complete: ['Amazing! Check the worldmap - a new module has been unlocked!'],
+  },
+  meta: {
+    hints: ['Include the word "unlock" in your answer', 'Write at least 6 characters'],
+    examples: ['unlock', 'I want to unlock the next module', 'Please unlock the new content'],
   },
 });
 

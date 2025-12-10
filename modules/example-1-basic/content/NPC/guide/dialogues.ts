@@ -11,7 +11,7 @@
 import {
   createDialogueTree,
   createDialogueNode,
-  acceptTask,
+  offerTask,
   callFunction,
 } from '@builders/index.js';
 import { guideState } from './state.js';
@@ -33,12 +33,12 @@ const firstGreeting = createDialogueNode({
   choices: {
     accept: {
       text: 'Yes, I\'d like the task',
-      next: null, // Close dialogue after accepting
+      next: null, // Close dialogue after offering task
       actions: [
         callFunction((ctx) => {
           guideState(ctx).hasMet = true;
         }),
-        acceptTask(greetingTask),
+        offerTask(greetingTask), // Show task offer modal instead of directly accepting
       ],
     },
     later: {

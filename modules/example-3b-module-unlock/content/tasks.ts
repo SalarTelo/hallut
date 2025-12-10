@@ -38,6 +38,10 @@ export const welcomeTask = createTask({
     ready: ['Ready to submit?'],
     complete: ['Excellent! You completed a task in an unlocked module!'],
   },
+  meta: {
+    hints: ['Write about unlocking this module from another module', 'Write at least 15 characters'],
+    examples: ['I unlocked this module by completing a special task!', 'This module was unlocked through module-to-module progression.'],
+  },
 });
 
 /**
@@ -65,6 +69,10 @@ export const completionTask = createTask({
     offer: ['Now that you\'ve completed the welcome task, let\'s finish this module.'],
     ready: ['Ready to submit?'],
     complete: ['Perfect! You\'ve completed all tasks in this module-unlocked module!'],
+  },
+  meta: {
+    hints: ['Reflect on completing a module that was unlocked by another module', 'Write at least 20 characters'],
+    examples: ['I completed this module that was unlocked through module progression.', 'This shows how modules can unlock each other in a chain.'],
   },
 });
 

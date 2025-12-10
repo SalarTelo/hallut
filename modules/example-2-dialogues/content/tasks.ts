@@ -38,6 +38,10 @@ export const reflectionTask = createTask({
     ready: ['Are you ready to submit your reflection?'],
     complete: ['Great work on your reflection!'],
   },
+  meta: {
+    hints: ['Think about what you learned or experienced', 'Write at least 20 characters to complete the reflection'],
+    examples: ['I learned that dialogue trees can guide players through tasks.', 'This module showed me how NPCs can offer tasks through conversation.'],
+  },
 });
 
 /**

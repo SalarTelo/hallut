@@ -20,6 +20,7 @@ export interface ModuleContext {
   getCurrentTask: () => Task | null;
   getCurrentTaskId: () => string | null;
   openTaskSubmission?: (task: Task | string) => void;
+  openTaskOffer?: (task: Task | string) => void;
   setInteractableState: (interactableId: string, key: string, value: unknown) => void;
   getInteractableState: (interactableId: string, key: string) => unknown;
   getInteractable: (interactableId: string) => Interactable | null;

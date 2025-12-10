@@ -23,5 +23,8 @@ export const teacherNPC = createNPC({
   avatar: '👨‍🏫',
   tasks: [reflectionTask],
   dialogueTree: teacherDialogueTree,
+  meta: {
+    role: 'teacher',
+  },
 });
 

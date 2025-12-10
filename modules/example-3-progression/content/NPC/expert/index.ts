@@ -20,5 +20,8 @@ export const expertNPC = createNPC({
   locked: true,
   unlockRequirement: taskComplete(introTask), // Locked until introTask is done
   dialogueTree: expertDialogueTree,
+  meta: {
+    role: 'expert',
+  },
 });
 

@@ -27,6 +27,7 @@ export {
 // Actions
 export {
   acceptTask,
+  offerTask,
   setState,
   setInteractableState,
   setModuleState,

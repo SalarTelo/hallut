@@ -114,6 +114,7 @@ export interface DialogueEntryConfig {
  */
 export type ChoiceAction =
   | { type: 'accept-task'; task: Task }
+  | { type: 'offer-task'; task: Task }
   | { type: 'set-state'; key: string; value: unknown }
   | { type: 'set-interactable-state'; interactableId: string; key: string; value: unknown }
   | { type: 'set-module-state'; key: string; value: unknown }

@@ -17,6 +17,15 @@ async function executeAction(
     case 'accept-task':
       context.acceptTask(action.task);
       break;
+    case 'offer-task':
+      // Open task offer modal instead of directly accepting
+      if (context.openTaskOffer) {
+        context.openTaskOffer(action.task);
+      } else {
+        // Fallback to direct accept if modal not available
+        context.acceptTask(action.task);
+      }
+      break;
     case 'set-state':
     case 'set-module-state':
       context.setModuleStateField(action.key, action.value);

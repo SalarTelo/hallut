@@ -8,10 +8,17 @@ import type { Task } from '@core/task/types.js';
 import type { ModuleContext } from '@core/module/types/index.js';
 
 /**
- * Create an accept task action
+ * Create an accept task action (directly accepts without showing modal)
  */
 export function acceptTask(task: Task): ChoiceAction {
   return { type: 'accept-task', task };
+}
+
+/**
+ * Create an offer task action (shows task details modal before accepting)
+ */
+export function offerTask(task: Task): ChoiceAction {
+  return { type: 'offer-task', task };
 }
 
 /**

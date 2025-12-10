@@ -25,5 +25,8 @@ export const guideNPC = createNPC({
   avatar: '👤',
   tasks: [greetingTask],
   dialogueTree: guideDialogueTree,
+  meta: {
+    role: 'guide',
+  },
 });
 
