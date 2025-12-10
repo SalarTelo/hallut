@@ -46,17 +46,29 @@ export function useModuleViews(
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
 
-  // Check welcome dialogue
+  // Check welcome dialogue once when module loads
+  // Welcome is only shown on initial entry, never when closing dialogues
   useEffect(() => {
     if (moduleData) {
       const welcomeDialogueId = `${moduleId}_welcome`;
       const seen = actions.hasSeenGreeting(moduleId, welcomeDialogueId);
       setHasSeenWelcome(seen);
+      // Mark as seen immediately if not seen (prevents flickering on subsequent interactions)
       if (!seen) {
         actions.markGreetingSeen(moduleId, welcomeDialogueId);
       }
     }
   }, [moduleData, moduleId]);
+
+  // Once any interaction happens (dialogue or task), ensure welcome won't show again
+  useEffect(() => {
+    if (moduleData && (selectedDialogueNode || selectedTaskId)) {
+      // User has interacted, welcome should not show again
+      if (!hasSeenWelcome) {
+        setHasSeenWelcome(true);
+      }
+    }
+  }, [moduleData, selectedDialogueNode, selectedTaskId, hasSeenWelcome]);
 
   // Derive view from content state (single source of truth)
   const currentView = useMemo<View>(() => {
@@ -75,14 +87,19 @@ export function useModuleViews(
       return 'dialogue';
     }
 
-    // Welcome view if not seen
-    if (!hasSeenWelcome) {
-      return 'welcome';
+    // Welcome view only on true initial load (no interactions yet)
+    // Never show welcome when closing dialogues or after any interaction
+    if (!hasSeenWelcome && moduleData) {
+      // Only show welcome if truly initial (no previous dialogue or task interactions)
+      const hasInteracted = selectedDialogueNode || selectedNPC || selectedTaskId;
+      if (!hasInteracted) {
+        return 'welcome';
+      }
     }
 
     // Default to interactable
     return 'interactable';
-  }, [explicitView, selectedTaskId, selectedDialogueNode, selectedNPC, hasSeenWelcome]);
+  }, [explicitView, selectedTaskId, selectedDialogueNode, selectedNPC, hasSeenWelcome, moduleData]);
 
   // Clear explicit view when it matches derived view
   useEffect(() => {
@@ -122,9 +139,14 @@ export function useModuleViews(
   const closeDialogue = () => {
     setSelectedDialogueNode(null);
     setSelectedNPC(null);
-    // Don't reset explicit view - let it be derived from remaining state
-    // If task is open, view will remain 'task', otherwise 'interactable'
-    setExplicitView(null);
+    // Explicitly set to interactable if no task is active
+    // This prevents brief welcome view flicker when closing dialogue
+    if (!selectedTaskId) {
+      setExplicitView('interactable');
+    } else {
+      // If task is active, let it derive to 'task' view
+      setExplicitView(null);
+    }
   };
 
   const closeTask = () => {
@@ -138,6 +160,12 @@ export function useModuleViews(
     setSelectedTaskId(null);
     setSelectedDialogueNode(null);
     setSelectedNPC(null);
+    // Mark welcome as seen when leaving welcome view
+    if (moduleData) {
+      const welcomeDialogueId = `${moduleId}_welcome`;
+      actions.markGreetingSeen(moduleId, welcomeDialogueId);
+      setHasSeenWelcome(true);
+    }
     setExplicitView('interactable');
   };
 
