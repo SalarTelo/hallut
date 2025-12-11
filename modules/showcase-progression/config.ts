@@ -24,11 +24,11 @@ export function createConfig() {
     welcome: createWelcome('Progression Guide', [
       'Welcome to the Progression showcase!',
       'This module demonstrates:',
-      '• Task chains (task unlocks task)',
-      '• Locked NPCs (unlock via task completion)',
-      '• Locked objects (unlock via task completion)',
-      '• Combined requirements (AND/OR)',
-      '• Module unlock requirements',
+      '1. Task chains (task unlocks task)',
+      '2. Locked NPCs (unlock via task completion)',
+      '3. Locked objects (unlock via task completion)',
+      '4. Combined requirements (AND/OR)',
+      '5. Module unlock requirements',
     ]),
     worldmap: {
       position: { x: 80, y: 50 },
@@ -36,7 +36,6 @@ export function createConfig() {
         shape: 'circle',
         size: 56,
       },
-      summary: 'Unlock requirements, task chains, and progression',
     },
     unlockRequirement: moduleComplete('module-creator-showcase'),
   });

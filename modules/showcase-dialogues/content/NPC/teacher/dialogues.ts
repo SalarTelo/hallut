@@ -28,10 +28,7 @@ const firstGreeting = createDialogueNode({
   lines: [
     'Hello! I\'m the Dialogue Teacher.',
     'I\'ll teach you about dialogue systems.',
-    '',
-    'Dialogues can be simple linear conversations,',
-    'or they can branch based on player choices.',
-    '',
+    'Dialogues can be simple linear conversations, or they can branch based on player choices.',
     'I have a task for you if you\'re interested.',
   ],
   choices: {
@@ -47,7 +44,7 @@ const firstGreeting = createDialogueNode({
     },
     learn: {
       text: 'Tell me more about dialogues',
-      next: null, // Will link to branching dialogue
+      next: 'branching-choice',
       actions: [
         callFunction((ctx) => {
           teacherState(ctx).hasMet = true;
@@ -67,23 +64,51 @@ const firstGreeting = createDialogueNode({
 });
 
 /**
+ * Dialogue node: State-based dialogue explanation
+ * 
+ * Explains state-based dialogues.
+ */
+const stateDialogueExplanation = createDialogueNode({
+    id: 'dialogue-explanation',
+  lines: [
+    'State-based dialogues allow NPCs to "remember" previous interactions.',
+    'When you talk to me again, I\'ll remember we\'ve met before!',
+    'This is done using state references that persist across dialogue sessions.',
+    'Try talking to me again after closing this dialogue to see the state-based greeting!',
+  ],
+  choices: {
+    task: {
+      text: 'Tell me about the task',
+      next: null,
+      actions: [offerTask(dialogueTask)],
+    },
+    branching: {
+      text: 'Show me branching dialogues',
+      next: 'branching-choice',
+    },
+    back: {
+      text: 'Go back',
+      next: null,
+    },
+  },
+});
+
+/**
  * Dialogue node: Branching example - Option A
  * 
  * Demonstrates branching dialogue where choices lead to different nodes.
  */
 const branchingOptionA = createDialogueNode({
+    id: 'branching-a',
   lines: [
     'You chose Option A!',
-    '',
-    'Branching dialogues allow players to make choices',
-    'that lead to different conversation paths.',
-    '',
+    'Branching dialogues allow players to make choices that lead to different conversation paths.',
     'This creates interactive, engaging conversations.',
   ],
   choices: {
     continue: {
       text: 'Tell me about state-based dialogues',
-      next: null, // Would link to state dialogue
+      next: stateDialogueExplanation,
       actions: [
         callFunction((ctx) => {
           teacherState(ctx).choseOptionA = true;
@@ -92,7 +117,7 @@ const branchingOptionA = createDialogueNode({
     },
     back: {
       text: 'Go back',
-      next: firstGreeting,
+      next: 'branching-choice',
     },
   },
 });
@@ -101,18 +126,16 @@ const branchingOptionA = createDialogueNode({
  * Dialogue node: Branching example - Option B
  */
 const branchingOptionB = createDialogueNode({
+    id: 'branching-b',
   lines: [
     'You chose Option B!',
-    '',
-    'Different choices can lead to different outcomes',
-    'and different information being shared.',
-    '',
+    'Different choices can lead to different outcomes and different information being shared.',
     'This makes dialogues dynamic and interesting.',
   ],
   choices: {
     continue: {
       text: 'Tell me about state-based dialogues',
-      next: null,
+      next: stateDialogueExplanation,
       actions: [
         callFunction((ctx) => {
           teacherState(ctx).choseOptionB = true;
@@ -121,7 +144,7 @@ const branchingOptionB = createDialogueNode({
     },
     back: {
       text: 'Go back',
-      next: firstGreeting,
+      next: 'branching-choice',
     },
   },
 });
@@ -132,23 +155,23 @@ const branchingOptionB = createDialogueNode({
  * Demonstrates a dialogue node with multiple choices that branch.
  */
 const branchingChoice = createDialogueNode({
+id: 'branching-choice',
   lines: [
     'Let me show you branching dialogues!',
-    '',
     'Choose an option to see how branching works:',
   ],
   choices: {
     optionA: {
       text: 'Option A - Learn about linear dialogues',
-      next: branchingOptionA,
+      next: 'branching-a',
     },
     optionB: {
       text: 'Option B - Learn about interactive dialogues',
-      next: branchingOptionB,
+      next: 'branching-b',
     },
     back: {
       text: 'Go back',
-      next: firstGreeting,
+      next: 'dialogue-explanation',
     },
   },
 });
@@ -162,12 +185,9 @@ const branchingChoice = createDialogueNode({
 const stateBasedGreeting = createDialogueNode({
   lines: [
     'Hello again!',
-    '',
     'I remember you! This is a state-based dialogue.',
     'The dialogue system remembers our previous interaction.',
-    '',
-    'State-based dialogues allow NPCs to "remember" things',
-    'and change their dialogue based on previous interactions.',
+    'State-based dialogues allow NPCs to "remember" things and change their dialogue based on previous interactions.',
   ],
   choices: {
     branching: {
@@ -251,6 +271,7 @@ export const teacherDialogueTree = createDialogueTree()
     branchingChoice,
     branchingOptionA,
     branchingOptionB,
+    stateDialogueExplanation,
     taskReady,
     taskComplete
   )

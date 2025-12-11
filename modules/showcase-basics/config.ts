@@ -25,11 +25,11 @@ export function createConfig() {
     welcome: createWelcome('Basics Guide', [
       'Welcome to the Basics showcase!',
       'This module demonstrates the fundamental building blocks:',
-      '• Module structure (config.ts, index.ts, content/)',
-      '• Basic NPC without dialogue',
-      '• Basic object (Note viewer)',
-      '• Simple text task',
-      '• Worldmap configuration',
+      '1. Module structure (config.ts, index.ts, content/)',
+      '2. Basic NPC without dialogue',
+      '3. Basic object (Note viewer)',
+      '4. Simple text task',
+      '5. Worldmap configuration',
     ]),
     worldmap: {
       position: { x: 30, y: 50 },

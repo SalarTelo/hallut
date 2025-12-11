@@ -21,7 +21,7 @@ export const basicNPC = createNPC({
   id: 'basic-npc',
   name: 'Basic NPC',
   position: position(30, 40),
-  avatar: '👤',
+  avatar: '',
   tasks: [basicTask],
   dialogueTree: basicDialogueTree,
   meta: {

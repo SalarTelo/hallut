@@ -39,45 +39,6 @@
         "note"
       ]
     },
-    "showcase-advanced": {
-      "id": "showcase-advanced",
-      "name": "showcase-advanced",
-      "tasks": {
-        "advanced-task": {
-          "id": "advanced-task",
-          "name": "Advanced Task",
-          "description": "Write about advanced features (at least 20 characters).",
-          "requirements": "Write at least 20 characters",
-          "goals": [
-            "Demonstrate advanced features"
-          ],
-          "submissionType": "text",
-          "dialogueOffer": "I have an advanced task for you.",
-          "dialogueReady": "Ready to submit?",
-          "dialogueComplete": "Excellent! You completed the advanced task.",
-          "hints": [
-            "Write about advanced features",
-            "At least 20 characters"
-          ],
-          "examples": [
-            "Advanced features include password locks and handlers",
-            "I learned about custom components"
-          ]
-        }
-      },
-      "npcs": {
-        "advanced-teacher": {
-          "id": "advanced-teacher",
-          "name": "Advanced Teacher",
-          "avatar": "👨‍🏫",
-          "personality": "A helpful character",
-          "role": "teacher"
-        }
-      },
-      "objectTypes": [
-        "note"
-      ]
-    },
     "showcase-basics": {
       "id": "showcase-basics",
       "name": "showcase-basics",

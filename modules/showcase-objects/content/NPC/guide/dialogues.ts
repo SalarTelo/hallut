@@ -19,7 +19,6 @@ const firstGreeting = createDialogueNode({
   lines: [
     'Hello! I\'m the Object Guide.',
     'I can help you unlock the locked object.',
-    '',
     'I have a task that will unlock it for you.',
   ],
   choices: {

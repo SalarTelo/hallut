@@ -24,12 +24,12 @@ export function createConfig() {
     welcome: createWelcome('Dialogue Guide', [
       'Welcome to the Dialogues showcase!',
       'This module demonstrates:',
-      '• Dialogue trees and nodes',
-      '• Branching dialogues (choices)',
-      '• State-based dialogues (NPC remembers)',
-      '• Conditional dialogue entry',
-      '• Offering tasks via dialogue',
-      '• State management with stateRef',
+      '1. Dialogue trees and nodes',
+      '2. Branching dialogues (choices)',
+      '3. State-based dialogues (NPC remembers)',
+      '4. Conditional dialogue entry',
+      '5. Offering tasks via dialogue',
+      '6. State management with stateRef',
     ]),
     worldmap: {
       position: { x: 20, y: 30 },
